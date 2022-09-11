@@ -1,5 +1,4 @@
-﻿using ICSharpCode.AvalonEdit.Highlighting.Xshd;
-using ICSharpCode.AvalonEdit.Highlighting;
+﻿using ICSharpCode.AvalonEdit.Highlighting;
 using RhinoPythonNetEditor.Resources;
 using Microsoft.Win32;
 using System;
@@ -22,6 +21,8 @@ using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 using System.Xml;
 using System.Resources;
 using System.Collections;
+using ICSharpCode.AvalonEdit.Folding;
+using RhinoPythonNetEditor.View.Pages;
 
 namespace RhinoPythonNetEditor.View.Controls
 {
@@ -46,5 +47,6 @@ namespace RhinoPythonNetEditor.View.Controls
             HighlightingManager.Instance.RegisterHighlighting("DefaultHighlighting", new string[] { ".cool" }, defaultHighlighting);
             textEditor.SyntaxHighlighting = defaultHighlighting;
         }
+
     }
 }
