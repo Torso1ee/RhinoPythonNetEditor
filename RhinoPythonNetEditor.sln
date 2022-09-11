@@ -1,0 +1,43 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.3.32819.101
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RhinoPythonNetEditor", "RhinoPythonNetEditor\RhinoPythonNetEditor.csproj", "{F9BC2027-7841-4815-A777-73CD79393494}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RhinoPythonNetEditor.Styling", "RhinoPythonNetEditor.Styling\RhinoPythonNetEditor.Styling.csproj", "{846273B8-C1ED-4767-9882-2FC399A46D2D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RhinoPythonNetEditor.Resources", "RhinoPythonNetEditor.Resources\RhinoPythonNetEditor.Resources.csproj", "{CAE904B4-4DFF-4291-82B1-584021351FB2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RhinoPythonNetEditor.View", "RhinoPythonNetEditor.View\RhinoPythonNetEditor.View.csproj", "{E2469FBC-B426-4953-90E0-D702C58892DD}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{F9BC2027-7841-4815-A777-73CD79393494}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F9BC2027-7841-4815-A777-73CD79393494}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F9BC2027-7841-4815-A777-73CD79393494}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F9BC2027-7841-4815-A777-73CD79393494}.Release|Any CPU.Build.0 = Release|Any CPU
+		{846273B8-C1ED-4767-9882-2FC399A46D2D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{846273B8-C1ED-4767-9882-2FC399A46D2D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{846273B8-C1ED-4767-9882-2FC399A46D2D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{846273B8-C1ED-4767-9882-2FC399A46D2D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CAE904B4-4DFF-4291-82B1-584021351FB2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CAE904B4-4DFF-4291-82B1-584021351FB2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CAE904B4-4DFF-4291-82B1-584021351FB2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CAE904B4-4DFF-4291-82B1-584021351FB2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E2469FBC-B426-4953-90E0-D702C58892DD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E2469FBC-B426-4953-90E0-D702C58892DD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E2469FBC-B426-4953-90E0-D702C58892DD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E2469FBC-B426-4953-90E0-D702C58892DD}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {86483CDD-926E-4531-9695-A86A82406532}
+	EndGlobalSection
+EndGlobal

@@ -1,0 +1,17 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="/RhinoPythonNetEditor.Styling;component/Styles.xaml"/>
+        <ResourceDictionary Source="/RhinoPythonNetEditor.Resources;component/Geometries.xaml"/>
+    </ResourceDictionary.MergedDictionaries>
+
+    <SolidColorBrush Color="#CC3F4040" x:Key="MenuBarBackgroundBrush"/>
+    <SolidColorBrush Color="#E51E1E1E" x:Key="EditorBackgroundBrush"/>
+    <SolidColorBrush Color="#FFABABAB" x:Key="MenuItemTextBrush"/>
+    <SolidColorBrush x:Key="TitleBarBrush" Color="#7F1E1E1E"/>
+    <SolidColorBrush Color="#FF3F4040" x:Key="LabelTextBrush"/>
+    <SolidColorBrush Color="#FFABABAB" x:Key="ButtonForegroundBrush"/>
+    <SolidColorBrush Color="#FFC6C6C6" x:Key="EditorTextBrush"/>
+
+
+</ResourceDictionary>
