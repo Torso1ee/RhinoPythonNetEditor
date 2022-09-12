@@ -23,6 +23,8 @@ using System.Resources;
 using System.Collections;
 using ICSharpCode.AvalonEdit.Folding;
 using RhinoPythonNetEditor.View.Pages;
+using ICSharpCode.AvalonEdit.Editing;
+using RhinoPythonNetEditor.View.Tools;
 
 namespace RhinoPythonNetEditor.View.Controls
 {
@@ -46,6 +48,12 @@ namespace RhinoPythonNetEditor.View.Controls
             }
             HighlightingManager.Instance.RegisterHighlighting("DefaultHighlighting", new string[] { ".cool" }, defaultHighlighting);
             textEditor.SyntaxHighlighting = defaultHighlighting;
+            var bm = new BreakPointMargin();
+            var lm = textEditor.TextArea.LeftMargins;
+            lm.Insert(0, bm);
+            var nm = lm[1] as LineNumberMargin;
+            nm.Margin = new Thickness(0, 0, 20, 0);
+            lm.RemoveAt(2);
         }
 
     }

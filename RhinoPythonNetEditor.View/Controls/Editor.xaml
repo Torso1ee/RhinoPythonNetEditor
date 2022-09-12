@@ -16,7 +16,7 @@
     </UserControl.Resources>
     <Grid Background="{StaticResource EditorBackgroundBrush}">
         <avalonEdit:TextEditor Name="textEditor"
-                               Margin="16,0,0,0"
+                               Margin="5,0,5,0"
                                FontFamily="Consolas"
                                Foreground="#D4D4D4"
                                HorizontalScrollBarVisibility="Auto"
