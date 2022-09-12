@@ -10,7 +10,7 @@
     <SolidColorBrush Color="#E51E1E1E" x:Key="EditorBackgroundBrush"/>
     <SolidColorBrush Color="#FFABABAB" x:Key="MenuItemTextBrush"/>
     <SolidColorBrush x:Key="TitleBarBrush" Color="#7F1E1E1E"/>
-    <SolidColorBrush Color="#FF3F4040" x:Key="LabelTextBrush"/>
+    <SolidColorBrush Color="Black" x:Key="LabelTextBrush"/>
     <SolidColorBrush Color="#FFABABAB" x:Key="ButtonForegroundBrush"/>
     <SolidColorBrush Color="#FFC6C6C6" x:Key="EditorTextBrush"/>
 

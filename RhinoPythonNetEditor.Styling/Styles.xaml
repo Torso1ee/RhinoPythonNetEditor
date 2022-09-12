@@ -5,11 +5,15 @@
         <ResourceDictionary Source="Styles/Label.xaml"/>
         <ResourceDictionary Source="Styles/Button.xaml"/>
         <ResourceDictionary Source="Styles/TabControl.xaml"/>
+        <ResourceDictionary Source="Styles/ScrollViewer.xaml"/>
     </ResourceDictionary.MergedDictionaries>
 
     <!-- Default Styles -->
     <Style TargetType="{x:Type Label}" BasedOn="{StaticResource DefaultLabelStyle}"/>
 
     <Style TargetType="{x:Type TabControl}" BasedOn="{StaticResource  TabControlBaseStyle}"/>
+
+    <Style TargetType="{x:Type ScrollViewer}" BasedOn="{StaticResource  AutoHideScrollViewer}"/>
+
 
 </ResourceDictionary>

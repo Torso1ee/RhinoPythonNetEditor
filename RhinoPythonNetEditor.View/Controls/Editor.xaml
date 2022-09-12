@@ -14,17 +14,18 @@
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </UserControl.Resources>
-    <Grid>
+    <Grid Background="{StaticResource EditorBackgroundBrush}">
         <avalonEdit:TextEditor Name="textEditor"
+                               Margin="16,0,0,0"
                                FontFamily="Consolas"
                                Foreground="#D4D4D4"
                                HorizontalScrollBarVisibility="Auto"
-                               VerticalScrollBarVisibility="Visible"
+                               VerticalScrollBarVisibility="Auto"
                                  ShowLineNumbers="True"
-                               Background="{StaticResource EditorBackgroundBrush}"
+                               Background="Transparent"
                                LineNumbersForeground="{StaticResource EditorTextBrush}"
                                FontWeight="Light"
-                               FontSize="14">
+                               FontSize="16">
             <avalonEdit:TextEditor.Options>
                 <avalonEdit:TextEditorOptions 
                     ShowSpaces="False" 
