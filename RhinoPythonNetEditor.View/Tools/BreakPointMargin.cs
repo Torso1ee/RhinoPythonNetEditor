@@ -21,17 +21,20 @@ using System.Windows.Media.Media3D;
 
 namespace RhinoPythonNetEditor.View.Tools
 {
-    public class BreakPointInfomation { }
+    public class BreakPointInfomation
+    {
+        public int Row { get; set; }
+    }
 
     public class BreakPointMargin : AbstractMargin, IWeakEventListener
     {
         //private BreakpointStore _manager;
         TextArea textArea;
         private double radius;
-        private DocumentLine previewLine;
+        private int previewLine;
         private bool previewPointVisible;
         protected int maxLineNumberLength = 1;
-        private List<DocumentLine> storedLines = new List<DocumentLine>();
+        private List<BreakPointInfomation> storedLines = new List<BreakPointInfomation>();
 
         static BreakPointMargin()
         {
@@ -72,22 +75,26 @@ namespace RhinoPythonNetEditor.View.Tools
                     drawingContext.DrawRectangle(Brushes.Transparent, null, new Rect(0, y - textView.VerticalOffset, radius, radius));
 
                 }
-                foreach (var  i in storedLines)
+                foreach (var i in storedLines)
                 {
-                    var line = TextView.VisualLines.FirstOrDefault(vl => vl.FirstDocumentLine == i);
+                    var line = TextView.VisualLines.FirstOrDefault(vl => vl.FirstDocumentLine.LineNumber == i.Row);
                     if (line != null)
                     {
                         double y = line.GetTextLineVisualYPosition(line.TextLines[0], VisualYPosition.TextTop);
                         drawingContext.DrawEllipse(Brushes.Red, null, new Point(0 + radius / 2, y - textView.VerticalOffset + radius / 2 + 1), radius / 2 - 2, radius / 2 - 2);
                     }
                 }
-                if (previewPointVisible && !storedLines.Contains(previewLine))
+                if (previewPointVisible)
                 {
-                    var visualLine = TextView.VisualLines.FirstOrDefault(vl => vl.FirstDocumentLine == previewLine);
-                    if (visualLine != null)
+                    var item = storedLines.FirstOrDefault(l => l.Row == previewLine);
+                    if (item == null)
                     {
-                        double y = visualLine.GetTextLineVisualYPosition(visualLine.TextLines[0], VisualYPosition.TextTop);
-                        drawingContext.DrawEllipse(Brushes.DarkRed, null, new Point(0 + radius / 2, y - textView.VerticalOffset + radius / 2 + 1), radius / 2 - 2, radius / 2 - 2);
+                        var visualLine = TextView.VisualLines.FirstOrDefault(vl => vl.FirstDocumentLine.LineNumber == previewLine);
+                        if (visualLine != null)
+                        {
+                            double y = visualLine.GetTextLineVisualYPosition(visualLine.TextLines[0], VisualYPosition.TextTop);
+                            drawingContext.DrawEllipse(Brushes.DarkRed, null, new Point(0 + radius / 2, y - textView.VerticalOffset + radius / 2 + 1), radius / 2 - 2, radius / 2 - 2);
+                        }
                     }
                 }
             }
@@ -134,9 +141,9 @@ namespace RhinoPythonNetEditor.View.Tools
 
         void OnDocumentLineCountChanged()
         {
-            int documentLineCount = Document != null ? Document.LineCount : 1;
+             int documentLineCount = Document != null ? Document.LineCount : 1;
             int newLength = documentLineCount.ToString(CultureInfo.CurrentCulture).Length;
-
+            storedLines = storedLines.Where(l => l.Row <= Document.LineCount).ToList();
             // The margin looks too small when there is only one digit, so always reserve space for
             // at least two digits
             if (newLength < 2)
@@ -151,15 +158,16 @@ namespace RhinoPythonNetEditor.View.Tools
 
         protected override void OnMouseLeftButtonDown(MouseButtonEventArgs e)
         {
-            if (previewLine != null)
+            if (previewLine != -1)
             {
-                if (!storedLines.Contains(previewLine))
+                var info = storedLines.FirstOrDefault(l => l.Row == previewLine);
+                if (info == null)
                 {
-                    storedLines.Add(previewLine);
+                    storedLines.Add(new BreakPointInfomation { Row = previewLine });
                 }
                 else
                 {
-                    storedLines.Remove(previewLine);
+                    storedLines.Remove(info);
                 }
             }
             InvalidateVisual();
@@ -172,23 +180,12 @@ namespace RhinoPythonNetEditor.View.Tools
             var offset = GetOffsetFromPoint(e);
             if (offset != -1)
             {
-                previewLine = textView.Document.GetLineByOffset(offset); // convert from text line to visual line.
+                previewLine = textView.Document.GetLineByOffset(offset).LineNumber; // convert from text line to visual line.
             }
             InvalidateVisual();
         }
 
-        protected override void OnMouseLeftButtonUp(MouseButtonEventArgs e)
-        {
-            //previewPointVisible = true;
-            //var textView = TextView;
-            //var offset = GetOffsetFromPoint(e);
-            //if (offset != -1)
-            //{
-            //    var lineClicked = -1;
-            //    lineClicked = textView.Document.GetLineByOffset(offset).LineNumber; // convert from text line to visual line.
-            //}
-            //InvalidateVisual();
-        }
+      
 
 
         int GetOffsetFromPoint(MouseEventArgs e)
@@ -206,7 +203,7 @@ namespace RhinoPythonNetEditor.View.Tools
 
         protected override void OnMouseLeave(MouseEventArgs e)
         {
-            previewLine = null;
+            previewLine = -1;
             previewPointVisible = false;
             InvalidateVisual();
         }

@@ -25,6 +25,7 @@ using ICSharpCode.AvalonEdit.Folding;
 using RhinoPythonNetEditor.View.Pages;
 using ICSharpCode.AvalonEdit.Editing;
 using RhinoPythonNetEditor.View.Tools;
+using ICSharpCode.AvalonEdit;
 
 namespace RhinoPythonNetEditor.View.Controls
 {
@@ -37,6 +38,13 @@ namespace RhinoPythonNetEditor.View.Controls
         public Editor()
         {
             InitializeComponent();
+            InstallHighlightDefinition();
+            InstallBreakPoint();
+            InstallFolding();
+        }
+
+        private void InstallHighlightDefinition()
+        {
             IHighlightingDefinition defaultHighlighting;
             using (Stream s = new MemoryStream(RhinoPythonNetEditor.Resources.Properties.Resources.Default))
             {
@@ -48,13 +56,23 @@ namespace RhinoPythonNetEditor.View.Controls
             }
             HighlightingManager.Instance.RegisterHighlighting("DefaultHighlighting", new string[] { ".cool" }, defaultHighlighting);
             textEditor.SyntaxHighlighting = defaultHighlighting;
+        }
+
+        private void InstallBreakPoint()
+        {
             var bm = new BreakPointMargin();
             var lm = textEditor.TextArea.LeftMargins;
             lm.Insert(0, bm);
             var nm = lm[1] as LineNumberMargin;
-            nm.Margin = new Thickness(0, 0, 20, 0);
+            nm.Margin = new Thickness(0, 0, 5, 0);
             lm.RemoveAt(2);
         }
 
+        private void InstallFolding()
+        {
+            var manager = FoldingManager.Install(textEditor.TextArea);
+            var strategy = new PythonFoldingStrategy();
+            textEditor.Document.Changed +=  (s,e)=> strategy.UpdateFoldings(manager, textEditor.Document);
+        }
     }
 }
