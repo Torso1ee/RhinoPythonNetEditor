@@ -13,5 +13,7 @@ namespace RhinoPythonNetEditor
     /// </summary>
     public partial class App : Application
     {
+
+
     }
 }

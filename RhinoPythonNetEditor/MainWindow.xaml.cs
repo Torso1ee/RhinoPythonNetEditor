@@ -23,6 +23,8 @@ namespace RhinoPythonNetEditor
         public MainWindow()
         {
             InitializeComponent();
+
+
         }
     }
 }

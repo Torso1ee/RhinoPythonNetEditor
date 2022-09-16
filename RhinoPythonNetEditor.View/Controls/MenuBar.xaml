@@ -5,7 +5,10 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:RhinoPythonNetEditor.View.Controls"
              xmlns:attach="clr-namespace:RhinoPythonNetEditor.Styling.Attach;assembly=RhinoPythonNetEditor.Styling"
+            xmlns:viewModel="clr-namespace:RhinoPythonNetEditor.ViewModel;assembly=RhinoPythonNetEditor.ViewModel"
              mc:Ignorable="d" 
+             DataContext="{Binding MenuBarViewModel, Source={StaticResource Locator}}"
+             d:DataContext="{d:DesignInstance {x:Type viewModel:MenuBarViewModel}}"
              d:DesignHeight="30" d:DesignWidth="800">
     <UserControl.Resources>
         <ResourceDictionary>
@@ -40,6 +43,7 @@
             Style="{StaticResource MenuItemIconStyle}"  
             attach:IconElement.Geometry="{StaticResource ConfirmGeometry}"
             Header="OK"  
+            Command="{Binding StartDebug}"
             HorizontalAlignment="Right"
            DockPanel.Dock="Right"/>
         <MenuItem 

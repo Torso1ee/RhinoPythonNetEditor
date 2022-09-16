@@ -124,6 +124,10 @@
       <Project>{846273b8-c1ed-4767-9882-2fc399a46d2d}</Project>
       <Name>RhinoPythonNetEditor.Styling</Name>
     </ProjectReference>
+    <ProjectReference Include="..\RhinoPythonNetEditor.ViewModel\RhinoPythonNetEditor.ViewModel.csproj">
+      <Project>{52463baf-e836-4624-84a0-80049cd96ea7}</Project>
+      <Name>RhinoPythonNetEditor.ViewModel</Name>
+    </ProjectReference>
     <ProjectReference Include="..\RhinoPythonNetEditor.View\RhinoPythonNetEditor.View.csproj">
       <Project>{e2469fbc-b426-4953-90e0-d702c58892dd}</Project>
       <Name>RhinoPythonNetEditor.View</Name>

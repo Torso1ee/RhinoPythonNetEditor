@@ -6,6 +6,7 @@
         <ResourceDictionary Source="Styles/Button.xaml"/>
         <ResourceDictionary Source="Styles/TabControl.xaml"/>
         <ResourceDictionary Source="Styles/ScrollViewer.xaml"/>
+        <ResourceDictionary Source="Styles/Effect.xaml"/>
     </ResourceDictionary.MergedDictionaries>
 
     <!-- Default Styles -->

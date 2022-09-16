@@ -18,7 +18,7 @@
         </ResourceDictionary>
     </UserControl.Resources>
     <Grid Background="{StaticResource EditorBackgroundBrush}">
-        <TabControl>
+        <TabControl Background="{x:Null}" >
             <TabItem  Header="问题">
             </TabItem>
             <TabItem Header="输出">
@@ -26,6 +26,7 @@
             <TabItem Header="帮助">
             </TabItem>
             <TabItem Header="终端">
+                <local:TerminalControl/>
             </TabItem>
         </TabControl>
     </Grid>

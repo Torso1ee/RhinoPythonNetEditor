@@ -3,7 +3,6 @@
     <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="/RhinoPythonNetEditor.Resources;component/Geometries.xaml"/>
         <ResourceDictionary Source="/RhinoPythonNetEditor.Styling;component/Styles.xaml"/>
-        <ResourceDictionary Source="/RhinoPythonNetEditor.Styling;component/Styles.xaml"/>
     </ResourceDictionary.MergedDictionaries>
 
     <SolidColorBrush Color="#CC3F4040" x:Key="MenuBarBackgroundBrush"/>
@@ -13,6 +12,8 @@
     <SolidColorBrush Color="Black" x:Key="LabelTextBrush"/>
     <SolidColorBrush Color="#FFABABAB" x:Key="ButtonForegroundBrush"/>
     <SolidColorBrush Color="#FFC6C6C6" x:Key="EditorTextBrush"/>
+    <SolidColorBrush Color="#FF333333" x:Key="DebugBarColor"/>
 
+    <BooleanToVisibilityConverter x:Key="BoolToVisibility"/>
 
 </ResourceDictionary>

@@ -1,5 +1,4 @@
-﻿using RhinoPythonNetEditor.Debug;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -17,11 +16,11 @@ using System.Windows.Shapes;
 namespace RhinoPythonNetEditor.View.Controls
 {
     /// <summary>
-    /// MenuBar.xaml 的交互逻辑
+    /// TerminalControl.xaml 的交互逻辑
     /// </summary>
-    public partial class MenuBar : UserControl
+    public partial class TerminalControl : UserControl
     {
-        public MenuBar()
+        public TerminalControl()
         {
             InitializeComponent();
         }

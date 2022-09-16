@@ -11,6 +11,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RhinoPythonNetEditor.Resour
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RhinoPythonNetEditor.View", "RhinoPythonNetEditor.View\RhinoPythonNetEditor.View.csproj", "{E2469FBC-B426-4953-90E0-D702C58892DD}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RhinoPythonNetEditor.Debug", "RhinoPythonNetEditor.Debug\RhinoPythonNetEditor.Debug.csproj", "{8C66965D-B0E5-4489-B52C-4347EF69D4AB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RhinoPythonNetEditor.ViewModel", "RhinoPythonNetEditor.ViewModel\RhinoPythonNetEditor.ViewModel.csproj", "{52463BAF-E836-4624-84A0-80049CD96EA7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RhinoPythonNetEditor.DataModels", "RhinoPythonNetEditor.DataModels\RhinoPythonNetEditor.DataModels.csproj", "{D295E2F0-FB3A-4B51-BE94-C81C59CECFC0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +39,18 @@ Global
 		{E2469FBC-B426-4953-90E0-D702C58892DD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E2469FBC-B426-4953-90E0-D702C58892DD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E2469FBC-B426-4953-90E0-D702C58892DD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8C66965D-B0E5-4489-B52C-4347EF69D4AB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8C66965D-B0E5-4489-B52C-4347EF69D4AB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8C66965D-B0E5-4489-B52C-4347EF69D4AB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8C66965D-B0E5-4489-B52C-4347EF69D4AB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{52463BAF-E836-4624-84A0-80049CD96EA7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{52463BAF-E836-4624-84A0-80049CD96EA7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{52463BAF-E836-4624-84A0-80049CD96EA7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{52463BAF-E836-4624-84A0-80049CD96EA7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D295E2F0-FB3A-4B51-BE94-C81C59CECFC0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D295E2F0-FB3A-4B51-BE94-C81C59CECFC0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D295E2F0-FB3A-4B51-BE94-C81C59CECFC0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D295E2F0-FB3A-4B51-BE94-C81C59CECFC0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -29,6 +29,7 @@
             </Trigger>
         </Style.Triggers>
     </Style>
+    
 
     <Style TargetType="{x:Type Button}" x:Key="IconButtonStyle" BasedOn="{StaticResource  ButtonBaseStyle}">
         <Setter Property="Template">
