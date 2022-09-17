@@ -43,13 +43,13 @@
             Style="{StaticResource MenuItemIconStyle}"  
             attach:IconElement.Geometry="{StaticResource ConfirmGeometry}"
             Header="OK"  
-            Command="{Binding StartDebug}"
             HorizontalAlignment="Right"
            DockPanel.Dock="Right"/>
         <MenuItem 
             Style="{StaticResource MenuItemIconStyle}"  
             attach:IconElement.Geometry="{StaticResource TestGeometry}"
             Header="测试"  
+            Command="{Binding StartDebug}"
             HorizontalAlignment="Right"
            DockPanel.Dock="Right"/>
     </Menu>

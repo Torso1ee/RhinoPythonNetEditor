@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using SuperSimpleTcp;
 using System.Net;
 using System.Diagnostics;
 using Newtonsoft.Json;
@@ -14,30 +13,20 @@ using System.Net.NetworkInformation;
 using System.IO;
 using System.Runtime.Remoting.Messaging;
 
-namespace RhinoPythonNetEditor.Debug
+namespace RhinoPythonNetEditor.Managers
 {
     public class DebugManager
     {
+        public event EventHandler DebugEnd = delegate { };
 
-
-        public DebugManager(PowerShellManager powerShellManager)
-        {
-            PowerShellManager = powerShellManager;
-        }
-
-        public PowerShellManager PowerShellManager { get; set; }
-
-        public event EventHandler OnDebugEnded = delegate { };
-
-        TcpClient tcpClient { get; set; }
+        TcpClient TcpClient { get; set; }
 
         DebugProtocolHost Client { get; set; }
-        int AdapterPort { get; set; }
+        public int AdapterPort { get; set; }
 
 
-        public void Start(string file)
+        public void Start()
         {
-            AdapterPort = NextFreePort();
             InitializeHost();
             Client.SendRequest(new InitializeRequest() { }, e => { });
             Client.SendRequest(new AttachRequest() { _Restart = false }, e => { });
@@ -46,28 +35,34 @@ namespace RhinoPythonNetEditor.Debug
 
         private void InitializeHost()
         {
-            tcpClient = new TcpClient();
-            tcpClient.Connect(IPAddress.Loopback.ToString(), AdapterPort);
-            var stream = new NetworkStream(tcpClient.Client);
+            TcpClient = new TcpClient();
+            TcpClient.Connect(IPAddress.Loopback.ToString(), AdapterPort);
+            var stream = new NetworkStream(TcpClient.Client);
             Client = new DebugProtocolHost(stream, stream);
+            Client.EventReceived += Client_EventReceived;
             Client.Run();
         }
 
-
-      
-        private void RunAdapter(string file)
+        private void Client_EventReceived(object sender, EventReceivedEventArgs e)
         {
-            //python - m debugpy--listen localhost:{ AdapterPort}
-            //--wait -for-client ""{ file}
-            //""
+            if (e.EventType == "terminated")
+            {
+                End();
+                DebugEnd?.Invoke(this, EventArgs.Empty);
+            }
         }
 
-        private void AdapterProcess_Exited(object sender, EventArgs e)
+        public void End()
         {
             Client.Stop();
-            tcpClient.Close();
-            tcpClient.Dispose();
-            OnDebugEnded?.Invoke(this, EventArgs.Empty);
+            TcpClient.Close();
+        }
+
+
+        public int NextPort()
+        {
+            AdapterPort = NextFreePort();
+            return AdapterPort;
         }
 
         int NextFreePort(int port = 0)

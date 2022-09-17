@@ -78,6 +78,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="MenuBarViewModel.cs" />
+    <Compile Include="Messages\DebugRequestMessage.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TerminalViewModel.cs" />
     <Compile Include="ViewModelLocator.cs" />
@@ -91,9 +92,9 @@
       <Project>{D295E2F0-FB3A-4B51-BE94-C81C59CECFC0}</Project>
       <Name>RhinoPythonNetEditor.DataModels</Name>
     </ProjectReference>
-    <ProjectReference Include="..\RhinoPythonNetEditor.Debug\RhinoPythonNetEditor.Debug.csproj">
-      <Project>{8c66965d-b0e5-4489-b52c-4347ef69d4ab}</Project>
-      <Name>RhinoPythonNetEditor.Debug</Name>
+    <ProjectReference Include="..\RhinoPythonNetEditor.Managers\RhinoPythonNetEditor.Managers.csproj">
+      <Project>{61a41698-e18e-425c-99e8-7fb46814398d}</Project>
+      <Name>RhinoPythonNetEditor.Managers</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

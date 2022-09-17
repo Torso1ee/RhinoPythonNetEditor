@@ -1,7 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using RhinoPythonNetEditor.DataModels.Business;
-using RhinoPythonNetEditor.Debug;
+using RhinoPythonNetEditor.Managers;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -10,13 +10,15 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using System.Windows;
+using CommunityToolkit.Mvvm.Messaging;
+using RhinoPythonNetEditor.ViewModel.Messages;
+
 namespace RhinoPythonNetEditor.ViewModel
 {
-    public class TerminalViewModel : ObservableRecipient
+    public class TerminalViewModel : ObservableRecipient, IRecipient<DebugRequestMessage>
     {
 
         private readonly PowerShellManager Manager;
-
 
         public TerminalViewModel()
         {
@@ -24,6 +26,7 @@ namespace RhinoPythonNetEditor.ViewModel
             Manager.PowerShellRunScript += (s, e) => Free = false;
             Manager.PowerShellRunScriptEnd += OnExcuteEnd;
             Manager.PowerShellDataAdded += (s, e) => UpdateLine(new ScriptLine { State = ScriptLineState.Normal, Text = e.Message });
+            IsActive = true;
         }
 
         public ObservableCollection<ScriptLine> OutputContent { get; set; } = new ObservableCollection<ScriptLine>();
@@ -82,6 +85,15 @@ namespace RhinoPythonNetEditor.ViewModel
                 Script = ScriptRecorder[++Index].Text;
             }
         }
+
+        public void Receive(DebugRequestMessage message)
+        {
+            Script = message.Script;
+            RunScriptCore();
+            message.Reply(true);
+        }
+
+
 
         public ICommand LastScript => new RelayCommand(() => LastScriptCore());
 
