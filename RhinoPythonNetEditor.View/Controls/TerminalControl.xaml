@@ -9,6 +9,7 @@
              xmlns:dm="clr-namespace:RhinoPythonNetEditor.DataModels.Business;assembly=RhinoPythonNetEditor.DataModels"
              mc:Ignorable="d" 
              xmlns:attach="clr-namespace:RhinoPythonNetEditor.Styling.Attach;assembly=RhinoPythonNetEditor.Styling"
+             DataContext="{Binding TerminalViewModel, Source={StaticResource Locator}}"
              d:DesignHeight="450" d:DesignWidth="800">
     <UserControl.Resources>
         <ResourceDictionary>
@@ -21,9 +22,6 @@
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </UserControl.Resources>
-    <UserControl.DataContext>
-        <vm:TerminalViewModel/>
-    </UserControl.DataContext>
     <Grid>
         <Grid.RowDefinitions >
             <RowDefinition Height="*"/>

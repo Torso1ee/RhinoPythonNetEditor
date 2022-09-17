@@ -18,11 +18,14 @@ namespace RhinoPythonNetEditor.ViewModel
 
         public MenuBarViewModel MenuBarViewModel =>Services.GetService<MenuBarViewModel>();
 
+        public TerminalViewModel TerminalViewModel => Services.GetService<TerminalViewModel>();
+
+
         public IServiceProvider ConfigureServices()
         {
             var services = new ServiceCollection();
-
             services.AddSingleton<MenuBarViewModel>();
+            services.AddSingleton<TerminalViewModel>();
             return services.BuildServiceProvider();
         }
     }

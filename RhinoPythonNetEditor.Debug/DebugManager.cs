@@ -19,8 +19,15 @@ namespace RhinoPythonNetEditor.Debug
     public class DebugManager
     {
 
+
+        public DebugManager(PowerShellManager powerShellManager)
+        {
+            PowerShellManager = powerShellManager;
+        }
+
+        public PowerShellManager PowerShellManager { get; set; }
+
         public event EventHandler OnDebugEnded = delegate { };
-        Process AdapterProcess { get; set; }
 
         TcpClient tcpClient { get; set; }
 
@@ -30,15 +37,11 @@ namespace RhinoPythonNetEditor.Debug
 
         public void Start(string file)
         {
-            Task.Run(() =>
-            {
-                AdapterPort = NextFreePort();
-                RunAdapter(file);
-                InitializeHost();
-                Client.SendRequest(new InitializeRequest() {  }, e => { });
-                Client.SendRequest(new AttachRequest() { _Restart = false }, e => { });
-                Client.SendRequest(new ConfigurationDoneRequest() {  }, e => { });
-            });
+            AdapterPort = NextFreePort();
+            InitializeHost();
+            Client.SendRequest(new InitializeRequest() { }, e => { });
+            Client.SendRequest(new AttachRequest() { _Restart = false }, e => { });
+            Client.SendRequest(new ConfigurationDoneRequest() { }, e => { });
         }
 
         private void InitializeHost()
@@ -51,25 +54,12 @@ namespace RhinoPythonNetEditor.Debug
         }
 
 
-        public void End()
-        {
-            AdapterProcess.Kill();
-        }
+      
         private void RunAdapter(string file)
         {
-            var startInfo = new ProcessStartInfo();
-            startInfo.FileName = @"cmd.exe";
-            startInfo.UseShellExecute = false;
-            startInfo.CreateNoWindow = true;
-            startInfo.RedirectStandardOutput = true;
-            startInfo.Arguments = $@"/C python -m debugpy --listen localhost:{AdapterPort} --wait-for-client ""{file}""";
-            AdapterProcess = new Process();
-            AdapterProcess.StartInfo = startInfo;
-            AdapterProcess.EnableRaisingEvents = true;
-            AdapterProcess.Exited += AdapterProcess_Exited;
-            AdapterProcess.OutputDataReceived += (s, e) => Console.WriteLine(e.Data);
-            AdapterProcess.Start();
-            AdapterProcess.BeginOutputReadLine();
+            python - m debugpy--listen localhost:{ AdapterPort}
+            --wait -for-client ""{ file}
+            ""
         }
 
         private void AdapterProcess_Exited(object sender, EventArgs e)
@@ -77,7 +67,6 @@ namespace RhinoPythonNetEditor.Debug
             Client.Stop();
             tcpClient.Close();
             tcpClient.Dispose();
-            AdapterProcess.Dispose();
             OnDebugEnded?.Invoke(this, EventArgs.Empty);
         }
 

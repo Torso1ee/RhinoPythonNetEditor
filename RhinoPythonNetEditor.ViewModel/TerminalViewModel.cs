@@ -57,7 +57,7 @@ namespace RhinoPythonNetEditor.ViewModel
             Application.Current.Dispatcher.Invoke(() => OutputContent.Add(line));
         }
 
-        private void RunScriptCore()
+        public void RunScriptCore()
         {
             Index = -1;
             OutputContent.Add(new ScriptLine { State = ScriptLineState.Input, Text = Script });
