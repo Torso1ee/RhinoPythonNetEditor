@@ -29,6 +29,7 @@ namespace RhinoPythonNetEditor.ViewModel
         public ObservableCollection<ScriptLine> OutputContent { get; set; } = new ObservableCollection<ScriptLine>();
         public ObservableCollection<ScriptLine> ScriptRecorder { get; set; } = new ObservableCollection<ScriptLine>();
 
+        private int Index = -1;
 
         private string script;
         public string Script
@@ -58,9 +59,36 @@ namespace RhinoPythonNetEditor.ViewModel
 
         private void RunScriptCore()
         {
+            Index = -1;
             OutputContent.Add(new ScriptLine { State = ScriptLineState.Input, Text = Script });
+            ScriptRecorder.Add(new ScriptLine { State = ScriptLineState.Input, Text = Script });
             Manager?.RunScript(Script);
+            Script = "";
         }
+
+        private void LastScriptCore()
+        {
+            if (Index == -1) Index = ScriptRecorder.Count;
+            if (Index > 0)
+            {
+                Script = ScriptRecorder[--Index].Text;
+            }
+        }
+
+        private void NextScriptCore()
+        {
+            if (Index != -1 && Index < ScriptRecorder.Count - 1)
+            {
+                Script = ScriptRecorder[++Index].Text;
+            }
+        }
+
+        public ICommand LastScript => new RelayCommand(() => LastScriptCore());
+
+        public ICommand NextScript => new RelayCommand(() => NextScriptCore());
+
+        public ICommand ResetIndex => new RelayCommand(() => Index = -1);
+
         public ICommand RunScript => new RelayCommand(() => RunScriptCore());
 
     }

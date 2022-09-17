@@ -1,5 +1,4 @@
-﻿using Microsoft.Xaml.Behaviors;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -7,8 +6,9 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Interop;
 using System.Windows;
+using Microsoft.Xaml.Behaviors;
 
-namespace RhinoPythonNetEditor
+namespace RhinoPythonNetEditor.Styling.Behaviors
 {
     public class WindowAeroStyleBehavior : Behavior<Window>
     {
@@ -19,17 +19,51 @@ namespace RhinoPythonNetEditor
             AssociatedObject.Loaded += AssociatedObject_Loaded;
         }
 
+        public static DependencyProperty EnabledProperty = DependencyProperty.Register("Enabled", typeof(bool), typeof(WindowAeroStyleBehavior), new PropertyMetadata(true, OnEnabledPropertyChanged));
+
+
+        public bool Enabled
+        {
+            get { return (bool)GetValue(EnabledProperty); }
+            set { SetValue(EnabledProperty, value); }
+        }
+
+        private static void OnEnabledPropertyChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            if (sender is WindowAeroStyleBehavior behavior) behavior.window?.EnableBlur((bool)e.NewValue, (bool)e.NewValue);
+        }
         protected override void OnDetaching()
         {
             base.OnDetaching();
+            if (window != null)
+            {
+                window.LocationChanged -= Window_LocationChanged;
+                window.PreviewMouseUp -= Window_PreviewMouseUp;
+            }
             AssociatedObject.Loaded -= AssociatedObject_Loaded;
         }
 
-        private async void AssociatedObject_Loaded(object sender, RoutedEventArgs e)
+        private  void AssociatedObject_Loaded(object sender, RoutedEventArgs e)
         {
             window = Window.GetWindow(AssociatedObject);
+            if (window != null)
+            {
+                window.LocationChanged += Window_LocationChanged;
+                window.PreviewMouseUp += Window_PreviewMouseUp;
+            }
+            window?.EnableBlur(Enabled, Enabled);
+        }
+
+        private void Window_LocationChanged(object sender, EventArgs e)
+        {
+            window?.EnableBlur(false, false);
+        }
+
+        private void Window_PreviewMouseUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
             window?.EnableBlur(true, true);
         }
+
     }
     public static class WindowEffect
     {

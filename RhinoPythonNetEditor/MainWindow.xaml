@@ -5,13 +5,15 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:RhinoPythonNetEditor"
         xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+        xmlns:commands="clr-namespace:RhinoPythonNetEditor.View.Commands;assembly=RhinoPythonNetEditor.View"
         xmlns:View="clr-namespace:RhinoPythonNetEditor.View.Pages;assembly=RhinoPythonNetEditor.View"
+        xmlns:behaviors="clr-namespace:RhinoPythonNetEditor.Styling.Behaviors;assembly=RhinoPythonNetEditor.Styling"
         mc:Ignorable="d"
         SnapsToDevicePixels="True"
         Background="{StaticResource BackgroundBrush}"
         Title="MainWindow" Height="800" Width="800">
     <i:Interaction.Behaviors>
-        <local:WindowAeroStyleBehavior/>
+        <behaviors:WindowAeroStyleBehavior x:Name="aero" Enabled="True"/>
     </i:Interaction.Behaviors>
     <Window.Template>
         <ControlTemplate TargetType="{x:Type Window}">

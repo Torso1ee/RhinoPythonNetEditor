@@ -32,6 +32,8 @@ namespace RhinoPythonNetEditor.Debug
         private DateTime Start { get; set; }
         private PowerShell PSInstance { get; set; }
 
+        private int CurrentCount { get; set; } = 0;
+
         private string PythonPath { get; set; } = "python";
 
         public event EventHandler<PowerShellDataAddedEventArgs> PowerShellDataAdded = delegate { };
@@ -52,6 +54,7 @@ namespace RhinoPythonNetEditor.Debug
                 var state = new object();
                 Start = DateTime.Now;
                 PSInstance.AddScript(scriptText);
+                PSInstance.Streams.ClearStreams();
                 var inCol = new PSDataCollection<PSObject>();
                 var col = new PSDataCollection<PSObject>();
                 col.DataAdded += Col_DataAdded;
@@ -63,15 +66,17 @@ namespace RhinoPythonNetEditor.Debug
 
         void OnExcuteEnd(IAsyncResult asyncResult)
         {
-            var msg =string.Join("\n", PSInstance.Streams.Error.Select(d=>d.ToString()));
-            PowerShellRunScriptEnd?.Invoke(this, new PowerShellRunScriptEndEventArgs { 
-                Time = DateTime.Now - Start ,
+            var msg = string.Join("\n", PSInstance.Streams.Error.Skip(CurrentCount).Select(d => d.ToString()));
+            CurrentCount = PSInstance.Streams.Error.Count;
+            PowerShellRunScriptEnd?.Invoke(this, new PowerShellRunScriptEndEventArgs
+            {
+                Time = DateTime.Now - Start,
                 Error = PSInstance.HadErrors,
                 ErrorMessage = msg
             });
         }
 
-      
+
         void Col_DataAdded(object sender, DataAddedEventArgs e)
         {
             PowerShellDataAdded?.Invoke(this, new PowerShellDataAddedEventArgs { Message = (sender as PSDataCollection<PSObject>)[e.Index].ToString() });

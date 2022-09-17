@@ -54,7 +54,9 @@
                 <Path Margin="5,0" Width="10" Height="10" Stretch="Uniform" VerticalAlignment="Center" Data="{StaticResource CmdGeometry}" Fill="{StaticResource ScriptLineNormalBrush}"/>
                 <TextBox VerticalContentAlignment="Center" IsEnabled="{Binding Free}"  FontFamily="Consolas"  Effect="{StaticResource DefaultDropShadowEffect}" Foreground="{StaticResource  ScriptLineScriptBrush}" FontSize="13" Margin="0,5,5,5" Grid.Row="1" Text="{Binding Script, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" BorderBrush="{x:Null}" Background="{x:Null}" CaretBrush="White">
                     <TextBox.InputBindings>
-                        <KeyBinding Command="{Binding RunScript}" Key="Enter"/>
+                        <KeyBinding Command="{Binding RunScript}" Key="Return"/>
+                        <KeyBinding Command="{Binding LastScript}" Key="Up"/>
+                        <KeyBinding Command="{Binding NextScript}" Key="Down"/>
                     </TextBox.InputBindings>
                 </TextBox>
             </DockPanel>
