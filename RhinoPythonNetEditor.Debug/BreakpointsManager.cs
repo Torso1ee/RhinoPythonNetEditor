@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 
 namespace RhinoPythonNetEditor.Debug
 {
-    internal class BreakpointsManager
+    public class BreakpointsManager
     {
+
     }
 }
