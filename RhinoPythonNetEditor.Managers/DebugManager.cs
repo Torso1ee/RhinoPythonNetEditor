@@ -18,6 +18,12 @@ namespace RhinoPythonNetEditor.Managers
     public class DebugManager
     {
         public event EventHandler DebugEnd = delegate { };
+        public event EventHandler Stopped = delegate { };
+
+
+        private List<int> Indicis { get; set; }
+        private string FilePath { get; set; }
+
 
         TcpClient TcpClient { get; set; }
 
@@ -25,12 +31,24 @@ namespace RhinoPythonNetEditor.Managers
         public int AdapterPort { get; set; }
 
 
-        public void Start()
+        public void Start(List<int> indicis, string file)
         {
+            Indicis = indicis.ToList();
+            FilePath = file;
             InitializeHost();
-            Client.SendRequest(new InitializeRequest() { }, e => { });
-            Client.SendRequest(new AttachRequest() { _Restart = false }, e => { });
-            Client.SendRequest(new ConfigurationDoneRequest() { }, e => { });
+            Client.SendRequest(new InitializeRequest() {    }, e => { });
+            Client.SendRequest(new AttachRequest() { _Restart = false }, arg => { });
+
+        }
+
+        public SetBreakpointsRequest SendBreakPointRequest(List<int> indicis)
+        {
+            Indicis = indicis.ToList();
+            var req = new SetBreakpointsRequest();
+            for (int i = 0; i < Indicis.Count; i++) req.Breakpoints.Add(new SourceBreakpoint(Indicis[i]));
+            req.Source = new Source() { Path = FilePath  };
+            Client.SendRequest(req, (a, e) => { });
+            return req;
         }
 
         private void InitializeHost()
@@ -40,7 +58,13 @@ namespace RhinoPythonNetEditor.Managers
             var stream = new NetworkStream(TcpClient.Client);
             Client = new DebugProtocolHost(stream, stream);
             Client.EventReceived += Client_EventReceived;
+            Client.LogMessage += Client_LogMessage;
             Client.Run();
+        }
+
+        private void Client_LogMessage(object sender, LogEventArgs e)
+        {
+            Console.WriteLine(e.Message);
         }
 
         private void Client_EventReceived(object sender, EventReceivedEventArgs e)
@@ -49,6 +73,14 @@ namespace RhinoPythonNetEditor.Managers
             {
                 End();
                 DebugEnd?.Invoke(this, EventArgs.Empty);
+            }
+            else if (e.EventType == "initialized")
+            {
+                SendBreakPointRequest(Indicis);
+                Client.SendRequest(new ConfigurationDoneRequest() { }, arg => { });
+            }
+            else if( e.EventType== "stopped")
+            {
             }
         }
 

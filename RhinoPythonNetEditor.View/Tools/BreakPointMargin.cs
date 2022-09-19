@@ -21,9 +21,16 @@ using System.Windows.Media.Media3D;
 
 namespace RhinoPythonNetEditor.View.Tools
 {
-    public class BreakPointInfomation
+    public class BreakPointInformation
     {
         public int Row { get; set; }
+    }
+
+    public class BreakPointEventArgs:EventArgs
+    {
+        public BreakPointInformation Information { get; set; }
+
+        public bool IsAddOrRemove { get; set; }
     }
 
     public class BreakPointMargin : AbstractMargin, IWeakEventListener
@@ -34,7 +41,8 @@ namespace RhinoPythonNetEditor.View.Tools
         private int previewLine;
         private bool previewPointVisible;
         protected int maxLineNumberLength = 1;
-        private List<BreakPointInfomation> storedLines = new List<BreakPointInfomation>();
+        private List<BreakPointInformation> storedLines = new List<BreakPointInformation>();
+
 
         static BreakPointMargin()
         {
@@ -42,6 +50,7 @@ namespace RhinoPythonNetEditor.View.Tools
                                                        new FrameworkPropertyMetadata(typeof(BreakPointMargin)));
         }
 
+        public event EventHandler<BreakPointEventArgs> BreakPointChanged = delegate { };
         protected override Size MeasureOverride(Size availableSize)
         {
             radius = (double)GetValue(TextBlock.FontSizeProperty);
@@ -163,11 +172,14 @@ namespace RhinoPythonNetEditor.View.Tools
                 var info = storedLines.FirstOrDefault(l => l.Row == previewLine);
                 if (info == null)
                 {
-                    storedLines.Add(new BreakPointInfomation { Row = previewLine });
+                    var infor = new BreakPointInformation { Row = previewLine };
+                    storedLines.Add(infor);
+                    BreakPointChanged?.Invoke(this, new BreakPointEventArgs { Information = infor, IsAddOrRemove = true });
                 }
                 else
                 {
                     storedLines.Remove(info);
+                    BreakPointChanged?.Invoke(this, new BreakPointEventArgs { Information = info, IsAddOrRemove = false });
                 }
             }
             InvalidateVisual();

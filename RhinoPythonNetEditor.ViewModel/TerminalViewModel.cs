@@ -51,7 +51,12 @@ namespace RhinoPythonNetEditor.ViewModel
 
         private void OnExcuteEnd(object sender, PowerShellRunScriptEndEventArgs e)
         {
+            string time = "";
             if (e.Error) UpdateLine(new ScriptLine { State = ScriptLineState.Error, Text = e.ErrorMessage });
+            if (e.Time.TotalSeconds <= 60) time = $"{Math.Round(e.Time.TotalSeconds,2)}秒";
+            else if (e.Time.TotalSeconds <= 3600) time = $"{e.Time.Minutes}分钟{e.Time.Seconds}秒";
+            else  time = $"{Math.Round(e.Time.TotalSeconds/60)}分钟";
+            UpdateLine(new ScriptLine { State = ScriptLineState.Normal, Text = $"结束，运行时间{time}" });
             Free = true;
         }
 

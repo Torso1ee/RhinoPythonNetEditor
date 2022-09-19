@@ -22,42 +22,24 @@
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </UserControl.Resources>
-    <Grid>
-        <Grid.RowDefinitions >
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="30"/>
-        </Grid.RowDefinitions>
-        <ScrollViewer Margin="5" attach:ScrollViewerExtensions.AlwaysScrollToEnd="True" >
-            <ItemsControl  ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Auto" Margin="10" Background="{x:Null}" ItemsSource="{Binding OutputContent}" BorderBrush="{x:Null}">
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate DataType="{x:Type dm:ScriptLine }">
-                        <TextBox x:Name="tb" TextWrapping="Wrap" BorderThickness="0" IsReadOnly="True"  Text="{Binding Text}" FontSize="13" FontFamily="Consolas" Background="{x:Null}" BorderBrush="{x:Null}" />
-                        <DataTemplate.Triggers>
-                            <DataTrigger Binding="{Binding State}" Value="Error">
-                                <Setter TargetName="tb" Property="Foreground" Value="{StaticResource ScriptLineErrorBrush}"/>
-                            </DataTrigger>
-                            <DataTrigger Binding="{Binding State}" Value="Input">
-                                <Setter  TargetName="tb" Property="Foreground" Value="{StaticResource  ScriptLineInputBrush}"/>
-                            </DataTrigger>
-                            <DataTrigger Binding="{Binding State}" Value="Normal">
-                                <Setter TargetName="tb"  Property="Foreground" Value="{StaticResource ScriptLineNormalBrush}"/>
-                            </DataTrigger>
-                        </DataTemplate.Triggers>
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ItemsControl>
-        </ScrollViewer>
-        <Border Grid.Row="1" Effect="{StaticResource  CmdDropShadowEffect}">
-            <DockPanel >
-                <Path Margin="5,0" Width="10" Height="10" Stretch="Uniform" VerticalAlignment="Center" Data="{StaticResource CmdGeometry}" Fill="{StaticResource ScriptLineNormalBrush}"/>
-                <TextBox VerticalContentAlignment="Center" IsEnabled="{Binding Free}"  FontFamily="Consolas"  Effect="{StaticResource DefaultDropShadowEffect}" Foreground="{StaticResource  ScriptLineScriptBrush}" FontSize="13" Margin="0,5,5,5" Grid.Row="1" Text="{Binding Script, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" BorderBrush="{x:Null}" Background="{x:Null}" CaretBrush="White">
-                    <TextBox.InputBindings>
-                        <KeyBinding Command="{Binding RunScript}" Key="Return"/>
-                        <KeyBinding Command="{Binding LastScript}" Key="Up"/>
-                        <KeyBinding Command="{Binding NextScript}" Key="Down"/>
-                    </TextBox.InputBindings>
-                </TextBox>
-            </DockPanel>
-        </Border>
-    </Grid>
+    <ScrollViewer Margin="5" attach:ScrollViewerExtensions.AlwaysScrollToEnd="True" >
+        <ItemsControl  ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Auto" Margin="10" Background="{x:Null}" ItemsSource="{Binding OutputContent}" BorderBrush="{x:Null}">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate DataType="{x:Type dm:ScriptLine }">
+                    <TextBox x:Name="tb" TextWrapping="Wrap" BorderThickness="0" IsReadOnly="True"  Text="{Binding Text}" FontSize="13" FontFamily="Consolas" Background="{x:Null}" BorderBrush="{x:Null}" />
+                    <DataTemplate.Triggers>
+                        <DataTrigger Binding="{Binding State}" Value="Error">
+                            <Setter TargetName="tb" Property="Foreground" Value="{StaticResource ScriptLineErrorBrush}"/>
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding State}" Value="Input">
+                            <Setter  TargetName="tb" Property="Foreground" Value="{StaticResource  ScriptLineInputBrush}"/>
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding State}" Value="Normal">
+                            <Setter TargetName="tb"  Property="Foreground" Value="{StaticResource ScriptLineNormalBrush}"/>
+                        </DataTrigger>
+                    </DataTemplate.Triggers>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+    </ScrollViewer>
 </UserControl>

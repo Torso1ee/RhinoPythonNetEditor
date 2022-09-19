@@ -26,6 +26,9 @@ using RhinoPythonNetEditor.View.Pages;
 using ICSharpCode.AvalonEdit.Editing;
 using RhinoPythonNetEditor.View.Tools;
 using ICSharpCode.AvalonEdit;
+using CommunityToolkit.Mvvm.Messaging;
+using RhinoPythonNetEditor.ViewModel;
+using RhinoPythonNetEditor.ViewModel.Messages;
 
 namespace RhinoPythonNetEditor.View.Controls
 {
@@ -35,17 +38,29 @@ namespace RhinoPythonNetEditor.View.Controls
     public partial class Editor : UserControl
     {
 
+        BreakPointMargin breakPointMargin;
+        IHighlightingDefinition defaultHighlighting;
+
         public Editor()
         {
             InitializeComponent();
             InstallHighlightDefinition();
             InstallBreakPoint();
             InstallFolding();
+            WeakReferenceMessenger.Default.Register<CodeRequestMessage>(this, (r, m) =>
+            {
+                m.Reply(textEditor.Document.Text);
+            });
+            breakPointMargin.BreakPointChanged += BreakPointMargin_BreakPointChanged;
+        }
+
+        private void BreakPointMargin_BreakPointChanged(object sender, BreakPointEventArgs e)
+        {
+            WeakReferenceMessenger.Default.Send(new BreakPointValueChangedMessage(e.IsAddOrRemove) { Line = e.Information.Row });
         }
 
         private void InstallHighlightDefinition()
         {
-            IHighlightingDefinition defaultHighlighting;
             using (Stream s = new MemoryStream(RhinoPythonNetEditor.Resources.Properties.Resources.Default))
             {
                 using (XmlReader reader = new XmlTextReader(s))
@@ -60,9 +75,9 @@ namespace RhinoPythonNetEditor.View.Controls
 
         private void InstallBreakPoint()
         {
-            var bm = new BreakPointMargin();
+            breakPointMargin = new BreakPointMargin();
             var lm = textEditor.TextArea.LeftMargins;
-            lm.Insert(0, bm);
+            lm.Insert(0, breakPointMargin);
             var nm = lm[1] as LineNumberMargin;
             nm.Margin = new Thickness(0, 0, 5, 0);
             lm.RemoveAt(2);
@@ -72,7 +87,9 @@ namespace RhinoPythonNetEditor.View.Controls
         {
             var manager = FoldingManager.Install(textEditor.TextArea);
             var strategy = new PythonFoldingStrategy();
-            textEditor.Document.Changed +=  (s,e)=> strategy.UpdateFoldings(manager, textEditor.Document);
+            textEditor.Document.Changed += (s, e) => strategy.UpdateFoldings(manager, textEditor.Document);
         }
+
+
     }
 }
