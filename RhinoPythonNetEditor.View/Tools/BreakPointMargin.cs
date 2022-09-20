@@ -56,7 +56,6 @@ namespace RhinoPythonNetEditor.View.Tools
 
             if (stop)
             {
-                TextView.HighlightedLine = line;
                 StepLine = line;
             }
             else
@@ -107,7 +106,7 @@ namespace RhinoPythonNetEditor.View.Tools
                     if (line != null)
                     {
                         double y = line.GetTextLineVisualYPosition(line.TextLines[0], VisualYPosition.TextTop);
-                        drawingContext.DrawEllipse(i.Stopped ? Brushes.Yellow : Brushes.Red, null, new Point(0 + radius / 2, y - textView.VerticalOffset + radius / 2 + 1), radius / 2 - 2, radius / 2 - 2);
+                        drawingContext.DrawEllipse(Brushes.Red, null, new Point(0 + radius / 2 - 2, y - textView.VerticalOffset + radius / 2 + 2), radius / 2 - 4, radius / 2 - 4);
                     }
                 }
                 if (previewPointVisible)
@@ -119,7 +118,7 @@ namespace RhinoPythonNetEditor.View.Tools
                         if (visualLine != null)
                         {
                             double y = visualLine.GetTextLineVisualYPosition(visualLine.TextLines[0], VisualYPosition.TextTop);
-                            drawingContext.DrawEllipse(Brushes.DarkRed, null, new Point(0 + radius / 2, y - textView.VerticalOffset + radius / 2 + 1), radius / 2 - 2, radius / 2 - 2);
+                            drawingContext.DrawEllipse(Brushes.DarkRed, null, new Point(0 + radius / 2 - 2, y - textView.VerticalOffset + radius / 2 + 2), radius / 2 - 4, radius / 2 - 4);
                         }
                     }
                 }
@@ -127,12 +126,34 @@ namespace RhinoPythonNetEditor.View.Tools
                 var stepLine = TextView.VisualLines.FirstOrDefault(vl => vl.FirstDocumentLine.LineNumber == StepLine);
                 if (stepLine != null)
                 {
+                    var geo = Arrow.Clone();
+                    var rectangle = new RectangleGeometry(new Rect(new Size(2000, 18)));
                     double y = stepLine.GetTextLineVisualYPosition(stepLine.TextLines[0], VisualYPosition.TextTop);
-                    drawingContext.DrawEllipse(Brushes.Yellow, null, new Point(0 + radius / 2, y - textView.VerticalOffset + radius / 2 + 1), radius / 2 - 2, radius / 2 - 2);
+                    geo.Transform = new TranslateTransform(0, y + 3);
+                    rectangle.Transform = new TranslateTransform(60, y);
+                    drawingContext.DrawGeometry(Brushes.Transparent, ArrowPen, geo);
+                    drawingContext.DrawGeometry(LineBrush, LinePen, rectangle);
                 }
             }
         }
 
+        private Brush LineBrush { get; set; } = new SolidColorBrush(Colors.Yellow) { Opacity = 0.3 };
+
+        private Geometry arrow;
+
+        public Geometry Arrow
+        {
+            get
+            {
+                if (arrow == null)
+                    arrow = FindResource("ArrowGeometry") as Geometry;
+                return arrow;
+            }
+        }
+
+        private Pen ArrowPen { get; set; } = new Pen(Brushes.Gold, 2);
+
+        private Pen LinePen { get; set; } = new Pen(Brushes.Transparent, 1);
 
         protected override void OnTextViewChanged(TextView oldTextView, TextView newTextView)
         {
