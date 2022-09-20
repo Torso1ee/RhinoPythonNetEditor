@@ -49,7 +49,7 @@
             Style="{StaticResource MenuItemIconStyle}"  
             attach:IconElement.Geometry="{StaticResource TestGeometry}"
             Header="测试"  
-            Command="{Binding StartDebug}"
+            Command="{Binding DebugViewModel.StartDebug, Source={StaticResource Locator}}"
             HorizontalAlignment="Right"
            DockPanel.Dock="Right"/>
     </Menu>

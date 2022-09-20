@@ -9,27 +9,31 @@
 
     <Style TargetType="{x:Type Button}" x:Key="ButtonBaseStyle">
         <Style.Triggers>
-            <Trigger Property="IsMouseOver" Value="True">
-                <Trigger.EnterActions>
+            <MultiTrigger>
+                <MultiTrigger.Conditions>
+                    <Condition Property="IsMouseOver" Value="True"/>
+                    <Condition Property="IsEnabled" Value="True"/>
+                </MultiTrigger.Conditions>
+                <MultiTrigger.EnterActions>
                     <BeginStoryboard>
                         <Storyboard>
                             <ColorAnimation  Storyboard.TargetProperty="(Button.Background).(SolidColorBrush.Color)" Duration="0:0:0.3" To="{StaticResource ButtonActiveBackgroundColor}"/>
                             <ColorAnimation  Storyboard.TargetProperty="(Button.Foreground).(SolidColorBrush.Color)" Duration="0:0:0.3" To="{StaticResource  ButtonActiveForegroundColor}"/>
                         </Storyboard>
                     </BeginStoryboard>
-                </Trigger.EnterActions>
-                <Trigger.ExitActions>
+                </MultiTrigger.EnterActions>
+                <MultiTrigger.ExitActions>
                     <BeginStoryboard>
                         <Storyboard>
                             <ColorAnimation  Storyboard.TargetProperty="(Button.Background).(SolidColorBrush.Color)" Duration="0:0:0.3"/>
                             <ColorAnimation  Storyboard.TargetProperty="(Button.Foreground).(SolidColorBrush.Color)" Duration="0:0:0.3"/>
                         </Storyboard>
                     </BeginStoryboard>
-                </Trigger.ExitActions>
-            </Trigger>
+                </MultiTrigger.ExitActions>
+            </MultiTrigger>
         </Style.Triggers>
     </Style>
-    
+
 
     <Style TargetType="{x:Type Button}" x:Key="IconButtonStyle" BasedOn="{StaticResource  ButtonBaseStyle}">
         <Setter Property="Template">

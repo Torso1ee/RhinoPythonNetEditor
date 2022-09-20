@@ -34,6 +34,6 @@
         <controls:Editor  Grid.Row="2"/>
         <GridSplitter Background="{StaticResource MenuItemTextBrush}" Grid.Row="2" Height="1" HorizontalAlignment="Stretch" VerticalAlignment="Bottom"/>
         <controls:ConsoleControl Grid.Row="3"/>
-        <controls:DebugControl Grid.Row="1" Visibility="{Binding MenuBarViewModel.IsDebuging, Source={StaticResource Locator}, Converter={StaticResource BoolToVisibility}}"/>
+        <controls:DebugControl Grid.Row="1" Visibility="{Binding  DebugViewModel.IsDebuging, Source={StaticResource Locator}, Converter={StaticResource BoolToVisibility}}"/>
     </Grid>
 </UserControl>

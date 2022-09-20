@@ -49,14 +49,18 @@ namespace RhinoPythonNetEditor.View.Controls
             InstallFolding();
             WeakReferenceMessenger.Default.Register<CodeRequestMessage>(this, (r, m) =>
             {
-                m.Reply(textEditor.Document.Text);
+                Application.Current.Dispatcher.Invoke(() => m.Reply(textEditor.Document.Text));
+            });
+            WeakReferenceMessenger.Default.Register<StepMessage>(this, (r, m) =>
+            {
+                Application.Current.Dispatcher.Invoke(() => breakPointMargin.Step(m.Line, m.Value));
             });
             breakPointMargin.BreakPointChanged += BreakPointMargin_BreakPointChanged;
         }
 
         private void BreakPointMargin_BreakPointChanged(object sender, BreakPointEventArgs e)
         {
-            WeakReferenceMessenger.Default.Send(new BreakPointValueChangedMessage(e.IsAddOrRemove) { Line = e.Information.Row });
+            WeakReferenceMessenger.Default.Send(new AllBreakPointInformationsMessage(e.Indicis));
         }
 
         private void InstallHighlightDefinition()

@@ -7,12 +7,10 @@ using System.Threading.Tasks;
 
 namespace RhinoPythonNetEditor.ViewModel.Messages
 {
-    public class BreakPointValueChangedMessage:ValueChangedMessage<bool>
+    public class AllBreakPointInformationsMessage : ValueChangedMessage<List<int>>
     {
-        public BreakPointValueChangedMessage(bool value) : base(value)
+        public AllBreakPointInformationsMessage(List<int> value) : base(value)
         {
         }
-
-        public int Line { get; set; }
     }
 }

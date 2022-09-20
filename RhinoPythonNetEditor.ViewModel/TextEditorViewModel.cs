@@ -12,23 +12,13 @@ using System.Windows;
 
 namespace RhinoPythonNetEditor.ViewModel
 {
-    public class TextEditorViewModel : ObservableRecipient, IRecipient<BreakPointValueChangedMessage>,IRecipient<AllBreakPointInformationsRequestMessage>
+    public class TextEditorViewModel : ObservableRecipient
     {
 
-        internal List<int> BreakPointIndices { get; set; } = new List<int>();
         public TextEditorViewModel()
         {
             IsActive = true;
         }
-        public void Receive(BreakPointValueChangedMessage message)
-        {
-            if (message.Value) BreakPointIndices.Add(message.Line);
-            else BreakPointIndices.Remove(message.Line);
-        }
-
-        public void Receive(AllBreakPointInformationsRequestMessage message)
-        {
-            message.Reply(BreakPointIndices);
-        }
+      
     }
 }

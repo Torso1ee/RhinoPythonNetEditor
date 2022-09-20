@@ -93,6 +93,7 @@ namespace RhinoPythonNetEditor.ViewModel
 
         public void Receive(DebugRequestMessage message)
         {
+            OutputContent.Clear();
             Script = message.Script;
             RunScriptCore();
             message.Reply(true);

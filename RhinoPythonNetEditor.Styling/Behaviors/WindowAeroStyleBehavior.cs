@@ -43,7 +43,7 @@ namespace RhinoPythonNetEditor.Styling.Behaviors
             AssociatedObject.Loaded -= AssociatedObject_Loaded;
         }
 
-        private  void AssociatedObject_Loaded(object sender, RoutedEventArgs e)
+        private   void AssociatedObject_Loaded(object sender, RoutedEventArgs e)
         {
             window = Window.GetWindow(AssociatedObject);
             if (window != null)
@@ -54,7 +54,7 @@ namespace RhinoPythonNetEditor.Styling.Behaviors
             window?.EnableBlur(Enabled, Enabled);
         }
 
-        private void Window_LocationChanged(object sender, EventArgs e)
+        private  void Window_LocationChanged(object sender, EventArgs e)
         {
             window?.EnableBlur(false, false);
         }

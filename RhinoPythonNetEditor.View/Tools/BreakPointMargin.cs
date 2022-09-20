@@ -24,13 +24,15 @@ namespace RhinoPythonNetEditor.View.Tools
     public class BreakPointInformation
     {
         public int Row { get; set; }
+
+        public bool Stopped { get; set; } = false;
+
     }
 
-    public class BreakPointEventArgs:EventArgs
+    public class BreakPointEventArgs : EventArgs
     {
-        public BreakPointInformation Information { get; set; }
+        public List<int> Indicis { get; set; }
 
-        public bool IsAddOrRemove { get; set; }
     }
 
     public class BreakPointMargin : AbstractMargin, IWeakEventListener
@@ -42,13 +44,28 @@ namespace RhinoPythonNetEditor.View.Tools
         private bool previewPointVisible;
         protected int maxLineNumberLength = 1;
         private List<BreakPointInformation> storedLines = new List<BreakPointInformation>();
-
-
+        private int StepLine;
         static BreakPointMargin()
         {
             DefaultStyleKeyProperty.OverrideMetadata(typeof(BreakPointMargin),
                                                        new FrameworkPropertyMetadata(typeof(BreakPointMargin)));
         }
+
+        public void Step(int line, bool stop)
+        {
+
+            if (stop)
+            {
+                TextView.HighlightedLine = line;
+                StepLine = line;
+            }
+            else
+            {
+                StepLine = -1;
+            }
+            InvalidateVisual();
+        }
+
 
         public event EventHandler<BreakPointEventArgs> BreakPointChanged = delegate { };
         protected override Size MeasureOverride(Size availableSize)
@@ -90,7 +107,7 @@ namespace RhinoPythonNetEditor.View.Tools
                     if (line != null)
                     {
                         double y = line.GetTextLineVisualYPosition(line.TextLines[0], VisualYPosition.TextTop);
-                        drawingContext.DrawEllipse(Brushes.Red, null, new Point(0 + radius / 2, y - textView.VerticalOffset + radius / 2 + 1), radius / 2 - 2, radius / 2 - 2);
+                        drawingContext.DrawEllipse(i.Stopped ? Brushes.Yellow : Brushes.Red, null, new Point(0 + radius / 2, y - textView.VerticalOffset + radius / 2 + 1), radius / 2 - 2, radius / 2 - 2);
                     }
                 }
                 if (previewPointVisible)
@@ -106,8 +123,16 @@ namespace RhinoPythonNetEditor.View.Tools
                         }
                     }
                 }
+                if (StepLine == -1) return;
+                var stepLine = TextView.VisualLines.FirstOrDefault(vl => vl.FirstDocumentLine.LineNumber == StepLine);
+                if (stepLine != null)
+                {
+                    double y = stepLine.GetTextLineVisualYPosition(stepLine.TextLines[0], VisualYPosition.TextTop);
+                    drawingContext.DrawEllipse(Brushes.Yellow, null, new Point(0 + radius / 2, y - textView.VerticalOffset + radius / 2 + 1), radius / 2 - 2, radius / 2 - 2);
+                }
             }
         }
+
 
         protected override void OnTextViewChanged(TextView oldTextView, TextView newTextView)
         {
@@ -150,7 +175,7 @@ namespace RhinoPythonNetEditor.View.Tools
 
         void OnDocumentLineCountChanged()
         {
-             int documentLineCount = Document != null ? Document.LineCount : 1;
+            int documentLineCount = Document != null ? Document.LineCount : 1;
             int newLength = documentLineCount.ToString(CultureInfo.CurrentCulture).Length;
             storedLines = storedLines.Where(l => l.Row <= Document.LineCount).ToList();
             // The margin looks too small when there is only one digit, so always reserve space for
@@ -174,13 +199,13 @@ namespace RhinoPythonNetEditor.View.Tools
                 {
                     var infor = new BreakPointInformation { Row = previewLine };
                     storedLines.Add(infor);
-                    BreakPointChanged?.Invoke(this, new BreakPointEventArgs { Information = infor, IsAddOrRemove = true });
                 }
                 else
                 {
                     storedLines.Remove(info);
-                    BreakPointChanged?.Invoke(this, new BreakPointEventArgs { Information = info, IsAddOrRemove = false });
                 }
+                BreakPointChanged?.Invoke(this, new BreakPointEventArgs { Indicis = storedLines.Select(s => s.Row).ToList() });
+
             }
             InvalidateVisual();
         }
@@ -197,7 +222,7 @@ namespace RhinoPythonNetEditor.View.Tools
             InvalidateVisual();
         }
 
-      
+
 
 
         int GetOffsetFromPoint(MouseEventArgs e)

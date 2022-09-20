@@ -12,19 +12,38 @@ using System.Net.Sockets;
 using System.Net.NetworkInformation;
 using System.IO;
 using System.Runtime.Remoting.Messaging;
+using System.Dynamic;
+using Microsoft.Diagnostics.Runtime;
+using Microsoft.Diagnostics.Runtime.Utilities;
+using System.Threading;
+using Thread = System.Threading.Thread;
 
 namespace RhinoPythonNetEditor.Managers
 {
+    public enum Reason
+    {
+        Breakpoint,
+        Step,
+        Pause,
+        Unset,
+    }
+    public class StoppedArgs : EventArgs
+    {
+        public int Line { get; set; }
+
+        public Reason Reason { get; set; }
+    }
     public class DebugManager
     {
         public event EventHandler DebugEnd = delegate { };
-        public event EventHandler Stopped = delegate { };
-
+        public event EventHandler<StoppedArgs> Stopped = delegate { };
+        public event EventHandler ConfigDone = delegate { };
+        public event EventHandler Continued = delegate { };
 
         private List<int> Indicis { get; set; }
         private string FilePath { get; set; }
 
-
+        private int StoppedThreadId { get; set; }
         TcpClient TcpClient { get; set; }
 
         DebugProtocolHost Client { get; set; }
@@ -36,19 +55,53 @@ namespace RhinoPythonNetEditor.Managers
             Indicis = indicis.ToList();
             FilePath = file;
             InitializeHost();
-            Client.SendRequest(new InitializeRequest() {    }, e => { });
+            Client.SendRequest(new InitializeRequest() { }, e => { });
             Client.SendRequest(new AttachRequest() { _Restart = false }, arg => { });
 
         }
 
-        public SetBreakpointsRequest SendBreakPointRequest(List<int> indicis)
+        public void Continue()
+        {
+            if (Client.IsRunning) Client.SendRequest(new ContinueRequest(), e => { });
+        }
+
+        public void Stop()
+        {
+            if (Client.IsRunning) Client.SendRequest(new PauseRequest(), e => { });
+        }
+
+        public void Next()
+        {
+            if (Client.IsRunning) Client.SendRequest(new NextRequest() { ThreadId = StoppedThreadId }, e => { });
+        }
+
+        public void StepIn()
+        {
+            if (Client.IsRunning) Client.SendRequest(new StepInRequest() { ThreadId = StoppedThreadId }, e => { });
+        }
+
+        public void StepOut()
+        {
+            if (Client.IsRunning) Client.SendRequest(new StepOutRequest() { ThreadId = StoppedThreadId }, e => { });
+        }
+
+        public void Restart()
+        {
+            if (Client.IsRunning) Client.SendRequest(new RestartRequest(), e => { });
+        }
+
+        public void Terminate()
+        {
+            if (Client.IsRunning) Client.SendRequest(new TerminateRequest(), e => { });
+        }
+
+        public void SendBreakPointRequest(List<int> indicis)
         {
             Indicis = indicis.ToList();
             var req = new SetBreakpointsRequest();
             for (int i = 0; i < Indicis.Count; i++) req.Breakpoints.Add(new SourceBreakpoint(Indicis[i]));
-            req.Source = new Source() { Path = FilePath  };
+            req.Source = new Source() { Path = FilePath };
             Client.SendRequest(req, (a, e) => { });
-            return req;
         }
 
         private void InitializeHost()
@@ -77,12 +130,29 @@ namespace RhinoPythonNetEditor.Managers
             else if (e.EventType == "initialized")
             {
                 SendBreakPointRequest(Indicis);
-                Client.SendRequest(new ConfigurationDoneRequest() { }, arg => { });
+                Client.SendRequest(new ConfigurationDoneRequest() { }, arg =>
+                {
+                    ConfigDone?.Invoke(this, EventArgs.Empty);
+                });
             }
-            else if( e.EventType== "stopped")
+            else if (e.EventType == "stopped")
             {
+                var se = e.Body as StoppedEvent;
+                StoppedThreadId = se.ThreadId.Value;
+                var reason = Reason.Unset;
+                Enum.TryParse(se.Reason.ToString(), false, out reason);
+                Client.SendRequest(new StackTraceRequest(se.ThreadId.Value), (args, resp) =>
+                {
+                    Stopped?.Invoke(this, new StoppedArgs { Line = resp.StackFrames[0].Line, Reason = reason });
+                });
             }
+            else if (e.EventType == "continued")
+            {
+                Continued?.Invoke(this, EventArgs.Empty);
+            }
+
         }
+
 
         public void End()
         {
