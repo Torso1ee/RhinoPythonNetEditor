@@ -76,7 +76,7 @@ namespace RhinoPythonNetEditor.ViewModel
             var infos = Indicis;
             var code = WeakReferenceMessenger.Default.Send<CodeRequestMessage>();
             if (!Directory.Exists($@"temp\")) Directory.CreateDirectory($@"temp\");
-            using (var fs = new FileStream(@"temp\temp.py", FileMode.Truncate))
+            using (var fs = new FileStream(@"temp\temp.py", FileMode.Create))
             {
                 var bytes = Encoding.UTF8.GetBytes(code.Response);
                 await fs.WriteAsync(bytes, 0, bytes.Length);

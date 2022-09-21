@@ -16,6 +16,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Xml;
+using RhinoPythonNetEditor.View.Controls;
 
 namespace RhinoPythonNetEditor.View.Pages
 {
@@ -30,6 +31,14 @@ namespace RhinoPythonNetEditor.View.Pages
             InitializeComponent();
         }
 
+
+        public DependencyProperty HostInRhinoProperty = DependencyProperty.Register("HostInRhino", typeof(bool), typeof(TitleBar), new PropertyMetadata(false));
+
+        public bool HostInRhino
+        {
+            get { return (bool)GetValue(HostInRhinoProperty); }
+            set { SetValue(HostInRhinoProperty, value); }
+        }
         private async void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
             await Task.Delay(500);

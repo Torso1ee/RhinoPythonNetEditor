@@ -8,6 +8,7 @@
              xmlns:attach="clr-namespace:RhinoPythonNetEditor.Styling.Attach;assembly=RhinoPythonNetEditor.Styling"
             xmlns:PresentationOptions="http://schemas.microsoft.com/winfx/2006/xaml/presentation/options"
              mc:Ignorable="d" 
+             xmlns:pages="clr-namespace:RhinoPythonNetEditor.View.Pages"
              xmlns:commands="clr-namespace:RhinoPythonNetEditor.View.Commands"
              d:DesignHeight="30" d:DesignWidth="800">
     <UserControl.Resources>
@@ -42,7 +43,20 @@
 
                     </Image.Source>
                 </Image>
-                <Label Content="Grasshopper Python Script Editor" Foreground="{StaticResource  LabelTextBrush}" />
+                <Label  Foreground="{StaticResource  LabelTextBrush}" >
+                    <Label.Style>
+                        <Style BasedOn="{StaticResource {x:Type Label}}" TargetType="{x:Type Label}">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{ Binding HostInRhino, RelativeSource={RelativeSource AncestorType=pages:CodeEditor}}" Value="True">
+                                    <Setter Property="Content" Value="Grasshopper Python Script Editor"/>
+                                </DataTrigger>
+                                <DataTrigger Binding="{ Binding HostInRhino, RelativeSource={RelativeSource AncestorType=pages:CodeEditor}}" Value="False">
+                                    <Setter Property="Content" Value="PythonNet Script Editor"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Label.Style>
+                </Label>
             </StackPanel>
             <StackPanel Margin="15,0" Orientation="Horizontal" HorizontalAlignment="Right">
                 <Button attach:IconElement.Geometry="{StaticResource MinimizeGeometry}" Command="commands:WindowCommands.WindowStateChange">
