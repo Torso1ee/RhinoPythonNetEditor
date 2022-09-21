@@ -17,6 +17,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Xml;
 using RhinoPythonNetEditor.View.Controls;
+using RhinoPythonNetEditor.View.Tools;
 
 namespace RhinoPythonNetEditor.View.Pages
 {
@@ -29,6 +30,7 @@ namespace RhinoPythonNetEditor.View.Pages
         public CodeEditor()
         {
             InitializeComponent();
+            var resource = FindResource("windowProxy");
         }
 
 
@@ -42,7 +44,7 @@ namespace RhinoPythonNetEditor.View.Pages
         private async void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
             await Task.Delay(500);
-            window = Application.Current.Windows.OfType<Window>().SingleOrDefault(x => x.IsActive);
+            if(window == null) window = (FindResource("windowProxy") as BindingProxy).Data as Window;
         }
 
         private void TitleBar_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -52,7 +54,7 @@ namespace RhinoPythonNetEditor.View.Pages
 
         private void CommandBinding_Executed(object sender, ExecutedRoutedEventArgs e)
         {
-            window?.Close();
+            window?.Hide();
         }
 
         private void CommandBinding_CanExecute(object sender, CanExecuteRoutedEventArgs e)

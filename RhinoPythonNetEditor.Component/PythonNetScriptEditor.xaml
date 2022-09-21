@@ -10,6 +10,7 @@
         xmlns:View="clr-namespace:RhinoPythonNetEditor.View.Pages;assembly=RhinoPythonNetEditor.View"
         xmlns:behaviors="clr-namespace:RhinoPythonNetEditor.Styling.Behaviors;assembly=RhinoPythonNetEditor.Styling"
         mc:Ignorable="d"
+        Topmost="True"
         SnapsToDevicePixels="True"
         Background="#99D3D3D3"
         Title="MainWindow" Height="800" Width="800">

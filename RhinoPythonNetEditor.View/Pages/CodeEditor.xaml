@@ -19,6 +19,7 @@
     <UserControl.Resources>
         <ResourceDictionary>
             <tools:BindingProxy x:Key="proxy" Data="{Binding}"/>
+            <tools:BindingProxy x:Key="windowProxy" Data="{Binding RelativeSource={RelativeSource AncestorType=Window}}"/>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="/RhinoPythonNetEditor.View;component/ViewDictionary.xaml"/>
             </ResourceDictionary.MergedDictionaries>

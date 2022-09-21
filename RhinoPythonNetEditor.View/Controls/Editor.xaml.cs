@@ -40,6 +40,7 @@ namespace RhinoPythonNetEditor.View.Controls
 
         BreakPointMargin breakPointMargin;
         IHighlightingDefinition defaultHighlighting;
+        WeakReferenceMessenger messenger;
 
         public Editor()
         {
@@ -47,20 +48,11 @@ namespace RhinoPythonNetEditor.View.Controls
             InstallHighlightDefinition();
             InstallBreakPoint();
             InstallFolding();
-            WeakReferenceMessenger.Default.Register<CodeRequestMessage>(this, (r, m) =>
-            {
-                Application.Current.Dispatcher.Invoke(() => m.Reply(textEditor.Document.Text));
-            });
-            WeakReferenceMessenger.Default.Register<StepMessage>(this, (r, m) =>
-            {
-                Application.Current.Dispatcher.Invoke(() => breakPointMargin.Step(m.Line, m.Value));
-            });
-            breakPointMargin.BreakPointChanged += BreakPointMargin_BreakPointChanged;
         }
 
         private void BreakPointMargin_BreakPointChanged(object sender, BreakPointEventArgs e)
         {
-            WeakReferenceMessenger.Default.Send(new AllBreakPointInformationsMessage(e.Indicis));
+            messenger.Send(new AllBreakPointInformationsMessage(e.Indicis));
         }
 
         private void InstallHighlightDefinition()
@@ -94,6 +86,21 @@ namespace RhinoPythonNetEditor.View.Controls
             textEditor.Document.Changed += (s, e) => strategy.UpdateFoldings(manager, textEditor.Document);
         }
 
-
+        private void UserControl_Loaded(object sender, RoutedEventArgs e)
+        {
+            if (messenger == null)
+            {
+                messenger = (DataContext as ViewModelLocator).Messenger;
+                messenger.Register<CodeRequestMessage>(this, (r, m) =>
+                {
+                    Application.Current.Dispatcher.Invoke(() => m.Reply(textEditor.Document.Text));
+                });
+                messenger.Register<StepMessage>(this, (r, m) =>
+                {
+                    Application.Current.Dispatcher.Invoke(() => breakPointMargin.Step(m.Line, m.Value));
+                });
+                breakPointMargin.BreakPointChanged += BreakPointMargin_BreakPointChanged;
+            }
+        }
     }
 }

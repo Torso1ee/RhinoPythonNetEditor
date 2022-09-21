@@ -15,12 +15,15 @@ using System.Windows.Input;
 
 namespace RhinoPythonNetEditor.ViewModel
 {
-    public class DebugViewModel : ObservableRecipient, IRecipient<AllBreakPointInformationsMessage>
+    public class DebugViewModel : ObservableRecipient
     {
-        public DebugViewModel()
+        private WeakReferenceMessenger Messenger { get; set; }
+        public DebugViewModel(WeakReferenceMessenger messenger)
         {
             currentDir = Directory.GetCurrentDirectory();
+            messenger.Register<AllBreakPointInformationsMessage>(this, Receive);
             IsActive = true;
+           Messenger = messenger;
         }
 
         private bool isDebuging;
@@ -68,7 +71,7 @@ namespace RhinoPythonNetEditor.ViewModel
         public ICommand StepIn => new RelayCommand(() => debugManager?.StepIn());
         public ICommand StepOut => new RelayCommand(() => debugManager?.StepOut());
 
-        public ICommand Restart => new RelayCommand(() => {  Restarting = true; debugManager?.Terminate();  },()=>!Restarting);
+        public ICommand Restart => new RelayCommand(() => { Restarting = true; debugManager?.Terminate(); }, () => !Restarting);
 
         private List<int> Indicis { get; set; } = new List<int>();
         public ICommand Terminate => new RelayCommand(() => { debugManager?.Terminate(); restart = false; });
@@ -82,7 +85,7 @@ namespace RhinoPythonNetEditor.ViewModel
             debugManager = new DebugManager();
             var port = debugManager.NextPort();
             var infos = Indicis;
-            var code = WeakReferenceMessenger.Default.Send<CodeRequestMessage>();
+            var code = Messenger.Send<CodeRequestMessage>();
             if (!Directory.Exists($@"temp\")) Directory.CreateDirectory($@"temp\");
             using (var fs = new FileStream(@"temp\temp.py", FileMode.Create))
             {
@@ -95,7 +98,7 @@ namespace RhinoPythonNetEditor.ViewModel
             debugManager.Stopped += DebugManager_Stopped;
             debugManager.ConfigDone += (s, e) => ConfigDone = true;
             debugManager.Continued += DebugManager_Continued;
-            if (WeakReferenceMessenger.Default.Send(new DebugRequestMessage { Port = port, Script = script }))
+            if (Messenger.Send(new DebugRequestMessage { Port = port, Script = script }))
             {
                 IsDebuging = true;
                 debugManager.Start(infos.ToList(), file);
@@ -107,7 +110,7 @@ namespace RhinoPythonNetEditor.ViewModel
             var start = restart;
             ConfigDone = false;
             Stopped = false;
-            WeakReferenceMessenger.Default.Send(new StepMessage(false) { Line = -1 });
+            Messenger.Send(new StepMessage(false) { Line = -1 });
             if (start)
             {
                 await Task.Delay(1000);
@@ -122,7 +125,7 @@ namespace RhinoPythonNetEditor.ViewModel
 
         private void DebugManager_Continued(object sender, EventArgs e)
         {
-            WeakReferenceMessenger.Default.Send(new StepMessage(false) { Line = CurrentLine });
+            Messenger.Send(new StepMessage(false) { Line = CurrentLine });
             Stopped = false;
             ConfigDone = true;
         }
@@ -132,10 +135,10 @@ namespace RhinoPythonNetEditor.ViewModel
             CurrentLine = e.Line;
             Stopped = true;
             CurrentStopReason = e.Reason;
-            WeakReferenceMessenger.Default.Send(new StepMessage(true) { Line = e.Line });
+            Messenger.Send(new StepMessage(true) { Line = e.Line });
         }
 
-        public void Receive(AllBreakPointInformationsMessage message)
+        public void Receive(object recipient, AllBreakPointInformationsMessage message)
         {
             Indicis.Clear();
             Indicis.AddRange(message.Value);

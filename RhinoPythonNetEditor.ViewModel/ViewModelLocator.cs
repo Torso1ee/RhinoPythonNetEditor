@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using CommunityToolkit.Mvvm.Messaging;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,6 +17,7 @@ namespace RhinoPythonNetEditor.ViewModel
 
         public IServiceProvider Services { get; set; }
 
+        public WeakReferenceMessenger Messenger => Services.GetService<WeakReferenceMessenger>();
         public MenuBarViewModel MenuBarViewModel => Services.GetService<MenuBarViewModel>();
 
         public TerminalViewModel TerminalViewModel => Services.GetService<TerminalViewModel>();
@@ -26,9 +28,11 @@ namespace RhinoPythonNetEditor.ViewModel
         public IServiceProvider ConfigureServices()
         {
             var services = new ServiceCollection();
-            services.AddSingleton<MenuBarViewModel>();
-            services.AddSingleton<TerminalViewModel>();
-            services.AddSingleton<DebugViewModel>();
+            var messenger = new WeakReferenceMessenger();
+            services.AddSingleton(messenger);
+            services.AddSingleton(new MenuBarViewModel(messenger));
+            services.AddSingleton(new TerminalViewModel(messenger));
+            services.AddSingleton( new DebugViewModel(messenger));
             return services.BuildServiceProvider();
         }
     }

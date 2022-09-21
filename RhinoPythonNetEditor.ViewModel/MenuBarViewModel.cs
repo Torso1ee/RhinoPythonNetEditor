@@ -15,12 +15,17 @@ using System.IO;
 
 namespace RhinoPythonNetEditor.ViewModel
 {
+
     public class MenuBarViewModel : ObservableRecipient
     {
-        public MenuBarViewModel()
+        public MenuBarViewModel(WeakReferenceMessenger messenger)
         {
             IsActive = true;
+            Messenger = messenger;
         }
+
+        private WeakReferenceMessenger Messenger { get; set; }
+
 
     }
 }

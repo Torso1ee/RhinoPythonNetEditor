@@ -15,19 +15,23 @@ using RhinoPythonNetEditor.ViewModel.Messages;
 
 namespace RhinoPythonNetEditor.ViewModel
 {
-    public class TerminalViewModel : ObservableRecipient, IRecipient<DebugRequestMessage>
+    public class TerminalViewModel : ObservableRecipient
     {
 
         private readonly PowerShellManager Manager;
 
-        public TerminalViewModel()
+        public TerminalViewModel(WeakReferenceMessenger messenger)
         {
             Manager = new PowerShellManager();
             Manager.PowerShellRunScript += (s, e) => Free = false;
             Manager.PowerShellRunScriptEnd += OnExcuteEnd;
             Manager.PowerShellDataAdded += (s, e) => UpdateLine(new ScriptLine { State = ScriptLineState.Normal, Text = e.Message });
+            Messenger = messenger;
+            Messenger.Register<DebugRequestMessage>(this, Receive);
             IsActive = true;
         }
+
+        private WeakReferenceMessenger Messenger { get; set; }
 
         public ObservableCollection<ScriptLine> OutputContent { get; set; } = new ObservableCollection<ScriptLine>();
         public ObservableCollection<ScriptLine> ScriptRecorder { get; set; } = new ObservableCollection<ScriptLine>();
@@ -53,9 +57,9 @@ namespace RhinoPythonNetEditor.ViewModel
         {
             string time = "";
             if (e.Error) UpdateLine(new ScriptLine { State = ScriptLineState.Error, Text = e.ErrorMessage });
-            if (e.Time.TotalSeconds <= 60) time = $"{Math.Round(e.Time.TotalSeconds,2)}秒";
+            if (e.Time.TotalSeconds <= 60) time = $"{Math.Round(e.Time.TotalSeconds, 2)}秒";
             else if (e.Time.TotalSeconds <= 3600) time = $"{e.Time.Minutes}分钟{e.Time.Seconds}秒";
-            else  time = $"{Math.Round(e.Time.TotalSeconds/60)}分钟";
+            else time = $"{Math.Round(e.Time.TotalSeconds / 60)}分钟";
             UpdateLine(new ScriptLine { State = ScriptLineState.Normal, Text = $"结束，运行时间{time}" });
             Free = true;
         }
@@ -91,7 +95,7 @@ namespace RhinoPythonNetEditor.ViewModel
             }
         }
 
-        public void Receive(DebugRequestMessage message)
+        public void Receive(object recipient, DebugRequestMessage message)
         {
             OutputContent.Clear();
             Script = message.Script;
