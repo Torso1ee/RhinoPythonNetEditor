@@ -1,0 +1,31 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+	
+  <PropertyGroup>
+    <TargetFramework>net48</TargetFramework>
+    <Version>1.0</Version>
+    <Title>RhinoPythonNetEditor.Component</Title>
+    <Description>Description of RhinoPythonNetEditor.Component</Description>
+    <TargetExt>.gha</TargetExt>
+    <UseWpf>true</UseWpf>
+    <PlatformTarget>x64</PlatformTarget>
+  </PropertyGroup>
+  
+  <ItemGroup>
+    <PackageReference Include="Grasshopper" Version="7.13.21348.13001" IncludeAssets="compile;build" />
+    <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.39" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <ProjectReference Include="..\RhinoPythonNetEditor.Resources\RhinoPythonNetEditor.Resources.csproj" />
+    <ProjectReference Include="..\RhinoPythonNetEditor.Styling\RhinoPythonNetEditor.Styling.csproj" />
+    <ProjectReference Include="..\RhinoPythonNetEditor.ViewModel\RhinoPythonNetEditor.ViewModel.csproj" />
+    <ProjectReference Include="..\RhinoPythonNetEditor.View\RhinoPythonNetEditor.View.csproj" />
+  </ItemGroup>
+  
+  <PropertyGroup Condition="$(Configuration) == 'Debug' AND $([MSBuild]::IsOSPlatform(Windows))">
+    <StartProgram>C:\Program Files\Rhino 7\System\Rhino.exe</StartProgram>
+    <StartArguments></StartArguments>
+    <StartAction>Program</StartAction>
+  </PropertyGroup>
+
+</Project>

@@ -1,4 +1,4 @@
-﻿using RhinoPythonNetEditor.View.Controls;
+﻿using RhinoPythonNetEditor.View.Pages;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,22 +11,19 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace RhinoPythonNetEditor
+namespace RhinoPythonNetEditor.Component
 {
     /// <summary>
-    /// MainWindow.xaml 的交互逻辑
+    /// PythonNetScriptEditor.xaml 的交互逻辑
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class PythonNetScriptEditor : Window
     {
-        public MainWindow()
+        public PythonNetScriptEditor()
         {
             InitializeComponent();
         }
 
-
-      
     }
 }

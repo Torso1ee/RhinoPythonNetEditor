@@ -17,6 +17,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RhinoPythonNetEditor.DataMo
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RhinoPythonNetEditor.Managers", "RhinoPythonNetEditor.Managers\RhinoPythonNetEditor.Managers.csproj", "{61A41698-E18E-425C-99E8-7FB46814398D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RhinoPythonNetEditor.Component", "RhinoPythonNetEditor.Component\RhinoPythonNetEditor.Component.csproj", "{2340E8DD-8F30-4FCC-8DDB-0F6FFDE73BD8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -51,6 +53,10 @@ Global
 		{61A41698-E18E-425C-99E8-7FB46814398D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{61A41698-E18E-425C-99E8-7FB46814398D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{61A41698-E18E-425C-99E8-7FB46814398D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2340E8DD-8F30-4FCC-8DDB-0F6FFDE73BD8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2340E8DD-8F30-4FCC-8DDB-0F6FFDE73BD8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2340E8DD-8F30-4FCC-8DDB-0F6FFDE73BD8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2340E8DD-8F30-4FCC-8DDB-0F6FFDE73BD8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
