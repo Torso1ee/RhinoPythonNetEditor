@@ -49,6 +49,7 @@
             Style="{StaticResource MenuItemIconStyle}"  
             attach:IconElement.Geometry="{StaticResource TestGeometry}"
             Header="测试"  
+            IsEnabled="{Binding DebugViewModel.IsDebuging, Source={StaticResource Locator}, Converter={StaticResource InvertConverter}}"
             Command="{Binding DebugViewModel.StartDebug, Source={StaticResource Locator}}"
             HorizontalAlignment="Right"
            DockPanel.Dock="Right"/>

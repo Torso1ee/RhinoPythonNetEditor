@@ -22,7 +22,5 @@ namespace RhinoPythonNetEditor.ViewModel
             IsActive = true;
         }
 
-     
-       
     }
 }

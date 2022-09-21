@@ -9,7 +9,7 @@
         <GradientStop Color="White"/>
         <GradientStop Color="Gray"  Offset="1"/>
     </LinearGradientBrush>
-
+    <SolidColorBrush  x:Key="MenuItemIconUnactiveBrush" Color="#FFC6C6C6"/>
     <!--Style-->
 
     <Style x:Key="MenuItemBaseStyle" TargetType="{x:Type MenuItem}">
@@ -59,10 +59,18 @@
                                 <ColumnDefinition Width="Auto"/>
                                 <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
-                            <Path Fill="{StaticResource MenuItemIconBrush}" Data="{TemplateBinding attach:IconElement.Geometry}" Height="{TemplateBinding attach:IconElement.Height}" Width="{TemplateBinding attach:IconElement.Width}" Stretch="Uniform"/>
+                            <Path x:Name="p" Data="{TemplateBinding attach:IconElement.Geometry}" Height="{TemplateBinding attach:IconElement.Height}" Width="{TemplateBinding attach:IconElement.Width}" Stretch="Uniform"/>
                             <ContentPresenter Grid.Column="1" Margin="4" x:Name="presenter" HorizontalAlignment="Center" VerticalAlignment="Center" ContentSource="Header"/>
                         </Grid>
                     </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter TargetName="p" Property="Fill" Value="{StaticResource MenuItemIconUnactiveBrush}"/>
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="True">
+                            <Setter TargetName="p" Property="Fill" Value="{StaticResource MenuItemIconBrush }"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>

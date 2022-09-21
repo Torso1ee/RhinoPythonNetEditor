@@ -28,7 +28,10 @@ namespace RhinoPythonNetEditor.ViewModel
         public bool IsDebuging
         {
             get { return isDebuging; }
-            set { SetProperty(ref isDebuging, value); }
+            set
+            {
+                SetProperty(ref isDebuging, value);
+            }
         }
         private string currentDir { get; set; }
 
