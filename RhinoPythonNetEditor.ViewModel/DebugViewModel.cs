@@ -38,7 +38,6 @@ namespace RhinoPythonNetEditor.ViewModel
         public ICommand StartDebug => new RelayCommand(() => StartDebugCore(), () => !IsDebuging);
 
         private bool stopped;
-        private bool restart;
 
         public bool Stopped
         {
@@ -53,6 +52,15 @@ namespace RhinoPythonNetEditor.ViewModel
             set { SetProperty(ref configDone, value); }
         }
 
+        private bool restart;
+
+        public bool Restarting
+        {
+            get { return restart; }
+            set { SetProperty(ref restart, value); }
+        }
+
+
         public ICommand Stop => new RelayCommand(() => debugManager?.Stop());
         public ICommand Continue => new RelayCommand(() => { debugManager?.Continue(); ConfigDone = false; });
         public ICommand Next => new RelayCommand(() => debugManager?.Next());
@@ -60,7 +68,7 @@ namespace RhinoPythonNetEditor.ViewModel
         public ICommand StepIn => new RelayCommand(() => debugManager?.StepIn());
         public ICommand StepOut => new RelayCommand(() => debugManager?.StepOut());
 
-        public ICommand Restart => new RelayCommand(() => { debugManager?.Terminate(); restart = true; });
+        public ICommand Restart => new RelayCommand(() => {  Restarting = true; debugManager?.Terminate();  },()=>!Restarting);
 
         private List<int> Indicis { get; set; } = new List<int>();
         public ICommand Terminate => new RelayCommand(() => { debugManager?.Terminate(); restart = false; });
@@ -97,7 +105,6 @@ namespace RhinoPythonNetEditor.ViewModel
         private async void DebugManager_DebugEnd(object sender, EventArgs e)
         {
             var start = restart;
-            restart = false;
             ConfigDone = false;
             Stopped = false;
             WeakReferenceMessenger.Default.Send(new StepMessage(false) { Line = -1 });
@@ -110,6 +117,7 @@ namespace RhinoPythonNetEditor.ViewModel
             {
                 IsDebuging = false;
             }
+            Restarting = false;
         }
 
         private void DebugManager_Continued(object sender, EventArgs e)

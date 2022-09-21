@@ -56,7 +56,7 @@
             <Button  Command="{Binding Next}" IsEnabled="{Binding Stopped}" attach:IconElement.Geometry="{StaticResource  StepGeometry}" />
             <Button Command="{Binding StepIn}"  IsEnabled="{Binding Stopped}" attach:IconElement.Geometry="{StaticResource  NextGeometry}"/>
             <Button Command="{Binding StepOut}" IsEnabled="{Binding Stopped}" attach:IconElement.Geometry="{StaticResource  PrevGeometry}"/>
-            <Button Command="{Binding Restart}" attach:IconElement.Geometry="{StaticResource  RestartGeometry}" Foreground="{StaticResource DebugButtonBrush2}"/>
+            <Button  Command="{Binding Restart}" attach:IconElement.Geometry="{StaticResource  RestartGeometry}" Foreground="{StaticResource DebugButtonBrush2}"/>
             <Button Command="{Binding Terminate}" attach:IconElement.Geometry="{StaticResource  EndGeometry}" Foreground="{StaticResource DebugButtonBrush3}"/>
         </StackPanel>
     </Border>
