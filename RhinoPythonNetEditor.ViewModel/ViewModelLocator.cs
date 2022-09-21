@@ -20,7 +20,6 @@ namespace RhinoPythonNetEditor.ViewModel
 
         public TerminalViewModel TerminalViewModel => Services.GetService<TerminalViewModel>();
 
-        public TextEditorViewModel TextEditorViewModel => Services.GetService<TextEditorViewModel>();
         public DebugViewModel DebugViewModel => Services.GetService<DebugViewModel>();
 
 
@@ -29,7 +28,6 @@ namespace RhinoPythonNetEditor.ViewModel
             var services = new ServiceCollection();
             services.AddSingleton<MenuBarViewModel>();
             services.AddSingleton<TerminalViewModel>();
-            services.AddSingleton<TextEditorViewModel>();
             services.AddSingleton<DebugViewModel>();
             return services.BuildServiceProvider();
         }

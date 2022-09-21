@@ -5,13 +5,14 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:RhinoPythonNetEditor.View.Controls"
              xmlns:attach="clr-namespace:RhinoPythonNetEditor.Styling.Attach;assembly=RhinoPythonNetEditor.Styling"
-            xmlns:viewModel="clr-namespace:RhinoPythonNetEditor.ViewModel;assembly=RhinoPythonNetEditor.ViewModel"
+          xmlns:tools="clr-namespace:RhinoPythonNetEditor.View.Tools"
+             xmlns:viewModel="clr-namespace:RhinoPythonNetEditor.ViewModel;assembly=RhinoPythonNetEditor.ViewModel"
              mc:Ignorable="d" 
-             DataContext="{Binding MenuBarViewModel, Source={StaticResource Locator}}"
              d:DataContext="{d:DesignInstance {x:Type viewModel:MenuBarViewModel}}"
              d:DesignHeight="30" d:DesignWidth="800">
     <UserControl.Resources>
         <ResourceDictionary>
+            <tools:BindingProxy x:Key="proxy" Data="{Binding}"/>
             <Style TargetType="{x:Type MenuItem}" BasedOn="{StaticResource MenuItemActiveStyle  }">
                 <Setter Property="Width" Value="50"/>
                 <Setter Property="Height" Value="30"/>
@@ -29,7 +30,7 @@
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </UserControl.Resources>
-    <Menu Background="{StaticResource MenuBarBackgroundBrush}" >
+    <Menu Background="{StaticResource MenuBarBackgroundBrush}" DataContext="{Binding Data.MenuBarViewModel, Source={StaticResource proxy}}" >
         <Menu.ItemsPanel>
             <ItemsPanelTemplate>
                 <DockPanel  HorizontalAlignment="Stretch"/>
@@ -49,8 +50,8 @@
             Style="{StaticResource MenuItemIconStyle}"  
             attach:IconElement.Geometry="{StaticResource TestGeometry}"
             Header="测试"  
-            IsEnabled="{Binding DebugViewModel.IsDebuging, Source={StaticResource Locator}, Converter={StaticResource InvertConverter}}"
-            Command="{Binding DebugViewModel.StartDebug, Source={StaticResource Locator}}"
+            IsEnabled="{Binding Data.DebugViewModel.IsDebuging, Source={StaticResource proxy}, Converter={StaticResource InvertConverter}}"
+            Command="{Binding Data.DebugViewModel.StartDebug, Source={StaticResource proxy}}"
             HorizontalAlignment="Right"
            DockPanel.Dock="Right"/>
     </Menu>

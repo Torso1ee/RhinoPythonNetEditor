@@ -32,7 +32,7 @@ namespace RhinoPythonNetEditor.View.Pages
         }
 
 
-        public DependencyProperty HostInRhinoProperty = DependencyProperty.Register("HostInRhino", typeof(bool), typeof(TitleBar), new PropertyMetadata(false));
+        public static readonly DependencyProperty HostInRhinoProperty = DependencyProperty.Register("HostInRhino", typeof(bool), typeof(TitleBar), new PropertyMetadata(false));
 
         public bool HostInRhino
         {

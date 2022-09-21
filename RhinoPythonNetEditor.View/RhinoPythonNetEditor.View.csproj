@@ -118,6 +118,7 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <Compile Include="Tools\BindingProxy.cs" />
     <Compile Include="Tools\BreakPointMargin.cs" />
     <Compile Include="Tools\PythonFoldingStrategy.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">

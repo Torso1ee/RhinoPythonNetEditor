@@ -86,7 +86,6 @@
     <Compile Include="Messages\StepMessage.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TerminalViewModel.cs" />
-    <Compile Include="TextEditorViewModel.cs" />
     <Compile Include="ViewModelLocator.cs" />
   </ItemGroup>
   <ItemGroup>

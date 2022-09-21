@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:RhinoPythonNetEditor.Component"
         xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
-        xmlns:viewModel="clr-namespace:RhinoPythonNetEditor.ViewModel;assembly=RhinoPythonNetEditor.ViewModel"
+        xmlns:vm="clr-namespace:RhinoPythonNetEditor.ViewModel;assembly=RhinoPythonNetEditor.ViewModel"
         xmlns:commands="clr-namespace:RhinoPythonNetEditor.View.Commands;assembly=RhinoPythonNetEditor.View"
         xmlns:View="clr-namespace:RhinoPythonNetEditor.View.Pages;assembly=RhinoPythonNetEditor.View"
         xmlns:behaviors="clr-namespace:RhinoPythonNetEditor.Styling.Behaviors;assembly=RhinoPythonNetEditor.Styling"
@@ -13,12 +13,12 @@
         SnapsToDevicePixels="True"
         Background="#99D3D3D3"
         Title="MainWindow" Height="800" Width="800">
-    <Window.Resources>
-        <viewModel:ViewModelLocator x:Key="Locator"/>
-    </Window.Resources>
     <i:Interaction.Behaviors>
         <behaviors:WindowAeroStyleBehavior x:Name="aero" Enabled="True"/>
     </i:Interaction.Behaviors>
+    <Window.DataContext>
+        <vm:ViewModelLocator/>
+    </Window.DataContext>
     <Window.Template>
         <ControlTemplate TargetType="{x:Type Window}">
             <Border BorderBrush="{TemplateBinding Background}"  Background="{TemplateBinding Background}" BorderThickness="0,1,0,0">

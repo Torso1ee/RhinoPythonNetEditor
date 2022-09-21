@@ -6,6 +6,5 @@
              StartupUri="MainWindow.xaml">
     <Application.Resources>
         <SolidColorBrush x:Key="BackgroundBrush" Color="#99D3D3D3"/>
-        <viewModel:ViewModelLocator x:Key="Locator"/>
     </Application.Resources>
 </Application>
