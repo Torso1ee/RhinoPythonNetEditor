@@ -20,10 +20,11 @@ namespace RhinoPythonNetEditor.Component
             "PythonNetScriptComponent provides editing and debugging cpython code in Rhino.PythonNet Script also supports interoperating with .Net library.",
             "Math", "Script")
         {
+            Editor = new PythonNetScriptEditor();
         }
 
 
-        internal Lazy<PythonNetScriptEditor> Editor { get; set; } = new Lazy<PythonNetScriptEditor>(() => new PythonNetScriptEditor());
+        internal PythonNetScriptEditor Editor { get; set; } 
         /// <summary>
         /// Registers all the input parameters for this component.
         /// </summary>

@@ -17,7 +17,7 @@ namespace RhinoPythonNetEditor.Component
 
         public override GH_ObjectResponse RespondToMouseDoubleClick(GH_Canvas sender, GH_CanvasMouseEvent e)
         {
-            Owner.Editor.Value.Show();
+            Owner.Editor.Show();
             return base.RespondToMouseDoubleClick(sender, e);
         }
     }
