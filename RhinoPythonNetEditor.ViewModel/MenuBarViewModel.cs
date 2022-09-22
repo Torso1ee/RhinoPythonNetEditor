@@ -18,14 +18,15 @@ namespace RhinoPythonNetEditor.ViewModel
 
     public class MenuBarViewModel : ObservableRecipient
     {
-        public MenuBarViewModel(WeakReferenceMessenger messenger)
+        public MenuBarViewModel(ViewModelLocator locator)
         {
             IsActive = true;
-            Messenger = messenger;
+            Locator = locator;
         }
 
-        private WeakReferenceMessenger Messenger { get; set; }
+        private WeakReferenceMessenger Messenger => Locator?.Messenger;
 
+        private ViewModelLocator Locator { get; set; }
 
     }
 }

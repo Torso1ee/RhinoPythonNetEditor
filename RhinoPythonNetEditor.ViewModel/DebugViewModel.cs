@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
+using Grasshopper.Kernel;
 using RhinoPythonNetEditor.Managers;
 using RhinoPythonNetEditor.ViewModel.Messages;
 using System;
@@ -17,14 +18,17 @@ namespace RhinoPythonNetEditor.ViewModel
 {
     public class DebugViewModel : ObservableRecipient
     {
-        private WeakReferenceMessenger Messenger { get; set; }
-        public DebugViewModel(WeakReferenceMessenger messenger)
+        private WeakReferenceMessenger Messenger => Locator?.Messenger;
+        private ViewModelLocator Locator { get; set; }
+        public DebugViewModel( ViewModelLocator locator)
         {
+            Locator = locator;
+            Locator.ConfigureFinished += (s,e) => Messenger.Register<AllBreakPointInformationsMessage>(this, Receive);
             currentDir = Directory.GetCurrentDirectory();
-            messenger.Register<AllBreakPointInformationsMessage>(this, Receive);
             IsActive = true;
-           Messenger = messenger;
         }
+
+        private string PythonPath { get; set; } = @"D:\Anaconda\envs\PythonNet\python.exe";
 
         private bool isDebuging;
 
@@ -93,7 +97,7 @@ namespace RhinoPythonNetEditor.ViewModel
                 await fs.WriteAsync(bytes, 0, bytes.Length);
             }
             var file = currentDir + $@"\temp\temp.py";
-            var script = $@"python -u -m debugpy --listen localhost:{port} --wait-for-client --log-to ~/logs ""{file}""";
+            var script = $@"{PythonPath} -u -m debugpy --listen localhost:{port} --wait-for-client --log-to ~/logs ""{file}""";
             debugManager.DebugEnd += DebugManager_DebugEnd;
             debugManager.Stopped += DebugManager_Stopped;
             debugManager.ConfigDone += (s, e) => ConfigDone = true;
@@ -143,6 +147,10 @@ namespace RhinoPythonNetEditor.ViewModel
             Indicis.Clear();
             Indicis.AddRange(message.Value);
             if (IsDebuging) debugManager.SendBreakPointRequest(Indicis);
+        }
+
+        private void SerializeParams()
+        {
         }
     }
 }

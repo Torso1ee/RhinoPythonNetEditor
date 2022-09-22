@@ -20,18 +20,21 @@ namespace RhinoPythonNetEditor.ViewModel
 
         private readonly PowerShellManager Manager;
 
-        public TerminalViewModel(WeakReferenceMessenger messenger)
+
+
+        public TerminalViewModel(ViewModelLocator locator)
         {
             Manager = new PowerShellManager();
             Manager.PowerShellRunScript += (s, e) => Free = false;
             Manager.PowerShellRunScriptEnd += OnExcuteEnd;
             Manager.PowerShellDataAdded += (s, e) => UpdateLine(new ScriptLine { State = ScriptLineState.Normal, Text = e.Message });
-            Messenger = messenger;
-            Messenger.Register<DebugRequestMessage>(this, Receive);
+            Locator = locator;
+            Locator.ConfigureFinished +=(s,e) => Messenger.Register<DebugRequestMessage>(this, Receive);
             IsActive = true;
         }
 
-        private WeakReferenceMessenger Messenger { get; set; }
+        private WeakReferenceMessenger Messenger => Locator?.Messenger;
+        private ViewModelLocator Locator { get; set; }
 
         public ObservableCollection<ScriptLine> OutputContent { get; set; } = new ObservableCollection<ScriptLine>();
         public ObservableCollection<ScriptLine> ScriptRecorder { get; set; } = new ObservableCollection<ScriptLine>();
