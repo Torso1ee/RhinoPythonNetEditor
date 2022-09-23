@@ -7,8 +7,11 @@ using RhinoPythonNetEditor.ViewModel.Messages;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Reflection;
+using System.Security.AccessControl;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -20,10 +23,10 @@ namespace RhinoPythonNetEditor.ViewModel
     {
         private WeakReferenceMessenger Messenger => Locator?.Messenger;
         private ViewModelLocator Locator { get; set; }
-        public DebugViewModel( ViewModelLocator locator)
+        public DebugViewModel(ViewModelLocator locator)
         {
             Locator = locator;
-            Locator.ConfigureFinished += (s,e) => Messenger.Register<AllBreakPointInformationsMessage>(this, Receive);
+            Locator.ConfigureFinished += (s, e) => Messenger.Register<AllBreakPointInformationsMessage>(this, Receive);
             currentDir = Directory.GetCurrentDirectory();
             IsActive = true;
         }
@@ -86,6 +89,7 @@ namespace RhinoPythonNetEditor.ViewModel
         private Reason CurrentStopReason { get; set; } = Reason.Unset;
         private async void StartDebugCore()
         {
+            SerializeParams();
             debugManager = new DebugManager();
             var port = debugManager.NextPort();
             var infos = Indicis;
@@ -151,6 +155,55 @@ namespace RhinoPythonNetEditor.ViewModel
 
         private void SerializeParams()
         {
+            GetInput();
+        }
+
+        private void GetInput()
+        {
+            Type iteratorType = null;
+            Assembly grasshopperAssembly = Assembly.GetAssembly(typeof(Grasshopper.Instances));
+            foreach (Type type in grasshopperAssembly.GetTypes())
+                if (type.Name == "GH_StructureIterator")
+                {
+                    iteratorType = type;
+                    break;
+                }
+            var TheType = iteratorType;
+            if (iteratorType != null)
+            {
+                object iteratorInstance = null;
+                foreach (ConstructorInfo constructor in iteratorType.GetConstructors(BindingFlags.Instance | BindingFlags.NonPublic))
+                {
+                    iteratorInstance = constructor.Invoke(new object[] { Locator.ComponentHost });
+                    if (iteratorInstance != null)
+                        break;
+                }
+                var access = iteratorInstance as IGH_DataAccess;
+                var m1 = TheType.GetMethod("EnsureAssignments");
+                var m2 = TheType.GetMethod("IncrementItemIndices");
+                var m3 = TheType.GetMethod("IncrementBranchIndices");
+                int i = 0;
+                while (true)
+                {
+                    Console.WriteLine(i);
+                    m1.Invoke(iteratorInstance, new object[] { });
+                    if ((bool)m2.Invoke(iteratorInstance, new object[] { }))
+                    {
+                        access.IncrementIteration();
+                    }
+                    else
+                    {
+                        if (!(bool)m3.Invoke(iteratorInstance, new object[] { }))
+                        {
+                            break;
+                        }
+                        access.IncrementIteration();
+                    }
+                    i++;
+                }
+
+            }
+
         }
     }
 }

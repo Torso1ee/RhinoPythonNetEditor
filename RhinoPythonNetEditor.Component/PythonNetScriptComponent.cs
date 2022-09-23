@@ -41,6 +41,7 @@ namespace RhinoPythonNetEditor.Component
             }
         }
 
+
         public bool IsInjected { get; set; } = false;
 
 
@@ -207,5 +208,6 @@ namespace RhinoPythonNetEditor.Component
 
         public string TooltipText { get; internal set; }
         public string TooltipDesc { get; internal set; }
+
     }
 }
