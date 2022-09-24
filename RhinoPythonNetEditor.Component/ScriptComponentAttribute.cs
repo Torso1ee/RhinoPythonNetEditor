@@ -20,6 +20,7 @@ namespace RhinoPythonNetEditor.Component
         {
             if (Owner is PythonNetScriptComponent comp)
             {
+                if (comp.Editor == null) comp.SetWindow();
                 comp.Editor.Show();
                 comp.Editor.Focus();
                 return GH_ObjectResponse.Handled;

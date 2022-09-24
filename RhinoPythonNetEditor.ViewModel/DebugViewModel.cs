@@ -1,7 +1,12 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
+using GH_IO.Serialization;
 using Grasshopper.Kernel;
+using Grasshopper.Kernel.Data;
+using Grasshopper.Kernel.Types;
+using Newtonsoft.Json;
+using Rhino.Geometry;
 using RhinoPythonNetEditor.Managers;
 using RhinoPythonNetEditor.ViewModel.Messages;
 using System;
@@ -15,7 +20,9 @@ using System.Security.AccessControl;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Documents;
 using System.Windows.Input;
+using System.Windows.Shapes;
 
 namespace RhinoPythonNetEditor.ViewModel
 {
@@ -32,6 +39,7 @@ namespace RhinoPythonNetEditor.ViewModel
         }
 
         private string PythonPath { get; set; } = @"D:\Anaconda\envs\PythonNet\python.exe";
+
 
         private bool isDebuging;
 
@@ -89,18 +97,20 @@ namespace RhinoPythonNetEditor.ViewModel
         private Reason CurrentStopReason { get; set; } = Reason.Unset;
         private async void StartDebugCore()
         {
-            SerializeParams();
             debugManager = new DebugManager();
             var port = debugManager.NextPort();
             var infos = Indicis;
             var code = Messenger.Send<CodeRequestMessage>();
-            if (!Directory.Exists($@"temp\")) Directory.CreateDirectory($@"temp\");
-            using (var fs = new FileStream(@"temp\temp.py", FileMode.Create))
+            var guid = Guid.NewGuid();
+            var dir = $@"temp\{guid}\";
+            if (!Directory.Exists(dir)) Directory.CreateDirectory(dir);
+            SerializeInput(0, $@"{dir}params_data");
+            using (var fs = new FileStream($@"{dir}temp.py", FileMode.Create))
             {
                 var bytes = Encoding.UTF8.GetBytes(code.Response);
                 await fs.WriteAsync(bytes, 0, bytes.Length);
             }
-            var file = currentDir + $@"\temp\temp.py";
+            var file = currentDir + $@"\{dir}temp.py";
             var script = $@"{PythonPath} -u -m debugpy --listen localhost:{port} --wait-for-client --log-to ~/logs ""{file}""";
             debugManager.DebugEnd += DebugManager_DebugEnd;
             debugManager.Stopped += DebugManager_Stopped;
@@ -153,13 +163,58 @@ namespace RhinoPythonNetEditor.ViewModel
             if (IsDebuging) debugManager.SendBreakPointRequest(Indicis);
         }
 
-        private void SerializeParams()
-        {
-            GetInput();
-        }
 
-        private void GetInput()
+        private int GetIterateCount()
         {
+            Type iteratorType = null;
+            int i = 0;
+            Assembly grasshopperAssembly = Assembly.GetAssembly(typeof(Grasshopper.Instances));
+            foreach (Type type in grasshopperAssembly.GetTypes())
+                if (type.Name == "GH_StructureIterator")
+                {
+                    iteratorType = type;
+                    break;
+                }
+            var TheType = iteratorType;
+            if (iteratorType != null)
+            {
+                object iteratorInstance = null;
+                foreach (ConstructorInfo constructor in iteratorType.GetConstructors(BindingFlags.Instance | BindingFlags.NonPublic))
+                {
+                    iteratorInstance = constructor.Invoke(new object[] { Locator.ComponentHost });
+                    if (iteratorInstance != null)
+                        break;
+                }
+                var access = iteratorInstance as IGH_DataAccess;
+                var m1 = TheType.GetMethod("EnsureAssignments");
+                var m2 = TheType.GetMethod("IncrementItemIndices");
+                var m3 = TheType.GetMethod("IncrementBranchIndices");
+                var m4 = TheType.GetMethod("ResetAssignedFlags");
+                m4.Invoke(iteratorInstance, new object[] { });
+                while (true)
+                {
+                    m1.Invoke(iteratorInstance, new object[] { });
+                    if ((bool)m2.Invoke(iteratorInstance, new object[] { }))
+                    {
+                        access.IncrementIteration();
+                    }
+                    else
+                    {
+                        if (!(bool)m3.Invoke(iteratorInstance, new object[] { }))
+                        {
+                            break;
+                        }
+                        access.IncrementIteration();
+                    }
+                    i++;
+                }
+            }
+            return i;
+        }
+        private void SerializeInput(int time, string path)
+        {
+            GH_LooseChunk chunk = new GH_LooseChunk("params data");
+            int i = 0;
             Type iteratorType = null;
             Assembly grasshopperAssembly = Assembly.GetAssembly(typeof(Grasshopper.Instances));
             foreach (Type type in grasshopperAssembly.GetTypes())
@@ -182,10 +237,58 @@ namespace RhinoPythonNetEditor.ViewModel
                 var m1 = TheType.GetMethod("EnsureAssignments");
                 var m2 = TheType.GetMethod("IncrementItemIndices");
                 var m3 = TheType.GetMethod("IncrementBranchIndices");
-                int i = 0;
+                var m4 = TheType.GetMethod("ResetAssignedFlags");
+                m4.Invoke(iteratorInstance, new object[] { });
                 while (true)
                 {
-                    Console.WriteLine(i);
+                    if (i == time)
+                    {
+                        var count = Locator.ComponentHost.Params.Input.Count;
+                        chunk.SetInt32("Count", count);
+                        for (int j = 0; j < count; j++)
+                        {
+                            GH_IWriter writer = chunk.CreateChunk("param", j);
+                            var param = Locator.ComponentHost.Params.Input[j];
+                            switch (param.Access)
+                            {
+                                case GH_ParamAccess.item:
+                                    IGH_Goo data = null;
+                                    access.GetData(j, ref data);
+                                    var tree2 = new GH_Structure<IGH_Goo>();
+                                    tree2.Append(data);
+                                    tree2.Write(writer.CreateChunk("Data"));
+                                    writer.SetString("access", "Item");
+                                    writer.SetString("name", param.NickName);
+                                    break;
+                                case GH_ParamAccess.list:
+                                    List<IGH_Goo> list = new List<IGH_Goo>();
+                                    access.GetDataList(j, list);
+                                    var tree = new GH_Structure<IGH_Goo>();
+                                    tree.AppendRange(list);
+                                    tree.Write(writer.CreateChunk("Data"));
+                                    writer.SetString("access", "List");
+                                    writer.SetString("name", param.NickName);
+                                    break;
+                                case GH_ParamAccess.tree:
+                                    access.GetDataTree(j, out GH_Structure<IGH_Goo> tree1);
+                                    tree1.Write(writer.CreateChunk("Data"));
+                                    writer.SetString("access", "Tree");
+                                    writer.SetString("name", param.NickName);
+                                    break;
+                            }
+                        }
+
+                        GH_IWriter wr = chunk.CreateChunk("param", count);
+                        var tree3 = new GH_Structure<IGH_Goo>();
+                        tree3.Append(new GH_Curve(new Circle(Point3d.Origin, 10).ToNurbsCurve()));
+                        tree3.Write(wr.CreateChunk("Data"));
+                        wr.SetString("access", "Tree");
+                        wr.SetString("name", "bin");
+
+                        byte[] bytes = chunk.Serialize_Binary();
+                        File.WriteAllBytes(path, bytes);
+                        break;
+                    }
                     m1.Invoke(iteratorInstance, new object[] { });
                     if ((bool)m2.Invoke(iteratorInstance, new object[] { }))
                     {
@@ -201,9 +304,7 @@ namespace RhinoPythonNetEditor.ViewModel
                     }
                     i++;
                 }
-
             }
-
         }
     }
 }
