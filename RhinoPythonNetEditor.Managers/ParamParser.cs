@@ -60,12 +60,18 @@ namespace RhinoPythonNetEditor.Managers
             tree.Read(reader);
             if (access == "Item")
             {
-                dynamic item = tree.get_FirstItem(true);
-                ParamDict[name] = item.Value;
+                var item = tree.get_FirstItem(false);
+                if (item == null) ParamDict[name] = null;
+                else
+                {
+                    dynamic d = item;
+                    ParamDict[name] = d.Value;
+                }
             }
             else if (access == "List")
             {
-                var lst = tree.Branches[0].Select(v => {
+                var lst = tree.Branches[0].Select(v =>
+                {
                     if (v == null) return null;
                     else
                     {
@@ -78,7 +84,22 @@ namespace RhinoPythonNetEditor.Managers
             }
             else if (access == "Tree")
             {
-                ParamDict[name] = tree;
+                var dt = new DataTree<dynamic>();
+                var count = tree.Branches.Count;
+                for (int j = 0; j < count; j++)
+                {
+                    dt.AddRange(tree.Branches[j].Select(v =>
+                    {
+                        if (v == null) return null;
+                        else
+                        {
+                            dynamic d = v;
+                            return d.Value;
+                        }
+                    }
+                ), tree.Paths[j]);
+                }
+                ParamDict[name] = dt;
             }
         }
     }

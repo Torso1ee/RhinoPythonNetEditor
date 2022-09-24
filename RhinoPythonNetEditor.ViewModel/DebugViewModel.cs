@@ -34,7 +34,7 @@ namespace RhinoPythonNetEditor.ViewModel
         {
             Locator = locator;
             Locator.ConfigureFinished += (s, e) => Messenger.Register<AllBreakPointInformationsMessage>(this, Receive);
-            currentDir = Directory.GetCurrentDirectory();
+            CurrentDir = Directory.GetParent(typeof(DebugViewModel).Assembly.Location).ToString();
             IsActive = true;
         }
 
@@ -51,7 +51,7 @@ namespace RhinoPythonNetEditor.ViewModel
                 SetProperty(ref isDebuging, value);
             }
         }
-        private string currentDir { get; set; }
+        private string CurrentDir { get; set; }
 
         public ICommand StartDebug => new RelayCommand(() => StartDebugCore(), () => !IsDebuging);
 
@@ -78,6 +78,7 @@ namespace RhinoPythonNetEditor.ViewModel
             set { SetProperty(ref restart, value); }
         }
 
+        public int LineOffset { get; set; }
 
         public ICommand Stop => new RelayCommand(() => debugManager?.Stop());
         public ICommand Continue => new RelayCommand(() => { debugManager?.Continue(); ConfigDone = false; });
@@ -102,15 +103,18 @@ namespace RhinoPythonNetEditor.ViewModel
             var infos = Indicis;
             var code = Messenger.Send<CodeRequestMessage>();
             var guid = Guid.NewGuid();
-            var dir = $@"temp\{guid}\";
+            var dir = CurrentDir + $@"\temp\{guid}\";
             if (!Directory.Exists(dir)) Directory.CreateDirectory(dir);
+            File.Copy(CurrentDir + @"\paramparser.py", dir + @"\paramparser.py");
             SerializeInput(0, $@"{dir}params_data");
             using (var fs = new FileStream($@"{dir}temp.py", FileMode.Create))
             {
-                var bytes = Encoding.UTF8.GetBytes(code.Response);
+                var result = CodeFile(code.Response, $@"{dir}params_data");
+                LineOffset = result.Item1;
+                var bytes = Encoding.UTF8.GetBytes(result.Item2);
                 await fs.WriteAsync(bytes, 0, bytes.Length);
             }
-            var file = currentDir + $@"\{dir}temp.py";
+            var file = $@"{dir}temp.py";
             var script = $@"{PythonPath} -u -m debugpy --listen localhost:{port} --wait-for-client --log-to ~/logs ""{file}""";
             debugManager.DebugEnd += DebugManager_DebugEnd;
             debugManager.Stopped += DebugManager_Stopped;
@@ -211,6 +215,23 @@ namespace RhinoPythonNetEditor.ViewModel
             }
             return i;
         }
+
+        private (int, string) CodeFile(string code, string paramPath)
+        {
+            var sb = new StringBuilder();
+            sb.AppendLine("import paramparser");
+            sb.AppendLine($"prmDict = paramparser.parse_args(r'{CurrentDir}',r'{paramPath}')");
+            int i = 3;
+            foreach (var p in Locator.ComponentHost.Params.Input)
+            {
+                sb.AppendLine($"{p.NickName}=prmDict['{p.NickName}']");
+                i++;
+            }
+            sb.AppendLine(code);
+            i++;
+            return (i,sb.ToString());
+        }
+
         private void SerializeInput(int time, string path)
         {
             GH_LooseChunk chunk = new GH_LooseChunk("params data");
