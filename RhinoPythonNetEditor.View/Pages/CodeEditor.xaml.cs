@@ -18,6 +18,9 @@ using System.Windows.Shapes;
 using System.Xml;
 using RhinoPythonNetEditor.View.Controls;
 using RhinoPythonNetEditor.View.Tools;
+using CommunityToolkit.Mvvm.Messaging;
+using RhinoPythonNetEditor.ViewModel.Messages;
+using RhinoPythonNetEditor.ViewModel;
 
 namespace RhinoPythonNetEditor.View.Pages
 {
@@ -27,6 +30,8 @@ namespace RhinoPythonNetEditor.View.Pages
     public partial class CodeEditor : UserControl
     {
         private Window window;
+        WeakReferenceMessenger messenger;
+
         public CodeEditor()
         {
             InitializeComponent();
@@ -44,7 +49,17 @@ namespace RhinoPythonNetEditor.View.Pages
         private async void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
             await Task.Delay(500);
-            if(window == null) window = (FindResource("windowProxy") as BindingProxy).Data as Window;
+            if (window == null) window = (FindResource("windowProxy") as BindingProxy).Data as Window;
+            if (messenger == null)
+            {
+                messenger = (DataContext as ViewModelLocator).Messenger;
+                messenger.Register<MessageDialogRequestMessage>(this, async (r, m) =>
+                {
+                    var messageBox = new MessageDialog(m.Title, m.Message);
+                    await Dialog.Show(window, messageBox).WaitingForClosed();
+                    m.Reply(true);
+                });
+            }
         }
 
         private void TitleBar_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)

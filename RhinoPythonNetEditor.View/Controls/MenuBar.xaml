@@ -44,6 +44,7 @@
             Style="{StaticResource MenuItemIconStyle}"  
             attach:IconElement.Geometry="{StaticResource ConfirmGeometry}"
             Header="OK"  
+            Command="{Binding Test}"
             HorizontalAlignment="Right"
            DockPanel.Dock="Right"/>
         <MenuItem 

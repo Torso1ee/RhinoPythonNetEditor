@@ -33,6 +33,6 @@
         <WindowChrome UseAeroCaptionButtons="false" NonClientFrameEdges="None"  GlassFrameThickness="0,1,0,0" CaptionHeight="1" />
     </WindowChrome.WindowChrome>
     <Grid>
-        <View:CodeEditor  x:Name="editor"/>
+        <View:CodeEditor  HostInRhino="True" x:Name="editor"/>
     </Grid>
 </Window>

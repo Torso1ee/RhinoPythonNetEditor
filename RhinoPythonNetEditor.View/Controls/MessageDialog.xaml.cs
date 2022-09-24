@@ -1,8 +1,4 @@
-﻿using CommunityToolkit.Mvvm.Messaging;
-using ICSharpCode.AvalonEdit;
-using RhinoPythonNetEditor.View.Tools;
-using RhinoPythonNetEditor.ViewModel;
-using RhinoPythonNetEditor.ViewModel.Messages;
+﻿using RhinoPythonNetEditor.View.Tools;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,15 +17,20 @@ using System.Windows.Shapes;
 namespace RhinoPythonNetEditor.View.Controls
 {
     /// <summary>
-    /// DebugControl.xaml 的交互逻辑
+    /// MessageDialog.xaml 的交互逻辑
     /// </summary>
-    public partial class DebugControl : UserControl
+    public partial class MessageDialog : UserControl
     {
-        public DebugControl()
+        public MessageDialog(string title, string message)
         {
             InitializeComponent();
+            tb.Text = message;
+            lb.Content = title;
         }
 
-      
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            if (VisualParent is Dialog dialog) dialog.IsClosed = true;
+        }
     }
 }
