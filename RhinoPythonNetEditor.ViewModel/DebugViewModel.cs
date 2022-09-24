@@ -123,7 +123,7 @@ namespace RhinoPythonNetEditor.ViewModel
             if (Messenger.Send(new DebugRequestMessage { Port = port, Script = script }))
             {
                 IsDebuging = true;
-                debugManager.Start(infos.ToList(), file);
+                debugManager.Start(infos.Select(i=>i+LineOffset).ToList(), file);
             }
         }
 
@@ -221,14 +221,13 @@ namespace RhinoPythonNetEditor.ViewModel
             var sb = new StringBuilder();
             sb.AppendLine("import paramparser");
             sb.AppendLine($"prmDict = paramparser.parse_args(r'{CurrentDir}',r'{paramPath}')");
-            int i = 3;
+            int i = 2;
             foreach (var p in Locator.ComponentHost.Params.Input)
             {
                 sb.AppendLine($"{p.NickName}=prmDict['{p.NickName}']");
                 i++;
             }
             sb.AppendLine(code);
-            i++;
             return (i,sb.ToString());
         }
 
