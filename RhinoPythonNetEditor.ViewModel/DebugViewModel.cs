@@ -157,14 +157,14 @@ namespace RhinoPythonNetEditor.ViewModel
             CurrentLine = e.Line;
             Stopped = true;
             CurrentStopReason = e.Reason;
-            Messenger.Send(new StepMessage(true) { Line = e.Line });
+            Messenger.Send(new StepMessage(true) { Line = e.Line-LineOffset });
         }
 
         public void Receive(object recipient, AllBreakPointInformationsMessage message)
         {
             Indicis.Clear();
             Indicis.AddRange(message.Value);
-            if (IsDebuging) debugManager.SendBreakPointRequest(Indicis);
+            if (IsDebuging) debugManager.SendBreakPointRequest(Indicis.Select(i=>i+LineOffset).ToList());
         }
 
 
