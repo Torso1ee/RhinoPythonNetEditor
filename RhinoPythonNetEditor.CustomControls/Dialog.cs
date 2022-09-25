@@ -8,9 +8,8 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Media;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.Window;
 
-namespace RhinoPythonNetEditor.View.Tools
+namespace RhinoPythonNetEditor.CustomControls
 {
     public class Dialog : ContentControl
     {
@@ -31,12 +30,14 @@ namespace RhinoPythonNetEditor.View.Tools
         {
             var count = VisualTreeHelper.GetChildrenCount(control);
             AdornerDecorator decorator = null;
+            var bd = VisualTreeHelper.GetChild(control,0);
             for (int i = 0; i < count; i++)
             {
-                var child = VisualTreeHelper.GetChild(control, i);
+                var child = VisualTreeHelper.GetChild(bd, i);
                 if (child is AdornerDecorator ad)
                 {
                     decorator = ad;
+                    break;
                 }
             }
             if (decorator != null)
@@ -65,7 +66,7 @@ namespace RhinoPythonNetEditor.View.Tools
             return null;
         }
      
-        private void Close()
+        public void Close()
         {
             if (decorator != null && container != null)
             {
@@ -88,7 +89,7 @@ namespace RhinoPythonNetEditor.View.Tools
 
     public static class DialogExtension
     {
-        public static Task WaitingForClosed(this Dialog dialog)
+        public static Task<bool> WaitingForClosed(this Dialog dialog)
         {
             var tcs = new TaskCompletionSource<bool>();
             try

@@ -30,7 +30,9 @@
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </UserControl.Resources>
-    <Menu Background="{StaticResource MenuBarBackgroundBrush}" DataContext="{Binding Data.MenuBarViewModel, Source={StaticResource proxy}}" >
+    <Menu Background="{StaticResource MenuBarBackgroundBrush}" DataContext="{Binding Data.MenuBarViewModel, Source={StaticResource proxy}}"
+            IsEnabled="{Binding Data.DebugViewModel.IsDebuging, Source={StaticResource proxy}, Converter={StaticResource InvertConverter}}"
+          >
         <Menu.ItemsPanel>
             <ItemsPanelTemplate>
                 <DockPanel  HorizontalAlignment="Stretch"/>
@@ -44,15 +46,26 @@
             Style="{StaticResource MenuItemIconStyle}"  
             attach:IconElement.Geometry="{StaticResource ConfirmGeometry}"
             Header="OK"  
-            Command="{Binding Test}"
+            HorizontalAlignment="Right"
+           DockPanel.Dock="Right"/>
+        <MenuItem 
+            Style="{StaticResource MenuItemIconStyle}"  
+            attach:IconElement.Geometry="{StaticResource DebugGeometry}"
+            Header="测试"  
+            Command="{Binding Data.DebugViewModel.StartDebug, Source={StaticResource proxy}}"
+            HorizontalAlignment="Right"
+           DockPanel.Dock="Right"/>
+        <MenuItem 
+            Style="{StaticResource MenuItemIconStyle}"  
+            attach:IconElement.Geometry="{StaticResource SettingGeometry}"
+            Header="设置"  
+            Command="{Binding Data.DebugViewModel.Setting, Source={StaticResource proxy}}"
             HorizontalAlignment="Right"
            DockPanel.Dock="Right"/>
         <MenuItem 
             Style="{StaticResource MenuItemIconStyle}"  
             attach:IconElement.Geometry="{StaticResource TestGeometry}"
-            Header="测试"  
-            IsEnabled="{Binding Data.DebugViewModel.IsDebuging, Source={StaticResource proxy}, Converter={StaticResource InvertConverter}}"
-            Command="{Binding Data.DebugViewModel.StartDebug, Source={StaticResource proxy}}"
+            Header="运行"  
             HorizontalAlignment="Right"
            DockPanel.Dock="Right"/>
     </Menu>

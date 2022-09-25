@@ -40,6 +40,23 @@ namespace RhinoPythonNetEditor.ViewModel
 
         private string PythonPath { get; set; } = @"D:\Anaconda\envs\PythonNet\python.exe";
 
+        private int times;
+
+        public int Times
+        {
+            get { return times; }
+            set { SetProperty(ref times, value); }
+        }
+
+        private int time = 1;
+
+        public int Time
+        {
+            get { return time; }
+            set { SetProperty(ref time, value); }
+        }
+
+
 
         private bool isDebuging;
 
@@ -54,6 +71,12 @@ namespace RhinoPythonNetEditor.ViewModel
         private string CurrentDir { get; set; }
 
         public ICommand StartDebug => new RelayCommand(() => StartDebugCore(), () => !IsDebuging);
+
+        public ICommand Setting => new RelayCommand(async () =>
+        {
+            Times = GetIterateCount();
+            await Locator.Messenger.Send(new DebugSettingDialogRequestMessage());
+        });
 
         private bool stopped;
 
@@ -98,6 +121,12 @@ namespace RhinoPythonNetEditor.ViewModel
         private Reason CurrentStopReason { get; set; } = Reason.Unset;
         private async void StartDebugCore()
         {
+            Times = GetIterateCount();
+            if(Time > Times)
+            {
+                await Locator.Messenger.Send(new MessageDialogRequestMessage { Message = $"当前设定迭代次数{Time}超出上限{Times}。", Title = "警告" });
+                return;
+            }
             debugManager = new DebugManager();
             var port = debugManager.NextPort();
             var infos = Indicis;
@@ -106,7 +135,7 @@ namespace RhinoPythonNetEditor.ViewModel
             var dir = CurrentDir + $@"\temp\{guid}\";
             if (!Directory.Exists(dir)) Directory.CreateDirectory(dir);
             File.Copy(CurrentDir + @"\paramparser.py", dir + @"\paramparser.py");
-            SerializeInput(0, $@"{dir}params_data");
+            SerializeInput(Time, $@"{dir}params_data");
             using (var fs = new FileStream($@"{dir}temp.py", FileMode.Create))
             {
                 var result = CodeFile(code.Response, $@"{dir}params_data");
@@ -123,9 +152,9 @@ namespace RhinoPythonNetEditor.ViewModel
             if (Messenger.Send(new DebugRequestMessage { Port = port, Script = script }))
             {
                 IsDebuging = true;
-                debugManager.Start(infos.Select(i=>i+LineOffset).ToList(), file);
+                debugManager.Start(infos.Select(i => i + LineOffset).ToList(), file);
             }
-           
+
         }
 
         private async void DebugManager_DebugEnd(object sender, EventArgs e)
@@ -158,21 +187,21 @@ namespace RhinoPythonNetEditor.ViewModel
             CurrentLine = e.Line;
             Stopped = true;
             CurrentStopReason = e.Reason;
-            Messenger.Send(new StepMessage(true) { Line = e.Line-LineOffset });
+            Messenger.Send(new StepMessage(true) { Line = e.Line - LineOffset });
         }
 
         public void Receive(object recipient, AllBreakPointInformationsMessage message)
         {
             Indicis.Clear();
             Indicis.AddRange(message.Value);
-            if (IsDebuging) debugManager.SendBreakPointRequest(Indicis.Select(i=>i+LineOffset).ToList());
+            if (IsDebuging) debugManager.SendBreakPointRequest(Indicis.Select(i => i + LineOffset).ToList());
         }
 
 
         private int GetIterateCount()
         {
             Type iteratorType = null;
-            int i = 0;
+            int i = 1;
             Assembly grasshopperAssembly = Assembly.GetAssembly(typeof(Grasshopper.Instances));
             foreach (Type type in grasshopperAssembly.GetTypes())
                 if (type.Name == "GH_StructureIterator")
@@ -229,13 +258,13 @@ namespace RhinoPythonNetEditor.ViewModel
                 i++;
             }
             sb.AppendLine(code);
-            return (i,sb.ToString());
+            return (i, sb.ToString());
         }
 
         private void SerializeInput(int time, string path)
         {
             GH_LooseChunk chunk = new GH_LooseChunk("params data");
-            int i = 0;
+            int i = 1;
             Type iteratorType = null;
             Assembly grasshopperAssembly = Assembly.GetAssembly(typeof(Grasshopper.Instances));
             foreach (Type type in grasshopperAssembly.GetTypes())

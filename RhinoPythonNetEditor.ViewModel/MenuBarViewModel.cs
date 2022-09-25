@@ -24,10 +24,6 @@ namespace RhinoPythonNetEditor.ViewModel
             Locator = locator;
         }
 
-        public ICommand Test => new RelayCommand(async () =>
-        {
-            await Locator.Messenger.Send(new MessageDialogRequestMessage { Title = "123", Message = "1234" });
-        });
         private WeakReferenceMessenger Messenger => Locator?.Messenger;
 
         private ViewModelLocator Locator { get; set; }

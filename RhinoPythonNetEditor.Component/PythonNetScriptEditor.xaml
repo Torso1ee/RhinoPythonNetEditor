@@ -11,12 +11,22 @@
         xmlns:behaviors="clr-namespace:RhinoPythonNetEditor.Styling.Behaviors;assembly=RhinoPythonNetEditor.Styling"
         mc:Ignorable="d"
         Topmost="True"
+        MinWidth="400"
+         PreviewMouseLeftButtonDown="Window_PreviewMouseLeftButtonDown"
+        ShowInTaskbar="False"
         SnapsToDevicePixels="True"
         Background="#99D3D3D3"
         Title="MainWindow" Height="800" Width="800">
     <i:Interaction.Behaviors>
         <behaviors:WindowAeroStyleBehavior x:Name="aero" Enabled="True"/>
     </i:Interaction.Behaviors>
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/RhinoPythonNetEditor.View;component/ViewDictionary.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Window.Resources>
     <Window.DataContext>
         <vm:ViewModelLocator/>
     </Window.DataContext>

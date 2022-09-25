@@ -21,6 +21,8 @@ using RhinoPythonNetEditor.View.Tools;
 using CommunityToolkit.Mvvm.Messaging;
 using RhinoPythonNetEditor.ViewModel.Messages;
 using RhinoPythonNetEditor.ViewModel;
+using RhinoPythonNetEditor.CustomControls;
+using RhinoPythonNetEditor.View.Dialogs;
 
 namespace RhinoPythonNetEditor.View.Pages
 {
@@ -53,11 +55,17 @@ namespace RhinoPythonNetEditor.View.Pages
             if (messenger == null)
             {
                 messenger = (DataContext as ViewModelLocator).Messenger;
-                messenger.Register<MessageDialogRequestMessage>(this, async (r, m) =>
+                messenger.Register<MessageDialogRequestMessage>(this, (r, m) =>
                 {
                     var messageBox = new MessageDialog(m.Title, m.Message);
-                    await Dialog.Show(window, messageBox).WaitingForClosed();
-                    m.Reply(true);
+                    var t = Dialog.Show(window, messageBox).WaitingForClosed();
+                    m.Reply(t);
+                });
+                messenger.Register<DebugSettingDialogRequestMessage>(this, (r, m) =>
+                {
+                    var messageBox = new DebugSetting();
+                    var t = Dialog.Show(window, messageBox).WaitingForClosed();
+                    m.Reply(t);
                 });
             }
         }

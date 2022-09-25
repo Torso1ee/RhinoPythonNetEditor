@@ -1,4 +1,5 @@
-﻿using RhinoPythonNetEditor.View.Tools;
+﻿using RhinoPythonNetEditor.CustomControls;
+using RhinoPythonNetEditor.View.Tools;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,7 +15,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace RhinoPythonNetEditor.View.Controls
+namespace RhinoPythonNetEditor.View.Dialogs
 {
     /// <summary>
     /// MessageDialog.xaml 的交互逻辑
@@ -30,7 +31,7 @@ namespace RhinoPythonNetEditor.View.Controls
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            if (VisualParent is Dialog dialog) dialog.IsClosed = true;
+            if (Parent is Dialog dialog) dialog.Close();
         }
     }
 }

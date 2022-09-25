@@ -96,7 +96,10 @@
     <Compile Include="Controls\MenuBar.xaml.cs">
       <DependentUpon>MenuBar.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\MessageDialog.xaml.cs">
+    <Compile Include="Dialogs\DebugSetting.xaml.cs">
+      <DependentUpon>DebugSetting.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\MessageDialog.xaml.cs">
       <DependentUpon>MessageDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\TerminalControl.xaml.cs">
@@ -123,7 +126,6 @@
     </Compile>
     <Compile Include="Tools\BindingProxy.cs" />
     <Compile Include="Tools\BreakPointMargin.cs" />
-    <Compile Include="Tools\Dialog.cs" />
     <Compile Include="Tools\PythonFoldingStrategy.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -137,6 +139,10 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\RhinoPythonNetEditor.CustomControls\RhinoPythonNetEditor.CustomControls.csproj">
+      <Project>{3e401e80-504f-4482-aaef-fd7af317f22f}</Project>
+      <Name>RhinoPythonNetEditor.CustomControls</Name>
+    </ProjectReference>
     <ProjectReference Include="..\RhinoPythonNetEditor.DataModels\RhinoPythonNetEditor.DataModels.csproj">
       <Project>{d295e2f0-fb3a-4b51-be94-c81c59cecfc0}</Project>
       <Name>RhinoPythonNetEditor.DataModels</Name>
@@ -171,7 +177,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Controls\MessageDialog.xaml">
+    <Page Include="Dialogs\DebugSetting.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Dialogs\MessageDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

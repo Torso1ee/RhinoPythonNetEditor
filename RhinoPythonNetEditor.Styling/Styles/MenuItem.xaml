@@ -3,7 +3,10 @@
                     xmlns:attach="clr-namespace:RhinoPythonNetEditor.Styling.Attach">
 
     <!--Brush-->
-    <Color  x:Key="MenuItemActiveColor">#19E9E9E9</Color> 
+    <Color  x:Key="MenuItemActiveColor">#19E9E9E9</Color>
+
+
+    
     <SolidColorBrush  x:Key="MenuItemTextActiveBrush" Color="#FFC6C6C6"/>
     <LinearGradientBrush x:Key="MenuItemIconBrush"  EndPoint="0.5,1" StartPoint="0.5,0">
         <GradientStop Color="White"/>

@@ -101,6 +101,7 @@
     <Compile Include="Messages\AllBreakPointInformationsMessage.cs" />
     <Compile Include="Messages\CodeRequestMessage.cs" />
     <Compile Include="Messages\DebugRequestMessage.cs" />
+    <Compile Include="Messages\DebugSettingDialogRequestMessage.cs" />
     <Compile Include="Messages\MessageDialogRequestMessage.cs" />
     <Compile Include="Messages\StepMessage.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

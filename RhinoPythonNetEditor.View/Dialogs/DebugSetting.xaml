@@ -1,0 +1,62 @@
+﻿<UserControl x:Class="RhinoPythonNetEditor.View.Dialogs.DebugSetting"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:RhinoPythonNetEditor.View.Dialogs"
+             xmlns:tools="clr-namespace:RhinoPythonNetEditor.View.Tools"
+             xmlns:attach="clr-namespace:RhinoPythonNetEditor.Styling.Attach;assembly=RhinoPythonNetEditor.Styling"
+             mc:Ignorable="d" 
+             Width="300" Height="Auto">
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <tools:BindingProxy x:Key="proxy" Data="{Binding}"/>
+            <Style TargetType="{x:Type Button}" BasedOn="{StaticResource  IconButtonStyle}">
+                <Setter Property="Width" Value="45"/>
+                <Setter Property="Height" Value="30"/>
+                <Setter Property="attach:IconElement.Height" Value="15"/>
+                <Setter Property="attach:IconElement.Width" Value="15"/>
+                <Setter Property="Background" Value="Transparent"/>
+                <Setter Property="Foreground" Value="{StaticResource ButtonForegroundBrush}"/>
+            </Style>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/RhinoPythonNetEditor.View;component/ViewDictionary.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </UserControl.Resources>
+    <Border CornerRadius="5" Background="White" Effect="{StaticResource  CmdDropShadowEffect}"  DataContext="{Binding Data.DebugViewModel, Source={StaticResource proxy}}">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="30"/>
+                <RowDefinition Height="60" />
+                <RowDefinition Height="40" />
+            </Grid.RowDefinitions>
+            <Border Background="{StaticResource TitleBarBrush}" CornerRadius="5,5,0,0">
+                <Grid>
+                    <StackPanel Orientation="Horizontal">
+                        <Path Margin="10,0,0,0" Height="20" Stretch="Uniform" Data="{StaticResource SettingGeometry}" Fill="{StaticResource   TitleBarBrush}"/>
+                        <Label x:Name="lb" Content="调试设置" HorizontalAlignment="Left"/>
+                    </StackPanel>
+                    <Button  HorizontalAlignment="Right" attach:IconElement.Geometry="{StaticResource CloseGeometry}" Click="Button_Click"/>
+                </Grid>
+            </Border>
+            <Border  Grid.Row="1"  Background="{StaticResource ActiveBrush}" >
+                <StackPanel Orientation="Vertical">
+                    <TextBlock Margin="5" TextBlock.TextWrapping="Wrap"  Background="{StaticResource ActiveBrush}" >
+                        <TextBlock.Text>
+                            注意：调试功能只针对某一次迭代，需要自行设定某一次的迭代轮次,默认调试第一次迭代。
+                        </TextBlock.Text>
+                    </TextBlock>
+                    <TextBlock Margin="5,0" Text="{Binding Times, StringFormat=当前迭代次数上限为{0}}" Background="{StaticResource ActiveBrush}" />
+                </StackPanel>
+            </Border>
+            <Border  Grid.Row="2"  Background="{StaticResource ActiveBrush}" CornerRadius="0,0,5,5" >
+                <StackPanel Orientation="Horizontal">
+                    <Label Content="选择当前迭代轮次："/>
+                    <TextBox Style="{StaticResource TextBoxBaseStyle}" Margin="0,5" Height="20" Text="{Binding Time, UpdateSourceTrigger=PropertyChanged}"/>
+                </StackPanel>
+            </Border>
+
+        </Grid>
+    </Border>
+</UserControl>
