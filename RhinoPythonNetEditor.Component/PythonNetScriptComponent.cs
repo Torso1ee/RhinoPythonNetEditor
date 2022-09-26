@@ -1,12 +1,18 @@
 using Grasshopper;
+using Grasshopper.GUI.Script;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Parameters;
 using Grasshopper.Kernel.Parameters.Hints;
 using Microsoft.Extensions.DependencyInjection;
 using Rhino.Geometry;
+using Rhino.Runtime;
 using RhinoPythonNetEditor.ViewModel;
 using System;
+using System.CodeDom.Compiler;
+using System.Collections;
 using System.Collections.Generic;
+using System.IO;
+using System.Reflection;
 
 namespace RhinoPythonNetEditor.Component
 {
@@ -24,7 +30,7 @@ namespace RhinoPythonNetEditor.Component
             "PythonNetScriptComponent provides editing and debugging cpython code in Rhino. PythonNet Script also supports interoperating with .Net library.",
             "Maths", "Script")
         {
-          
+
         }
 
         internal void SetWindow()
@@ -213,6 +219,235 @@ namespace RhinoPythonNetEditor.Component
 
         public string TooltipText { get; internal set; }
         public string TooltipDesc { get; internal set; }
+
+        internal CompiledScript ScriptAssembly { get; set; }
+        private IGH_ScriptInstance GetScriptInstance()
+        {
+            IGH_ScriptInstance instance;
+            if (this.ScriptAssembly != null)
+            {
+                if (this.ScriptAssembly.Instance == null)
+                {
+                    if (this.ScriptAssembly.Type == null)
+                    {
+                        this.ScriptAssembly = null;
+                    }
+                    else
+                    {
+                        object obj2 = Activator.CreateInstance(this.ScriptAssembly.Type);
+                        if (obj2 != null)
+                        {
+                            this.ScriptAssembly.Instance = (IGH_ScriptInstance)obj2;
+                            instance = this.ScriptAssembly.Instance;
+                        }
+                        else
+                        {
+                            this.AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Script instance cannot be constructed.");
+                            this.ScriptAssembly = null;
+                            instance = null;
+                        }
+                        return instance;
+                    }
+                }
+                else
+                {
+                    return this.ScriptAssembly.Instance;
+                }
+            }
+            if (this.ScriptSource == null)
+            {
+                this.ScriptAssembly = null;
+                instance = null;
+            }
+            else if (this.ScriptSource.IsEmpty)
+            {
+                this.AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "No code supplied");
+                this.ScriptAssembly = null;
+                instance = null;
+            }
+            else
+            {
+                Type type = this.CreateScriptType(this.ScriptSource);
+                if (type == null)
+                {
+                    instance = null;
+                }
+                else
+                {
+                    this.ScriptAssembly = new CompiledScript(type);
+                    if (this.ScriptAssembly.Instance != null)
+                    {
+                        instance = this.ScriptAssembly.Instance;
+                    }
+                    else
+                    {
+                        this.AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Script instance is a null reference");
+                        this.ScriptAssembly = null;
+                        instance = null;
+                    }
+                }
+            }
+            return instance;
+        }
+
+        private static readonly SortedDictionary<Guid, List<string>> CachedFailures = new SortedDictionary<Guid, List<string>>();
+        private readonly List<string> _compilerErrors = new List<string>();
+        private static readonly SortedDictionary<Guid, Type> CachedAssemblies;
+        private ScriptSource ScriptSource { get; } = new ScriptSource();
+        private Type CreateScriptType(ScriptSource source)
+        {
+            Type type;
+            this._compilerErrors.Clear();
+            if (source.IsEmpty)
+            {
+                type = null;
+            }
+            else
+            {
+                Guid key = this.ComputeScriptHash(source);
+                if (CachedAssemblies.ContainsKey(key))
+                {
+                    type = CachedAssemblies[key];
+                }
+                else if (CachedFailures.ContainsKey(key))
+                {
+                    List<string> collection = CachedFailures[key];
+                    if (collection != null)
+                    {
+                        this._compilerErrors.AddRange(collection);
+                    }
+                    type = null;
+                }
+                else
+                {
+                    IEnumerator enumerator;
+                    if (source.References != null)
+                    {
+                        List<string>.Enumerator enumerator;
+                        try
+                        {
+                            enumerator = source.References.GetEnumerator();
+                            while (enumerator.MoveNext())
+                            {
+                                AssemblyResolver.AddSearchFile(enumerator.Current);
+                            }
+                        }
+                        finally
+                        {
+                            enumerator.Dispose();
+                        }
+                    }
+                    string str = this.CreateSourceForCompile(source);
+                    str = this.ClearTemplateTags(str);
+                    CompilerResults results = this.CompileSource(str);
+                    try
+                    {
+                        enumerator = results.Errors.GetEnumerator();
+                        while (enumerator.MoveNext())
+                        {
+                            CompilerError current = (CompilerError)enumerator.Current;
+                            if (!IgnoreWarning(current))
+                            {
+                                List<string>.Enumerator enumerator;
+                                List<string> list2 = GH_CodeBlocks.StringSplit(Environment.NewLine, current.ErrorText);
+                                string format = "Error ({0}): {1}";
+                                if (current.IsWarning)
+                                {
+                                    format = "Warning ({0}): {1}";
+                                }
+                                if (current.Line > 0)
+                                {
+                                    format = format + string.Format(" (line {0})", current.Line);
+                                }
+                                try
+                                {
+                                    enumerator = list2.GetEnumerator();
+                                    while (enumerator.MoveNext())
+                                    {
+                                        string str3 = enumerator.Current;
+                                        this._compilerErrors.Add(string.Format(format, current.ErrorNumber, str3));
+                                    }
+                                }
+                                finally
+                                {
+                                    enumerator.Dispose();
+                                }
+                            }
+                        }
+                    }
+                    finally
+                    {
+                        if (enumerator is IDisposable)
+                        {
+                            (enumerator as IDisposable).Dispose();
+                        }
+                    }
+                    if (results.Errors.HasErrors)
+                    {
+                        if (!CachedFailures.ContainsKey(key))
+                        {
+                            CachedFailures.Add(key, new List<string>(this._compilerErrors));
+                        }
+                        type = null;
+                    }
+                    else
+                    {
+                        Assembly compiledAssembly = results.CompiledAssembly;
+                        if (compiledAssembly == null)
+                        {
+                            this.AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Assembly was not properly compiled");
+                            type = null;
+                        }
+                        else
+                        {
+                            Type type2 = compiledAssembly.GetType("Script_Instance");
+                            if (type2 == null)
+                            {
+                                this.AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Custom type could not be found in assembly");
+                                type = null;
+                            }
+                            else
+                            {
+                                if (!CachedAssemblies.ContainsKey(key))
+                                {
+                                    CachedAssemblies.Add(key, type2);
+                                }
+                                type = type2;
+                            }
+                        }
+                    }
+                }
+            }
+            return type;
+        }
+
+        private Guid ComputeScriptHash(ScriptSource source)
+        {
+            if (source == null)
+            {
+                throw new ArgumentNullException("source");
+            }
+            if (this.Params == null)
+            {
+                throw new NullReferenceException("Params field is unset");
+            }
+            MemoryStream output = new MemoryStream();
+            BinaryWriter writer = new BinaryWriter(output);
+            source.WriteHashData(writer);
+            foreach (IGH_Param param in this.Params.Input)
+            {
+                GH_ComponentParamServer.WriteParamHashData(writer, param, GH_ParamHashFields.TypeHint | GH_ParamHashFields.Expression | GH_ParamHashFields.PersistentData | GH_ParamHashFields.TypeId | GH_ParamHashFields.Access | GH_ParamHashFields.NickName);
+            }
+            int num = this.Params.Output.Count - 1;
+            for (int i = 1; i <= num; i++)
+            {
+                GH_ComponentParamServer.WriteParamHashData(writer, this.Params.Output[i], GH_ParamHashFields.NickName);
+            }
+            writer.Close();
+            output.Dispose();
+            return GH_Convert.ToSHA_Hash(output);
+        }
+
 
     }
 }
