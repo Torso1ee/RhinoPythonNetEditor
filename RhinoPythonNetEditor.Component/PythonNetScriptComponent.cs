@@ -1,16 +1,25 @@
+using Eto.Forms;
 using Grasshopper;
 using Grasshopper.GUI.Script;
 using Grasshopper.Kernel;
+using Grasshopper.Kernel.Data;
 using Grasshopper.Kernel.Parameters;
 using Grasshopper.Kernel.Parameters.Hints;
+using Grasshopper.Kernel.Types;
+using Microsoft.CSharp;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.VisualBasic.CompilerServices;
+using Python.Runtime;
+using Rhino;
 using Rhino.Geometry;
 using Rhino.Runtime;
+using Rhino.Runtime.InProcess;
 using RhinoPythonNetEditor.ViewModel;
 using System;
 using System.CodeDom.Compiler;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 
@@ -31,6 +40,24 @@ namespace RhinoPythonNetEditor.Component
             "Maths", "Script")
         {
 
+        }
+
+        public static bool IsPythonInitialized { get; set; } = false;
+
+        public static void PythonInitialized()
+        {
+            var pathToBaseEnv = @"D:\Anaconda\envs\PythonNet";
+            Runtime.PythonDLL = pathToBaseEnv + @"\python38.dll";
+            PythonEngine.PythonHome = pathToBaseEnv;
+            Environment.SetEnvironmentVariable("PATH", $@"{pathToBaseEnv}\Library\bin", EnvironmentVariableTarget.Process);
+            PythonEngine.Initialize();
+            Rhino.RhinoApp.Closing += RhinoApp_Closing;
+            IsPythonInitialized = true;
+        }
+
+        private static void RhinoApp_Closing(object sender, EventArgs e)
+        {
+            RhinoApp.InvokeOnUiThread(new Action(() => PythonEngine.Shutdown()));
         }
 
         internal void SetWindow()
@@ -86,6 +113,10 @@ namespace RhinoPythonNetEditor.Component
             this.VariableParameterMaintenance();
         }
 
+        protected override void BeforeSolveInstance()
+        {
+            if (!IsPythonInitialized) PythonInitialized();
+        }
 
         /// <summary>
         /// This is the method that actually does the work.
@@ -94,8 +125,160 @@ namespace RhinoPythonNetEditor.Component
         /// to store data in output parameters.</param>
         protected override void SolveInstance(IGH_DataAccess DA)
         {
+            if (HasOutParameter) DA.DisableGapLogic(0);
+            IGH_ScriptInstance scriptInstance = GetScriptInstance();
+            if (DA.Iteration == 0 && compilerErrors.Count > 0)
+            {
+                foreach (string str in compilerErrors)
+                {
+                    if (str.StartsWith("Error", StringComparison.OrdinalIgnoreCase))
+                    {
+                        AddRuntimeMessage(GH_RuntimeMessageLevel.Error, str);
+                    }
+                    if (str.StartsWith("Warning", StringComparison.OrdinalIgnoreCase))
+                    {
+                        AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, str);
+                    }
+                }
+                if (HasOutParameter)
+                {
+                    DA.SetDataList(0, compilerErrors);
+                }
+            }
+            if (scriptInstance != null)
+            {
+                List<object> inputs = new List<object>();
+                var count = Params.Input.Count;
+                for (int i = 0; i < count; i++)
+                {
+                    GH_ParamAccess access = this.Params.Input[i].Access;
+                    switch (access)
+                    {
+                        case GH_ParamAccess.item:
+                            inputs.Add(this.GetItemFromParameter(DA, i));
+                            break;
+
+                        case GH_ParamAccess.list:
+                            inputs.Add(this.GetListFromParameter(DA, i));
+                            break;
+
+                        case GH_ParamAccess.tree:
+                            inputs.Add(this.GetTreeFromParameter(DA, i));
+                            break;
+                        default:
+                            break;
+                    }
+                }
+                try
+                {
+                    scriptInstance.InvokeRunScript(this, RhinoDoc.ActiveDoc, DA.Iteration, inputs, DA);
+                }
+                catch (Exception exception)
+                {
+                    Exception ex = exception;
+                    ProjectData.SetProjectError(ex);
+                    Exception e = ex;
+                    if (HasOutParameter)
+                    {
+                        StackTrace trace = new StackTrace(e, true);
+                        if (trace.FrameCount == 0)
+                        {
+                            DA.SetData(0, string.Format("error: {0} (no line number available, sorry)", e.Message));
+                            AddRuntimeMessage(GH_RuntimeMessageLevel.Error, e.Message);
+                        }
+                        else
+                        {
+                            StackFrame frame = trace.GetFrame(0);
+                            DA.SetData(0, string.Format("error: {0} (line: {1})", e.Message, frame.GetFileLineNumber()));
+                            AddRuntimeMessage(GH_RuntimeMessageLevel.Error, string.Format("{0} (line: {1})", e.Message, frame.GetFileLineNumber()));
+                        }
+                    }
+                    HostUtils.ExceptionReport(e);
+                    ProjectData.ClearProjectError();
+                }
+            }
 
         }
+
+        private object GetTreeFromParameter(IGH_DataAccess access, int index)
+        {
+            GH_Structure<IGH_Goo> structure = new GH_Structure<IGH_Goo>();
+            access.GetDataTree<IGH_Goo>(index, out structure);
+            IGH_TypeHint typeHint = ((Param_ScriptVariable)this.Params.Input[index]).TypeHint;
+            DataTree<object> tree = new DataTree<object>();
+            int num = structure.PathCount - 1;
+            int num2 = 0;
+            while (num2 <= num)
+            {
+                GH_Path path = structure.get_Path(num2);
+                List<IGH_Goo> list = structure.Branches[num2];
+                List<object> data = new List<object>();
+                int num3 = list.Count - 1;
+                int num4 = 0;
+                while (true)
+                {
+                    if (num4 > num3)
+                    {
+                        tree.AddRange(data, path);
+                        num2++;
+                        break;
+                    }
+                    data.Add(this.TypeCast(list[num4], typeHint));
+                    num4++;
+                }
+            }
+            return tree;
+        }
+
+        private object GetListFromParameter(IGH_DataAccess access, int index)
+        {
+            List<IGH_Goo> list = new List<IGH_Goo>();
+            access.GetDataList<IGH_Goo>(index, list);
+            IGH_TypeHint typeHint = ((Param_ScriptVariable)this.Params.Input[index]).TypeHint;
+            List<object> list2 = new List<object>();
+            int num = list.Count - 1;
+            for (int i = 0; i <= num; i++)
+            {
+                list2.Add(this.TypeCast(list[i], typeHint));
+            }
+            return list2;
+        }
+
+
+        private object GetItemFromParameter(IGH_DataAccess access, int index)
+        {
+            IGH_Goo destination = null;
+            access.GetData<IGH_Goo>(index, ref destination);
+            return this.TypeCast(destination, index);
+        }
+
+        private object TypeCast(IGH_Goo data, int index)
+        {
+            Param_ScriptVariable variable = (Param_ScriptVariable)this.Params.Input[index];
+            return this.TypeCast(data, variable.TypeHint);
+        }
+
+        private object TypeCast(IGH_Goo data, IGH_TypeHint hint)
+        {
+            object obj;
+            if (data == null)
+            {
+                obj = null;
+            }
+            else if (hint == null)
+            {
+                obj = data.ScriptVariable();
+            }
+            else
+            {
+                object obj1 = data.ScriptVariable();
+                object target = null;
+                hint.Cast(obj1, out target);
+                obj = target;
+            }
+            return obj;
+        }
+
 
         public bool CanInsertParameter(GH_ParameterSide side, int index)
         {
@@ -291,13 +474,13 @@ namespace RhinoPythonNetEditor.Component
         }
 
         private static readonly SortedDictionary<Guid, List<string>> CachedFailures = new SortedDictionary<Guid, List<string>>();
-        private readonly List<string> _compilerErrors = new List<string>();
-        private static readonly SortedDictionary<Guid, Type> CachedAssemblies;
+        private readonly List<string> compilerErrors = new List<string>();
+        private static readonly SortedDictionary<Guid, Type> CachedAssemblies = new SortedDictionary<Guid, Type>();
         private ScriptSource ScriptSource { get; } = new ScriptSource();
         private Type CreateScriptType(ScriptSource source)
         {
             Type type;
-            this._compilerErrors.Clear();
+            this.compilerErrors.Clear();
             if (source.IsEmpty)
             {
                 type = null;
@@ -314,79 +497,42 @@ namespace RhinoPythonNetEditor.Component
                     List<string> collection = CachedFailures[key];
                     if (collection != null)
                     {
-                        this._compilerErrors.AddRange(collection);
+                        this.compilerErrors.AddRange(collection);
                     }
                     type = null;
                 }
                 else
                 {
-                    IEnumerator enumerator;
-                    if (source.References != null)
-                    {
-                        List<string>.Enumerator enumerator;
-                        try
-                        {
-                            enumerator = source.References.GetEnumerator();
-                            while (enumerator.MoveNext())
-                            {
-                                AssemblyResolver.AddSearchFile(enumerator.Current);
-                            }
-                        }
-                        finally
-                        {
-                            enumerator.Dispose();
-                        }
-                    }
+                    foreach (var path in source.References) AssemblyResolver.AddSearchFile(path);
                     string str = this.CreateSourceForCompile(source);
-                    str = this.ClearTemplateTags(str);
                     CompilerResults results = this.CompileSource(str);
-                    try
+                    foreach (var error in results.Errors)
                     {
-                        enumerator = results.Errors.GetEnumerator();
-                        while (enumerator.MoveNext())
+                        var cError = error as CompilerError;
+                        if (!IgnoreWarning(cError))
                         {
-                            CompilerError current = (CompilerError)enumerator.Current;
-                            if (!IgnoreWarning(current))
+                            List<string> list2 = GH_CodeBlocks.StringSplit(Environment.NewLine, cError.ErrorText);
+                            string format = "Error ({0}): {1}";
+                            if (cError.IsWarning)
                             {
-                                List<string>.Enumerator enumerator;
-                                List<string> list2 = GH_CodeBlocks.StringSplit(Environment.NewLine, current.ErrorText);
-                                string format = "Error ({0}): {1}";
-                                if (current.IsWarning)
-                                {
-                                    format = "Warning ({0}): {1}";
-                                }
-                                if (current.Line > 0)
-                                {
-                                    format = format + string.Format(" (line {0})", current.Line);
-                                }
-                                try
-                                {
-                                    enumerator = list2.GetEnumerator();
-                                    while (enumerator.MoveNext())
-                                    {
-                                        string str3 = enumerator.Current;
-                                        this._compilerErrors.Add(string.Format(format, current.ErrorNumber, str3));
-                                    }
-                                }
-                                finally
-                                {
-                                    enumerator.Dispose();
-                                }
+                                format = "Warning ({0}): {1}";
                             }
+                            if (cError.Line > 0)
+                            {
+                                format = format + string.Format(" (line {0})", cError.Line);
+                            }
+
+                            foreach (var er in list2)
+                                this.compilerErrors.Add(string.Format(format, cError.ErrorNumber, er));
+
                         }
                     }
-                    finally
-                    {
-                        if (enumerator is IDisposable)
-                        {
-                            (enumerator as IDisposable).Dispose();
-                        }
-                    }
+
                     if (results.Errors.HasErrors)
                     {
                         if (!CachedFailures.ContainsKey(key))
                         {
-                            CachedFailures.Add(key, new List<string>(this._compilerErrors));
+                            CachedFailures.Add(key, new List<string>(this.compilerErrors));
                         }
                         type = null;
                     }
@@ -421,6 +567,76 @@ namespace RhinoPythonNetEditor.Component
             return type;
         }
 
+        private CompilerResults CompileSource(string str)
+        {
+            string[] sources = new string[] { str };
+            return new CSharpCodeProvider().CompileAssemblyFromSource(ScriptAssemblyCompilerParameters(), sources);
+
+        }
+
+        private CompilerParameters ScriptAssemblyCompilerParameters()
+        {
+            CompilerParameters parameters = new CompilerParameters
+            {
+                OutputAssembly = Path.GetTempPath() + Guid.NewGuid().ToString() + ".dll",
+                GenerateExecutable = false,
+                GenerateInMemory = false,
+                IncludeDebugInformation = true,
+                TreatWarningsAsErrors = false,
+                WarningLevel = 4
+            };
+            foreach (string str in GH_ScriptEditor.DefaultAssemblyLocations())
+            {
+                parameters.ReferencedAssemblies.Add(str);
+            }
+            Assembly assembly = null;
+            try
+            {
+                assembly = Assembly.Load("Microsoft.CSharp");
+            }
+            catch (Exception exception1)
+            {
+                Exception ex = exception1;
+                ProjectData.SetProjectError(ex);
+                HostUtils.ExceptionReport(ex);
+                ProjectData.ClearProjectError();
+            }
+            if (assembly != null)
+            {
+                parameters.ReferencedAssemblies.Add(assembly.Location);
+            }
+            if ((this.ScriptSource != null) && (this.ScriptSource.References != null))
+            {
+                foreach (var reference in ScriptSource.References)
+                {
+                    if (File.Exists(reference))
+                    {
+                        try
+                        {
+                            Assembly.LoadFile(reference);
+                            parameters.ReferencedAssemblies.Add(reference);
+                        }
+                        catch (Exception exception3)
+                        {
+                            Exception ex = exception3;
+                            ProjectData.SetProjectError(ex);
+                            Exception exception2 = ex;
+                            Tracing.Assert(new Guid("{800AF1E3-DFA1-420a-BA06-A7E1A5CEF8F4}"), "Referenced Assembly failed to load: " + reference);
+                            ProjectData.ClearProjectError();
+                        }
+                    }
+                }
+            }
+            return parameters;
+        }
+
+
+
+        private string CreateSourceForCompile(ScriptSource source)
+        {
+            throw new NotImplementedException();
+        }
+
         private Guid ComputeScriptHash(ScriptSource source)
         {
             if (source == null)
@@ -448,6 +664,61 @@ namespace RhinoPythonNetEditor.Component
             return GH_Convert.ToSHA_Hash(output);
         }
 
+        public override void AddedToDocument(GH_Document document)
+        {
+            Params.ParameterChanged -= ParameterChanged;
+            Params.ParameterChanged += ParameterChanged;
+        }
+
+
+        private void ParameterChanged(object sender, GH_ParamServerEventArgs e)
+        {
+            switch (e.OriginalArguments.Type)
+            {
+                case GH_ObjectEventType.NickName:
+                case GH_ObjectEventType.Icon:
+                case GH_ObjectEventType.IconDisplayMode:
+                case GH_ObjectEventType.Sources:
+                case GH_ObjectEventType.Selected:
+                case GH_ObjectEventType.Enabled:
+                case GH_ObjectEventType.Preview:
+                case GH_ObjectEventType.PersistentData:
+                case GH_ObjectEventType.DataMapping:
+                    break;
+
+                case GH_ObjectEventType.NickNameAccepted:
+                    this.ScriptAssembly = null;
+                    this.ExpireSolution(true);
+                    return;
+
+                default:
+                    this.ScriptAssembly = null;
+                    this.ExpireSolution(true);
+                    break;
+            }
+        }
+
+        private static readonly SortedDictionary<string, bool> IgnoreWarnings;
+        public static bool IgnoreWarning(string warning)
+        {
+            if (IgnoreWarnings.Count == 0)
+            {
+                GH_SettingsServer server = new GH_SettingsServer("grasshopper_ignorewarnings");
+                if (server.Count == 0)
+                {
+                    server.SetValue("CS1702");
+                    server.WritePersistentSettings();
+                }
+                foreach (var name in server.EntryNames())
+                    IgnoreWarnings.Add(name, true);
+            }
+            return IgnoreWarnings.ContainsKey(warning);
+        }
+
+        public static bool IgnoreWarning(CompilerError warning)
+        {
+            return (warning.IsWarning ? IgnoreWarning(warning.ErrorNumber) : false);
+        }
 
     }
 }

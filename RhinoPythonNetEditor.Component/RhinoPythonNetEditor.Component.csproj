@@ -25,6 +25,7 @@
     <PackageReference Include="Grasshopper" Version="7.13.21348.13001" IncludeAssets="compile;build" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="6.0.0" />
     <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.39" />
+    <PackageReference Include="pythonnet" Version="3.0.0-rc6" />
     <PackageReference Include="Rhino.Inside" Version="7.0.0" />
   </ItemGroup>
   
@@ -33,6 +34,11 @@
     <ProjectReference Include="..\RhinoPythonNetEditor.Styling\RhinoPythonNetEditor.Styling.csproj" />
     <ProjectReference Include="..\RhinoPythonNetEditor.ViewModel\RhinoPythonNetEditor.ViewModel.csproj" />
     <ProjectReference Include="..\RhinoPythonNetEditor.View\RhinoPythonNetEditor.View.csproj" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <Reference Include="Microsoft.VisualBasic" />
+    <Reference Include="System.Windows.Forms" />
   </ItemGroup>
   
   <PropertyGroup Condition="$(Configuration) == 'Debug' AND $([MSBuild]::IsOSPlatform(Windows))">
