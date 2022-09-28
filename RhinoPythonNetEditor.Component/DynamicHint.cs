@@ -12,7 +12,7 @@ namespace RhinoPythonNetEditor.Component
     {
         public Guid HintID => new Guid("{6A184B65-BAA3-42d1-1234-3915B401DE53}");
 
-        public string TypeName => "Dynamic";
+        public string TypeName => "dynamic";
 
         public bool Cast(object data, out object target)
         {

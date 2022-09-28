@@ -197,7 +197,7 @@ namespace RhinoPythonNetEditor.ViewModel
             if (IsDebuging) debugManager.SendBreakPointRequest(Indicis.Select(i => i + LineOffset).ToList());
         }
 
-
+      
         private int GetIterateCount()
         {
             Type iteratorType = null;

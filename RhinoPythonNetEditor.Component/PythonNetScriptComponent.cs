@@ -19,6 +19,7 @@ using System;
 using System.CodeDom.Compiler;
 using System.Collections;
 using System.Collections.Generic;
+using System.Configuration.Assemblies;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
@@ -39,17 +40,23 @@ namespace RhinoPythonNetEditor.Component
             "PythonNetScriptComponent provides editing and debugging cpython code in Rhino. PythonNet Script also supports interoperating with .Net library.",
             "Maths", "Script")
         {
-
+            ScriptSource.References.Add(AssemblyPath + @"\Python.Runtime.dll");
+            ScriptSource = new ScriptSource(this);
         }
 
         public static bool IsPythonInitialized { get; set; } = false;
 
         public static void PythonInitialized()
         {
+            AssemblyPath = Path.GetDirectoryName(typeof(PythonNetScriptComponent).Assembly.Location);
+            var p = AssemblyPath + @"\compiled";
+            if (!Directory.Exists(p)) Directory.CreateDirectory(p);
+            CompiledPath = p;
             var pathToBaseEnv = @"D:\Anaconda\envs\PythonNet";
             Runtime.PythonDLL = pathToBaseEnv + @"\python38.dll";
             PythonEngine.PythonHome = pathToBaseEnv;
             Environment.SetEnvironmentVariable("PATH", $@"{pathToBaseEnv}\Library\bin", EnvironmentVariableTarget.Process);
+            Environment.SetEnvironmentVariable("PATH", p, EnvironmentVariableTarget.Process);
             PythonEngine.Initialize();
             Rhino.RhinoApp.Closing += RhinoApp_Closing;
             IsPythonInitialized = true;
@@ -60,9 +67,12 @@ namespace RhinoPythonNetEditor.Component
             RhinoApp.InvokeOnUiThread(new Action(() => PythonEngine.Shutdown()));
         }
 
+        private static string CompiledPath { get; set; }
+        private static string AssemblyPath { get; set; }
+
         internal void SetWindow()
         {
-            Editor = new PythonNetScriptEditor();
+            Editor = new PythonNetScriptEditor(this);
             Editor.Loaded += Editor_Loaded;
         }
 
@@ -476,7 +486,7 @@ namespace RhinoPythonNetEditor.Component
         private static readonly SortedDictionary<Guid, List<string>> CachedFailures = new SortedDictionary<Guid, List<string>>();
         private readonly List<string> compilerErrors = new List<string>();
         private static readonly SortedDictionary<Guid, Type> CachedAssemblies = new SortedDictionary<Guid, Type>();
-        private ScriptSource ScriptSource { get; } = new ScriptSource();
+        internal ScriptSource ScriptSource { get; } 
         private Type CreateScriptType(ScriptSource source)
         {
             Type type;
@@ -504,8 +514,8 @@ namespace RhinoPythonNetEditor.Component
                 else
                 {
                     foreach (var path in source.References) AssemblyResolver.AddSearchFile(path);
-                    string str = this.CreateSourceForCompile(source);
-                    CompilerResults results = this.CompileSource(str);
+                    string str = this.CreateSourceForCompile(source, out Guid id);
+                    CompilerResults results = this.CompileSource(str, id);
                     foreach (var error in results.Errors)
                     {
                         var cError = error as CompilerError;
@@ -567,18 +577,18 @@ namespace RhinoPythonNetEditor.Component
             return type;
         }
 
-        private CompilerResults CompileSource(string str)
+        private CompilerResults CompileSource(string str, Guid id)
         {
             string[] sources = new string[] { str };
-            return new CSharpCodeProvider().CompileAssemblyFromSource(ScriptAssemblyCompilerParameters(), sources);
+            return new CSharpCodeProvider().CompileAssemblyFromSource(ScriptAssemblyCompilerParameters(id), sources);
 
         }
 
-        private CompilerParameters ScriptAssemblyCompilerParameters()
+        private CompilerParameters ScriptAssemblyCompilerParameters(Guid id)
         {
             CompilerParameters parameters = new CompilerParameters
             {
-                OutputAssembly = Path.GetTempPath() + Guid.NewGuid().ToString() + ".dll",
+                OutputAssembly = CompiledPath + $@"\{id}.dll",
                 GenerateExecutable = false,
                 GenerateInMemory = false,
                 IncludeDebugInformation = true,
@@ -632,9 +642,11 @@ namespace RhinoPythonNetEditor.Component
 
 
 
-        private string CreateSourceForCompile(ScriptSource source)
+        private string CreateSourceForCompile(ScriptSource source, out Guid id)
         {
-            throw new NotImplementedException();
+            id = Guid.NewGuid();
+            File.WriteAllText(CompiledPath + $@"\{id}.py", source.PythonCode);
+            return source.GenerateCode(id);
         }
 
         private Guid ComputeScriptHash(ScriptSource source)
@@ -659,9 +671,10 @@ namespace RhinoPythonNetEditor.Component
             {
                 GH_ComponentParamServer.WriteParamHashData(writer, this.Params.Output[i], GH_ParamHashFields.NickName);
             }
+            var id = GH_Convert.ToSHA_Hash(output);
             writer.Close();
             output.Dispose();
-            return GH_Convert.ToSHA_Hash(output);
+            return id;
         }
 
         public override void AddedToDocument(GH_Document document)
@@ -698,7 +711,7 @@ namespace RhinoPythonNetEditor.Component
             }
         }
 
-        private static readonly SortedDictionary<string, bool> IgnoreWarnings;
+        private static readonly SortedDictionary<string, bool> IgnoreWarnings = new SortedDictionary<string, bool>();
         public static bool IgnoreWarning(string warning)
         {
             if (IgnoreWarnings.Count == 0)

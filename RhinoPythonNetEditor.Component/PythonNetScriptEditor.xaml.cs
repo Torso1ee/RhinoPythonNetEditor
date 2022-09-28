@@ -1,4 +1,7 @@
-﻿using RhinoPythonNetEditor.View.Pages;
+﻿using CommunityToolkit.Mvvm.Messaging;
+using RhinoPythonNetEditor.View.Pages;
+using RhinoPythonNetEditor.ViewModel;
+using RhinoPythonNetEditor.ViewModel.Messages;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,14 +23,33 @@ namespace RhinoPythonNetEditor.Component
     /// </summary>
     public partial class PythonNetScriptEditor : Window
     {
-        public PythonNetScriptEditor()
+        private ViewModelLocator Locator { get; set; }
+        public PythonNetScriptEditor(PythonNetScriptComponent comp)
         {
             InitializeComponent();
+            Owner = comp;
         }
 
-        private void Window_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        internal PythonNetScriptComponent Owner { get; set; }
+   
+        private void Window_PreviewMouseDown(object sender, MouseButtonEventArgs e)
         {
             if (WindowState == WindowState.Minimized) WindowState = WindowState.Normal;
+        }
+
+  
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            Locator = DataContext as ViewModelLocator;
+        }
+
+        private void Window_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            if (!(bool)e.NewValue)
+            {
+                var code = Locator.Messenger.Send<CodeRequestMessage>();
+                Owner.ScriptSource.PythonCode = code;
+            }
         }
     }
 }

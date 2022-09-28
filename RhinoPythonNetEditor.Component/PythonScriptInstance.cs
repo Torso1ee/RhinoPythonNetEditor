@@ -1,64 +1,64 @@
 ﻿using Grasshopper.Kernel;
 using Python.Runtime;
-using Rhino.Geometry;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Collections;
+using Rhino;
+using Rhino.Geometry;
+using Grasshopper;
+using Grasshopper.Kernel.Data;
+using Grasshopper.Kernel.Types;
+using Grasshopper.Kernel.Parameters;
 
 namespace RhinoPythonNetEditor.Component
 {
-    public class PythonScriptInstance : IGH_ScriptInstance
+    public class PythonScriptInstance : GH_ScriptInstance
     {
-        public bool Hidden { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        private List<string> __err = new List<string>();
+        private List<string> __out = new List<string>();
 
-        public bool IsPreviewCapable => throw new NotImplementedException();
-
-        public BoundingBox ClippingBox => throw new NotImplementedException();
-
-        public void AfterRunScript()
+        public override void InvokeRunScript(IGH_Component owner, object rhinoDocument, int iteration, List<object> inputs, IGH_DataAccess DA)
         {
-            throw new NotImplementedException();
-        }
-
-        public void BeforeRunScript()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void DrawViewportMeshes(IGH_PreviewArgs args)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void DrawViewportWires(IGH_PreviewArgs args)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void InvokeRunScript(IGH_Component owner, object rhinoDocument, int iteration, List<object> inputs, IGH_DataAccess DA)
-        {
+            __out.Clear();
+            __err.Clear();
+            {tadokorokouji114514}
             using (Py.GIL())
             {
-                dynamic np = Py.Import("numpy");
-                Console.WriteLine(np.cos(np.pi * 2));
-
-                dynamic sin = np.sin;
-                Console.WriteLine(sin(5));
-
-                double c = (double)(np.cos(5) + sin(5));
-                Console.WriteLine(c);
-
-                dynamic a = np.array(new List<float> { 1, 2, 3 });
-                Console.WriteLine(a.dtype);
-
-                dynamic b = np.array(new List<float> { 6, 5, 4 }, dtype: np.int32);
-                Console.WriteLine(b.dtype);
-
-                Console.WriteLine(a * b);
+                {bokusyu1919810}
+            }
+            try
+            {
+                {1145141919810}
+            }
+            catch (Exception exception)
+            {
+                __err.Add(string.Format("Script exception: {0}", exception.Message));
+            }
+            finally
+            {
+                if ((owner.Params.Output.Count > 0) && (owner.Params.Output[0] is Param_String))
+                {
+                    List<string> data = new List<string>();
+                    if (!ReferenceEquals(this.__err, null))
+                    {
+                        data.AddRange(this.__err);
+                    }
+                    if (!ReferenceEquals(this.__out, null))
+                    {
+                        data.AddRange(this.__out);
+                    }
+                    if (data.Count > 0)
+                    {
+                        DA.SetDataList(0, data);
+                    }
+                }
             }
 
         }
     }
 }
+
+
