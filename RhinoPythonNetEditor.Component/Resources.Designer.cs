@@ -61,6 +61,45 @@ namespace RhinoPythonNetEditor.Component {
         }
         
         /// <summary>
+        ///   查找类似 {C62D29C7-F213} {7F0A2DDA-D43D} = default({C62D29C7-F213});
+        ///    if (inputs[{C9474A41-931A}] != null)
+        ///    {
+        ///      {7F0A2DDA-D43D} = ({C62D29C7-F213})(inputs[{C9474A41-931A}]);
+        ///    } 的本地化字符串。
+        /// </summary>
+        internal static string CS_InputParamItem_Template {
+            get {
+                return ResourceManager.GetString("CS_InputParamItem_Template", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 List&lt;{C62D29C7-F213}&gt; {7F0A2DDA-D43D} = null;
+        ///    if (inputs[{C9474A41-931A}] != null)
+        ///    {
+        ///      {7F0A2DDA-D43D} = GH_DirtyCaster.CastToList&lt;{C62D29C7-F213}&gt;(inputs[{C9474A41-931A}]);
+        ///    } 的本地化字符串。
+        /// </summary>
+        internal static string CS_InputParamList_Template {
+            get {
+                return ResourceManager.GetString("CS_InputParamList_Template", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 DataTree&lt;{C62D29C7-F213}&gt; {7F0A2DDA-D43D} = null;
+        ///    if (inputs[{C9474A41-931A}] != null)
+        ///    {
+        ///      {7F0A2DDA-D43D} = GH_DirtyCaster.CastToTree&lt;{C62D29C7-F213}&gt;(inputs[{C9474A41-931A}]);
+        ///    } 的本地化字符串。
+        /// </summary>
+        internal static string CS_InputParamTree_Template {
+            get {
+                return ResourceManager.GetString("CS_InputParamTree_Template", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 abstract        ///\nas        ///\nbase        ///\nbool        ///\nbreak        ///\nbyte        ///\ncase        ///\ncatch        ///\nchar        ///\nchecked        ///\nclass        ///\nconst        ///\ncontinue        ///\ndecimal        ///\ndefault        ///\ndelegate        ///\ndo        ///\ndouble        ///\nelse        ///\nenum        ///\nevent        ///\nexplicit        ///\nextern        ///\nfalse        ///\nfinally        ///\nfixed        ///\nfloat        ///\nfor        ///\nforeach        ///\ngoto        ///\nif        ///\nimplicit        ///\nin        ///\nint        ///\ninterface        ///\ninternal        ///\nis        ///\nlock        ///\nlong        ///\nnamespace        ///\nnew        ///\nnull        ///\nobject        ///\noperator        ///\nout        ///\noverride        ///\nparams        ///\nprivate        ///\nprotected        ///\npublic        ///\nreadonly        ///\nref        ///\nreturn        ///\nsbyte        ///\nsealed        ///\nshort        ///\nsizeof        ///\nstackalloc        ///\nstatic        ///\nstring        ///\nst [字符串的其余部分被截断]&quot;; 的本地化字符串。
         /// </summary>
         internal static string CS_LanguageKeywords {
@@ -70,11 +109,24 @@ namespace RhinoPythonNetEditor.Component {
         }
         
         /// <summary>
-        ///   查找类似  的本地化字符串。
+        ///   查找类似 if ({7F0A2DDA-D43D} != null)
+        ///      {
+        ///        if (GH_Format.TreatAsCollection({7F0A2DDA-D43D}))
+        ///        {
+        ///          IEnumerable __enum_{7F0A2DDA-D43D} = (IEnumerable)({7F0A2DDA-D43D});
+        ///          DA.SetDataList({C9474A41-931A}, __enum_{7F0A2DDA-D43D});
+        ///        }
+        ///        else
+        ///        {
+        ///          if ({7F0A2DDA-D43D} is Grasshopper.Kernel.Data.IGH_DataTree)
+        ///          {
+        ///            //merge tree
+        ///            DA.SetDataTree({C9474A41-931A}, (Grasshopper.Kernel.Data.IGH_DataTree)({7F0A2DDA-D43D}));
+        ///      [字符串的其余部分被截断]&quot;; 的本地化字符串。
         /// </summary>
-        internal static string String1 {
+        internal static string CS_OutputParam_Template {
             get {
-                return ResourceManager.GetString("String1", resourceCulture);
+                return ResourceManager.GetString("CS_OutputParam_Template", resourceCulture);
             }
         }
         

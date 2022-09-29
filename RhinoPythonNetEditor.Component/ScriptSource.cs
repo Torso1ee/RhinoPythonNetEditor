@@ -65,9 +65,16 @@ namespace RhinoPythonNetEditor.Component
 
         public string GenerateCode(Guid id)
         {
-            var template = Resources.Template;
-            return "";
+            string template = Utility.FixNewlines(Resources.Template);
+            template=  template.Replace("{tadokorokouji}", CodeBlock_InputParameterAssignment());
+            template = template.Replace("{miuradaisenbai}", CodeBlock_OutputParameterDeclarations());
+            template = template.Replace("{bokusyu}", CodeBlock_PythonCode(id));
+            template = template.Replace("{1145141919810}", CodeBlock_ParameterAssignment());
+            File.WriteAllText(PythonNetScriptComponent.CompiledPath + @"\test.cs", template);
+            return template;
         }
+
+
 
 
         private static SortedDictionary<string, string> _keywords;
@@ -104,98 +111,75 @@ namespace RhinoPythonNetEditor.Component
             int num3 = Component.Params.Output.Count - 1;
             for (int j = Component.FirstOutputIndex; j <= num3; j++)
             {
-                list.Add( MungeParameterName(GH_Convert.ToVariableName(Component.Params.Output[j].NickName)));
+                list.Add("ref " + MungeParameterName(GH_Convert.ToVariableName(Component.Params.Output[j].NickName)));
             }
             return string.Join(", ", list.ToArray());
         }
 
-        private string CodeBlock_InputParameters()
-        {
-            string str;
-            List<string> list = new List<string>();
-            string str2 = string.Empty;
-            if (Component.Params.Input.Count == 0)
-            {
-                str = str2;
-            }
-            else
-            {
-                var num = Component.Params.Input.Count;
-                for (int i = 0; i < num; i++)
-                {
-                    Param_ScriptVariable variable = (Param_ScriptVariable)Component.Params.Input[i];
-                    string typeName = "object";
-                    if (variable.TypeHint != null)
-                    {
-                        typeName = variable.TypeHint.TypeName;
-                    }
-                    if (string.IsNullOrEmpty(typeName))
-                    {
-                        typeName = "object";
-                    }
-                    string item = string.Empty;
-                    string str5 = MungeParameterName(GH_Convert.ToVariableName(variable.NickName));
-                    switch (variable.Access)
-                    {
-                        case GH_ParamAccess.item:
-                            item = string.Format("{1} {0}", str5, typeName);
-                            break;
-
-                        case GH_ParamAccess.list:
-                            item = string.Format("List<{1}> {0}", str5, typeName);
-                            break;
-
-                        case GH_ParamAccess.tree:
-                            item = string.Format("DataTree<{1}> {0}", str5, typeName);
-                            break;
-
-                        default:
-                            break;
-                    }
-                    list.Add(item);
-                }
-                str2 = (list.Count != 0) ? string.Join(", ", list.ToArray()) : list[0];
-                str = str2;
-            }
-            return str;
-        }
-
-        private string CodeBlock_OutputParameters()
-        {
-            string str;
-            List<string> list = new List<string>();
-            string str2 = string.Empty;
-            if (Component.Params.Output.Count == Component.FirstOutputIndex)
-            {
-                str = str2;
-            }
-            else
-            {
-                int num = Component.Params.Output.Count - 1;
-                for (int i = Component.FirstOutputIndex; i < num; i++)
-                {
-                    string str3 = MungeParameterName(GH_Convert.ToVariableName(Component.Params.Output[i].NickName));
-                    list.Add(string.Format("ref object {0}", str3));
-                }
-                str2 = (list.Count != 0) ? string.Join(", ", list.ToArray()) : string.Empty;
-                str = str2;
-            }
-            return str;
-        }
 
         private string CodeBlock_ParameterAssignment()
         {
             StringBuilder builder = new StringBuilder();
             int num = Component.Params.Output.Count - 1;
-            //for (int i = Component.FirstOutputIndex; i <= num; i++)
-            //{
-            //    string newValue = MungeParameterName(GH_Convert.ToVariableName(Component.Params.Output[i].NickName));
-            //    string str2 = Utility.FixNewlines(Resources.CS_OutputParam_Template).Replace("{7F0A2DDA-D43D}", newValue).Replace("{C9474A41-931A}", i.ToString());
-            //    builder.Append(str2);
-            //}
+            for (int i = Component.FirstOutputIndex; i <= num; i++)
+            {
+                string newValue = MungeParameterName(GH_Convert.ToVariableName(Component.Params.Output[i].NickName));
+                string str2 = Utility.FixNewlines(Resources.CS_OutputParam_Template).Replace("{7F0A2DDA-D43D}", newValue).Replace("{C9474A41-931A}", i.ToString());
+                builder.Append(str2);
+            }
             return builder.ToString();
         }
 
+        private string CodeBlock_InputParameterAssignment()
+        {
+            string str;
+            StringBuilder builder = new StringBuilder();
+            for (int i = 0; i < Component.Params.Input.Count; i++)
+            {
+                Param_ScriptVariable variable1 = (Param_ScriptVariable)Component.Params.Input[i];
+                string newValue = MungeParameterName(GH_Convert.ToVariableName(variable1.NickName));
+                IGH_TypeHint typeHint = variable1.TypeHint;
+                string typeName = "object";
+                if (typeHint != null)
+                {
+                    typeName = typeHint.TypeName;
+                }
+                string text = string.Empty;
+                switch (variable1.Access)
+                {
+                    case GH_ParamAccess.item:
+                        text = Resources.CS_InputParamItem_Template;
+                        break;
+
+                    case GH_ParamAccess.list:
+                        text = Resources.CS_InputParamList_Template;
+                        break;
+
+                    case GH_ParamAccess.tree:
+                        text = Resources.CS_InputParamTree_Template;
+                        break;
+
+                    default:
+                        Tracing.Assert(new Guid("{8010B35A-3F61-40ca-BB0A-8153692FC78D}"), "Invalid Parameter Access flag. Source code generation failed.");
+                        return string.Empty;
+                }
+                builder.Append(Utility.FixNewlines(text).Replace("{7F0A2DDA-D43D}", newValue).Replace("{C62D29C7-F213}", typeName).Replace("{C9474A41-931A}", i.ToString()) + Environment.NewLine);
+            }
+            str = builder.ToString();
+            return str;
+        }
+
+        private string CodeBlock_OutputParameterDeclarations()
+        {
+            StringBuilder builder = new StringBuilder();
+            int num = Component.Params.Output.Count - 1;
+            for (int i = Component.FirstOutputIndex; i <= num; i++)
+            {
+                string str = MungeParameterName(GH_Convert.ToVariableName(Component.Params.Output[i].NickName));
+                builder.AppendLine(string.Format("  object {0} = null;", str));
+            }
+            return builder.ToString();
+        }
 
 
     }

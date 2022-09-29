@@ -70,7 +70,7 @@ namespace RhinoPythonNetEditor.Component
             RhinoApp.InvokeOnUiThread(new Action(() => PythonEngine.Shutdown()));
         }
 
-        private static string CompiledPath { get; set; }
+        internal static string CompiledPath { get; set; }
         private static string AssemblyPath { get; set; }
 
         internal void SetWindow()

@@ -117,11 +117,56 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="CS_InputParamItem_Template" xml:space="preserve">
+    <value>{C62D29C7-F213} {7F0A2DDA-D43D} = default({C62D29C7-F213});
+    if (inputs[{C9474A41-931A}] != null)
+    {
+      {7F0A2DDA-D43D} = ({C62D29C7-F213})(inputs[{C9474A41-931A}]);
+    }</value>
+  </data>
+  <data name="CS_InputParamList_Template" xml:space="preserve">
+    <value>List&lt;{C62D29C7-F213}&gt; {7F0A2DDA-D43D} = null;
+    if (inputs[{C9474A41-931A}] != null)
+    {
+      {7F0A2DDA-D43D} = GH_DirtyCaster.CastToList&lt;{C62D29C7-F213}&gt;(inputs[{C9474A41-931A}]);
+    }</value>
+  </data>
+  <data name="CS_InputParamTree_Template" xml:space="preserve">
+    <value>DataTree&lt;{C62D29C7-F213}&gt; {7F0A2DDA-D43D} = null;
+    if (inputs[{C9474A41-931A}] != null)
+    {
+      {7F0A2DDA-D43D} = GH_DirtyCaster.CastToTree&lt;{C62D29C7-F213}&gt;(inputs[{C9474A41-931A}]);
+    }</value>
+  </data>
   <data name="CS_LanguageKeywords" xml:space="preserve">
     <value>abstract\nas\nbase\nbool\nbreak\nbyte\ncase\ncatch\nchar\nchecked\nclass\nconst\ncontinue\ndecimal\ndefault\ndelegate\ndo\ndouble\nelse\nenum\nevent\nexplicit\nextern\nfalse\nfinally\nfixed\nfloat\nfor\nforeach\ngoto\nif\nimplicit\nin\nint\ninterface\ninternal\nis\nlock\nlong\nnamespace\nnew\nnull\nobject\noperator\nout\noverride\nparams\nprivate\nprotected\npublic\nreadonly\nref\nreturn\nsbyte\nsealed\nshort\nsizeof\nstackalloc\nstatic\nstring\nstruct\nswitch\nthis\nthrow\ntrue\ntry\ntypeof\nuint\nulong\nunchecked\nunsafe\nushort\nusing\nvirtual\nvoid\nvolatile\nwhile</value>
   </data>
-  <data name="String1" xml:space="preserve">
-    <value />
+  <data name="CS_OutputParam_Template" xml:space="preserve">
+    <value>if ({7F0A2DDA-D43D} != null)
+      {
+        if (GH_Format.TreatAsCollection({7F0A2DDA-D43D}))
+        {
+          IEnumerable __enum_{7F0A2DDA-D43D} = (IEnumerable)({7F0A2DDA-D43D});
+          DA.SetDataList({C9474A41-931A}, __enum_{7F0A2DDA-D43D});
+        }
+        else
+        {
+          if ({7F0A2DDA-D43D} is Grasshopper.Kernel.Data.IGH_DataTree)
+          {
+            //merge tree
+            DA.SetDataTree({C9474A41-931A}, (Grasshopper.Kernel.Data.IGH_DataTree)({7F0A2DDA-D43D}));
+          }
+          else
+          {
+            //assign direct
+            DA.SetData({C9474A41-931A}, {7F0A2DDA-D43D});
+          }
+        }
+      }
+      else
+      {
+        DA.SetData({C9474A41-931A}, null);
+      }</value>
   </data>
   <data name="Template" xml:space="preserve">
     <value>using Grasshopper.Kernel;
@@ -150,10 +195,11 @@ namespace RhinoPythonNetEditor.Component
         {
             __out.Clear();
             __err.Clear();
-            {tadokorokouji114514}
+            {tadokorokouji}
+		{miuradaisenbai}
             using (Py.GIL())
             {
-                {bokusyu1919810}
+                {bokusyu}
             }
             try
             {

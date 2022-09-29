@@ -24,10 +24,10 @@ namespace RhinoPythonNetEditor.Component
         {
             __out.Clear();
             __err.Clear();
-            {tadokorokouji114514}
+            {tadokorokouji}
             using (Py.GIL())
             {
-                {bokusyu1919810}
+                {bokusyu}
             }
             try
             {
