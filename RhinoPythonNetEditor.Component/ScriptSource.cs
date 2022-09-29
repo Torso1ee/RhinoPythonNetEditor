@@ -94,6 +94,8 @@ namespace RhinoPythonNetEditor.Component
         private string CodeBlock_PythonCode(Guid id)
         {
             var pythonFunc = new StringBuilder();
+            pythonFunc.AppendLine($"dynamic sys = Py.Import(\"sys\");");
+            pythonFunc.AppendLine($@"sys.path.append(@""{PythonNetScriptComponent.CompiledPath}"");");
             pythonFunc.AppendLine($"dynamic module = Py.Import(\"{id}\");");
             pythonFunc.AppendLine("dynamic func = module.func;");
             pythonFunc.AppendLine($"func({CodeBlock_ParameterSignature()});");

@@ -184,9 +184,7 @@ using Grasshopper.Kernel.Data;
 using Grasshopper.Kernel.Types;
 using Grasshopper.Kernel.Parameters;
 
-namespace RhinoPythonNetEditor.Component
-{
-    public class PythonScriptInstance : GH_ScriptInstance
+  public class PythonScriptInstance : GH_ScriptInstance
     {
         private List&lt;string&gt; __err = new List&lt;string&gt;();
         private List&lt;string&gt; __out = new List&lt;string&gt;();
@@ -230,7 +228,6 @@ namespace RhinoPythonNetEditor.Component
             }
 
         }
-    }
-}</value>
+    }</value>
   </data>
 </root>

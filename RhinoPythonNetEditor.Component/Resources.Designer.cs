@@ -146,11 +146,10 @@ namespace RhinoPythonNetEditor.Component {
         ///using Grasshopper.Kernel.Types;
         ///using Grasshopper.Kernel.Parameters;
         ///
-        ///namespace RhinoPythonNetEditor.Component
-        ///{
-        ///    public class PythonScriptInstance : GH_ScriptInstance
+        ///  public class PythonScriptInstance : GH_ScriptInstance
         ///    {
-        ///        private List&lt;string&gt; __err = new  [字符串的其余部分被截断]&quot;; 的本地化字符串。
+        ///        private List&lt;string&gt; __err = new List&lt;string&gt;();
+        ///        private List&lt;string&gt; _ [字符串的其余部分被截断]&quot;; 的本地化字符串。
         /// </summary>
         internal static string Template {
             get {

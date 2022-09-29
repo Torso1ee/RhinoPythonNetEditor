@@ -559,7 +559,7 @@ namespace RhinoPythonNetEditor.Component
                         }
                         else
                         {
-                            Type type2 = compiledAssembly.GetType("Script_Instance");
+                            Type type2 = compiledAssembly.GetType("PythonScriptInstance");
                             if (type2 == null)
                             {
                                 this.AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Custom type could not be found in assembly");
@@ -602,10 +602,12 @@ namespace RhinoPythonNetEditor.Component
             {
                 parameters.ReferencedAssemblies.Add(str);
             }
-            Assembly assembly = null;
+            Assembly assembly= null, assembly1 = null;
             try
             {
                 assembly = Assembly.Load("Microsoft.CSharp");
+                assembly1 = Assembly.Load("netstandard, Version=2.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51");
+
             }
             catch (Exception exception1)
             {
@@ -617,6 +619,10 @@ namespace RhinoPythonNetEditor.Component
             if (assembly != null)
             {
                 parameters.ReferencedAssemblies.Add(assembly.Location);
+            }
+            if (assembly1 != null)
+            {
+                parameters.ReferencedAssemblies.Add(assembly1.Location);
             }
             if ((this.ScriptSource != null) && (this.ScriptSource.References != null))
             {

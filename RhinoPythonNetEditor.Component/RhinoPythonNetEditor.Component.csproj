@@ -12,18 +12,11 @@
   </PropertyGroup>
 	
   <ItemGroup>
-    <Compile Remove="PythonScriptInstance.cs" />
-  </ItemGroup>
-	
-  <ItemGroup>
     <None Remove="paramparser.py" />
   </ItemGroup>
 	
   <ItemGroup>
     <Content Include="paramparser.py">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="PythonScriptInstance.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
@@ -50,6 +43,9 @@
   </ItemGroup>
   
   <ItemGroup>
+    <Compile Update="PythonScriptInstance.cs">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Compile>
     <Compile Update="Resources.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
