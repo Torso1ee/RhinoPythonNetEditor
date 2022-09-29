@@ -187,12 +187,12 @@ namespace RhinoPythonNetEditor.Component
         {
             StringBuilder builder = new StringBuilder();
             int num = Component.Params.Output.Count - 1;
-            for (int i = Component.FirstOutputIndex; i <= num; i++)
-            {
-                string newValue = MungeParameterName(GH_Convert.ToVariableName(Component.Params.Output[i].NickName));
-                string str2 = Utility.FixNewlines(Resources.CS_OutputParam_Template).Replace("{7F0A2DDA-D43D}", newValue).Replace("{C9474A41-931A}", i.ToString());
-                builder.Append(str2);
-            }
+            //for (int i = Component.FirstOutputIndex; i <= num; i++)
+            //{
+            //    string newValue = MungeParameterName(GH_Convert.ToVariableName(Component.Params.Output[i].NickName));
+            //    string str2 = Utility.FixNewlines(Resources.CS_OutputParam_Template).Replace("{7F0A2DDA-D43D}", newValue).Replace("{C9474A41-931A}", i.ToString());
+            //    builder.Append(str2);
+            //}
             return builder.ToString();
         }
 

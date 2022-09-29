@@ -40,15 +40,18 @@ namespace RhinoPythonNetEditor.Component
             "PythonNetScriptComponent provides editing and debugging cpython code in Rhino. PythonNet Script also supports interoperating with .Net library.",
             "Maths", "Script")
         {
-            ScriptSource.References.Add(AssemblyPath + @"\Python.Runtime.dll");
             ScriptSource = new ScriptSource(this);
+            ScriptSource.References.Add(AssemblyPath + @"\Python.Runtime.dll");
         }
 
+        static PythonNetScriptComponent()
+        {
+            AssemblyPath = Path.GetDirectoryName(typeof(PythonNetScriptComponent).Assembly.Location);
+        }
         public static bool IsPythonInitialized { get; set; } = false;
 
         public static void PythonInitialized()
         {
-            AssemblyPath = Path.GetDirectoryName(typeof(PythonNetScriptComponent).Assembly.Location);
             var p = AssemblyPath + @"\compiled";
             if (!Directory.Exists(p)) Directory.CreateDirectory(p);
             CompiledPath = p;
