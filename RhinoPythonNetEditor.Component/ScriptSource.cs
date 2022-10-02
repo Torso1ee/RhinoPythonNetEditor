@@ -65,8 +65,9 @@ namespace RhinoPythonNetEditor.Component
 
         public string GenerateCode(Guid id)
         {
+            GeneratePyFile(id);
             string template = Utility.FixNewlines(Resources.Template);
-            template=  template.Replace("{tadokorokouji}", CodeBlock_InputParameterAssignment());
+            template = template.Replace("{tadokorokouji}", CodeBlock_InputParameterAssignment());
             template = template.Replace("{miuradaisenbai}", CodeBlock_OutputParameterDeclarations());
             template = template.Replace("{bokusyu}", CodeBlock_PythonCode(id));
             template = template.Replace("{1145141919810}", CodeBlock_ParameterAssignment());
@@ -75,7 +76,15 @@ namespace RhinoPythonNetEditor.Component
         }
 
 
-
+        private void GeneratePyFile(Guid id)
+        {
+            var sb = new StringBuilder();
+            sb.AppendLine($"def func({CodeBlock_PyParameterSignature() + "," + CodeBlock_PyReturnSignature()}):");
+            var lines = PythonCode.Split('\n');
+            foreach (var l in lines) sb.AppendLine("\t" + l);
+            sb.AppendLine("\t" + $"return [{CodeBlock_PyReturnSignature()}]");
+            File.WriteAllText(PythonNetScriptComponent.CompiledPath + $@"\{id}.py", sb.ToString());
+        }
 
         private static SortedDictionary<string, string> _keywords;
         public static string MungeParameterName(string name)
@@ -94,14 +103,24 @@ namespace RhinoPythonNetEditor.Component
         private string CodeBlock_PythonCode(Guid id)
         {
             var pythonFunc = new StringBuilder();
+            var idName = id.ToString().Replace("-", "");
             pythonFunc.AppendLine($"dynamic sys = Py.Import(\"sys\");");
             pythonFunc.AppendLine($@"sys.path.append(@""{PythonNetScriptComponent.CompiledPath}"");");
             pythonFunc.AppendLine($"dynamic module = Py.Import(\"{id}\");");
             pythonFunc.AppendLine("dynamic func = module.func;");
-            pythonFunc.AppendLine($"func({CodeBlock_ParameterSignature()});");
+            pythonFunc.AppendLine($"var result{idName} = func({CodeBlock_PyParameterSignature()+","+ CodeBlock_PyReturnSignature()});");
+            List<string> list = new List<string>();
+            int num = Component.Params.Output.Count - 1;
+            int index = 0;
+            for (int i = Component.FirstOutputIndex; i <= num; i++)
+            {
+                string item = MungeParameterName(GH_Convert.ToVariableName(Component.Params.Output[i].NickName));
+                pythonFunc.AppendLine($"{item} = result{idName}[{index++}].As<object>();");
+            }
             return pythonFunc.ToString();
         }
-        private string CodeBlock_ParameterSignature()
+
+        private string CodeBlock_PyParameterSignature()
         {
             List<string> list = new List<string>();
             int num = Component.Params.Input.Count - 1;
@@ -110,10 +129,17 @@ namespace RhinoPythonNetEditor.Component
                 string item = MungeParameterName(GH_Convert.ToVariableName(Component.Params.Input[i].NickName));
                 list.Add(item);
             }
-            int num3 = Component.Params.Output.Count - 1;
-            for (int j = Component.FirstOutputIndex; j <= num3; j++)
+            return string.Join(", ", list.ToArray());
+        }
+
+        private string CodeBlock_PyReturnSignature()
+        {
+            List<string> list = new List<string>();
+            int num = Component.Params.Output.Count - 1;
+            for (int i = Component.FirstOutputIndex; i <= num; i++)
             {
-                list.Add("ref " + MungeParameterName(GH_Convert.ToVariableName(Component.Params.Output[j].NickName)));
+                string item = MungeParameterName(GH_Convert.ToVariableName(Component.Params.Output[i].NickName));
+                list.Add(item);
             }
             return string.Join(", ", list.ToArray());
         }
@@ -182,6 +208,7 @@ namespace RhinoPythonNetEditor.Component
             }
             return builder.ToString();
         }
+
 
 
     }

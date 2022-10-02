@@ -49,6 +49,7 @@ namespace RhinoPythonNetEditor.Component
             {
                 var code = Locator.Messenger.Send<CodeRequestMessage>();
                 Owner.ScriptSource.PythonCode = code;
+                Owner.ScriptAssembly = null;
             }
         }
     }

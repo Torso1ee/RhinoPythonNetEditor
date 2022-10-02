@@ -654,7 +654,6 @@ namespace RhinoPythonNetEditor.Component
         private string CreateSourceForCompile(ScriptSource source, out Guid id)
         {
             id = Guid.NewGuid();
-            File.WriteAllText(CompiledPath + $@"\{id}.py", source.PythonCode);
             return source.GenerateCode(id);
         }
 
