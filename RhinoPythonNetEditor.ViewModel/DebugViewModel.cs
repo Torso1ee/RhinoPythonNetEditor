@@ -250,8 +250,9 @@ namespace RhinoPythonNetEditor.ViewModel
         {
             var sb = new StringBuilder();
             sb.AppendLine("import paramparser");
+            sb.AppendLine("from System import *");
             sb.AppendLine($"prmDict = paramparser.parse_args(r'{CurrentDir}',r'{paramPath}')");
-            int i = 2;
+            int i = 3;
             foreach (var p in Locator.ComponentHost.Params.Input)
             {
                 sb.AppendLine($"{p.NickName}=prmDict['{p.NickName}']");

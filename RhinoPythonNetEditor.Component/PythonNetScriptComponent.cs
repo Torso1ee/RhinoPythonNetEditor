@@ -62,6 +62,13 @@ namespace RhinoPythonNetEditor.Component
             Environment.SetEnvironmentVariable("PATH", p, EnvironmentVariableTarget.Process);
             PythonEngine.Initialize();
             Rhino.RhinoApp.Closing += RhinoApp_Closing;
+            var paths = Environment.GetEnvironmentVariable("PATH");
+            Environment.SetEnvironmentVariable("PATH", paths + @";D:\Anaconda\envs\PythonNet\Library\bin", EnvironmentVariableTarget.Process);
+            using (Py.GIL())
+            {
+                dynamic sys = Py.Import("sys");
+                sys.path.append(CompiledPath);
+            }
             IsPythonInitialized = true;
         }
 

@@ -1,6 +1,5 @@
 ﻿import clr
 import sys
-
 def parse_args(assemblyPath, paramPath):
     sys.path.append(assemblyPath)
     clr.AddReference("RhinoInside")

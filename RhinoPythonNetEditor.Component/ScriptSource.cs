@@ -79,6 +79,7 @@ namespace RhinoPythonNetEditor.Component
         private void GeneratePyFile(Guid id)
         {
             var sb = new StringBuilder();
+            sb.AppendLine($"from System import *");
             sb.AppendLine($"def func({CodeBlock_PyParameterSignature() + "," + CodeBlock_PyReturnSignature()}):");
             var lines = PythonCode.Split('\n');
             foreach (var l in lines) sb.AppendLine("\t" + l);
@@ -104,8 +105,6 @@ namespace RhinoPythonNetEditor.Component
         {
             var pythonFunc = new StringBuilder();
             var idName = id.ToString().Replace("-", "");
-            pythonFunc.AppendLine($"dynamic sys = Py.Import(\"sys\");");
-            pythonFunc.AppendLine($@"sys.path.append(@""{PythonNetScriptComponent.CompiledPath}"");");
             pythonFunc.AppendLine($"dynamic module = Py.Import(\"{id}\");");
             pythonFunc.AppendLine("dynamic func = module.func;");
             pythonFunc.AppendLine($"var result{idName} = func({CodeBlock_PyParameterSignature()+","+ CodeBlock_PyReturnSignature()});");
