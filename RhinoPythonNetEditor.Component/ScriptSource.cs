@@ -82,7 +82,9 @@ namespace RhinoPythonNetEditor.Component
             sb.AppendLine($"from System import *");
             sb.AppendLine($"def func({CodeBlock_PyParameterSignature() + "," + CodeBlock_PyReturnSignature()}):");
             var lines = PythonCode.Split('\n');
-            foreach (var l in lines) sb.AppendLine("\t" + l);
+            var code = "";
+            foreach (var l in lines) code += ("\t" + l);
+            sb.AppendLine(code);
             sb.AppendLine("\t" + $"return [{CodeBlock_PyReturnSignature()}]");
             File.WriteAllText(PythonNetScriptComponent.CompiledPath + $@"\{id}.py", sb.ToString());
         }

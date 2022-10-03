@@ -22,7 +22,9 @@ using System.Collections.Generic;
 using System.Configuration.Assemblies;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Reflection;
+using System.Text.RegularExpressions;
 
 namespace RhinoPythonNetEditor.Component
 {
@@ -208,9 +210,35 @@ namespace RhinoPythonNetEditor.Component
                         }
                         else
                         {
-                            StackFrame frame = trace.GetFrame(0);
-                            DA.SetData(0, string.Format("error: {0} (line: {1})", e.Message, frame.GetFileLineNumber()));
-                            AddRuntimeMessage(GH_RuntimeMessageLevel.Error, string.Format("{0} (line: {1})", e.Message, frame.GetFileLineNumber()));
+                            StackFrame frame = trace.GetFrame(trace.FrameCount - 1);
+                            var errorLines = exception.StackTrace.Split('\n');
+                            var lCount = errorLines.Length;
+                            var pyError = new List<string>();
+                            for (int i = 0; i < lCount; )
+                            {
+                                if (errorLines[i].StartsWith("  File") && i + 1 < lCount)
+                                {
+                                    pyError.Add(errorLines[i] + "\n" + errorLines[i + 1]);
+                                    i += 2;
+                                }
+                                else
+                                {
+                                    i++;
+                                }
+                            }
+                            var ls = new List<string>();
+                            foreach (var l in pyError)
+                            {
+                                var ma = Regex.Match(l, @"line (\d+), in");
+                                if (ma.Groups.Count == 2)
+                                {
+                                    var eLine = ma.Groups[0].Value.Replace(ma.Groups[1].Value, (int.Parse(ma.Groups[1].Value) - 2).ToString());
+                                    ls.Add(l.Replace(ma.Groups[0].Value, eLine));
+                                }
+                            }
+                            var error = string.Join("\n", ls);
+                            DA.SetData(0, string.Format("error: {0})", error));
+                            AddRuntimeMessage(GH_RuntimeMessageLevel.Error, error);
                         }
                     }
                     HostUtils.ExceptionReport(e);
@@ -496,7 +524,7 @@ namespace RhinoPythonNetEditor.Component
         private static readonly SortedDictionary<Guid, List<string>> CachedFailures = new SortedDictionary<Guid, List<string>>();
         private readonly List<string> compilerErrors = new List<string>();
         private static readonly SortedDictionary<Guid, Type> CachedAssemblies = new SortedDictionary<Guid, Type>();
-        internal ScriptSource ScriptSource { get; } 
+        internal ScriptSource ScriptSource { get; }
         private Type CreateScriptType(ScriptSource source)
         {
             Type type;
@@ -609,7 +637,7 @@ namespace RhinoPythonNetEditor.Component
             {
                 parameters.ReferencedAssemblies.Add(str);
             }
-            Assembly assembly= null, assembly1 = null;
+            Assembly assembly = null, assembly1 = null;
             try
             {
                 assembly = Assembly.Load("Microsoft.CSharp");

@@ -35,10 +35,11 @@ namespace RhinoPythonNetEditor.ViewModel
             Locator = locator;
             Locator.ConfigureFinished += (s, e) => Messenger.Register<AllBreakPointInformationsMessage>(this, Receive);
             CurrentDir = Directory.GetParent(typeof(DebugViewModel).Assembly.Location).ToString();
+            PythonPath = CurrentDir + @"\python_env\python.exe";
             IsActive = true;
         }
 
-        private string PythonPath { get; set; } = @"D:\Anaconda\envs\PythonNet\python.exe";
+        private string PythonPath { get; set; }
 
         private int times;
 
@@ -144,7 +145,7 @@ namespace RhinoPythonNetEditor.ViewModel
                 await fs.WriteAsync(bytes, 0, bytes.Length);
             }
             var file = $@"{dir}temp.py";
-            var script = $@"{PythonPath} -u -m debugpy --listen localhost:{port} --wait-for-client --log-to {dir}logs ""{file}""";
+            var script = $@"{PythonPath}  -u -m debugpy --listen localhost:{port} --wait-for-client --log-to {dir}logs ""{file}""";
             debugManager.DebugEnd += DebugManager_DebugEnd;
             debugManager.Stopped += DebugManager_Stopped;
             debugManager.ConfigDone += (s, e) => ConfigDone = true;
