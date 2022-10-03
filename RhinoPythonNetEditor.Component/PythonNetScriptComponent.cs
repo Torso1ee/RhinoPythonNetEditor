@@ -57,15 +57,15 @@ namespace RhinoPythonNetEditor.Component
             var p = AssemblyPath + @"\compiled";
             if (!Directory.Exists(p)) Directory.CreateDirectory(p);
             CompiledPath = p;
-            var pathToBaseEnv = @"D:\Anaconda\envs\PythonNet";
+            var pathToBaseEnv = AssemblyPath + @"\python_env\";
             Runtime.PythonDLL = pathToBaseEnv + @"\python38.dll";
             PythonEngine.PythonHome = pathToBaseEnv;
-            Environment.SetEnvironmentVariable("PATH", $@"{pathToBaseEnv}\Library\bin", EnvironmentVariableTarget.Process);
-            Environment.SetEnvironmentVariable("PATH", p, EnvironmentVariableTarget.Process);
+            //Environment.SetEnvironmentVariable("PATH", $@"{pathToBaseEnv}\Library\bin", EnvironmentVariableTarget.Process);
+            //Environment.SetEnvironmentVariable("PATH", p, EnvironmentVariableTarget.Process);
             PythonEngine.Initialize();
             Rhino.RhinoApp.Closing += RhinoApp_Closing;
             var paths = Environment.GetEnvironmentVariable("PATH");
-            Environment.SetEnvironmentVariable("PATH", paths + @";D:\Anaconda\envs\PythonNet\Library\bin", EnvironmentVariableTarget.Process);
+            //Environment.SetEnvironmentVariable("PATH", paths + @";D:\Anaconda\envs\PythonNet\Library\bin", EnvironmentVariableTarget.Process);
             using (Py.GIL())
             {
                 dynamic sys = Py.Import("sys");
