@@ -52,4 +52,16 @@
         </Setter>
     </Style>
 
+    <Style TargetType="{x:Type Button}" x:Key="TextButtonStyle" BasedOn="{StaticResource  ButtonBaseStyle}">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Button}">
+                    <Border x:Name="bd" Background="{TemplateBinding Background}" CornerRadius="3">
+                        <Label Content="{TemplateBinding Content}"/>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    
 </ResourceDictionary>

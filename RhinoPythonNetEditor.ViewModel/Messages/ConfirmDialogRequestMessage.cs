@@ -7,7 +7,10 @@ using System.Threading.Tasks;
 
 namespace RhinoPythonNetEditor.ViewModel.Messages
 {
-    public class CodeRequestMessage:RequestMessage<string>
+    public class ConfirmDialogRequestMessage : AsyncRequestMessage<bool>
     {
+        public string Title { get; set; }
+        public string Message { get; set; }
+
     }
 }

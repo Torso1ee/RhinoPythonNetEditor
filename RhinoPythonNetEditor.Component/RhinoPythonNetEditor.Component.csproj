@@ -22,6 +22,7 @@
   </ItemGroup>
   
   <ItemGroup>
+    <PackageReference Include="AvalonEdit" Version="6.1.3.50" />
     <PackageReference Include="CommunityToolkit.Mvvm" Version="7.0.1" />
     <PackageReference Include="Grasshopper" Version="7.0.20314.3001" IncludeAssets="compile;build" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="6.0.0" />
@@ -31,6 +32,7 @@
   </ItemGroup>
   
   <ItemGroup>
+    <ProjectReference Include="..\RhinoPythonNetEditor.Interface\RhinoPythonNetEditor.Interface.csproj" />
     <ProjectReference Include="..\RhinoPythonNetEditor.Resources\RhinoPythonNetEditor.Resources.csproj" />
     <ProjectReference Include="..\RhinoPythonNetEditor.Styling\RhinoPythonNetEditor.Styling.csproj" />
     <ProjectReference Include="..\RhinoPythonNetEditor.ViewModel\RhinoPythonNetEditor.ViewModel.csproj" />

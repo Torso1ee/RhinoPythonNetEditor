@@ -30,7 +30,7 @@
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </UserControl.Resources>
-    <Menu Background="{StaticResource MenuBarBackgroundBrush}" DataContext="{Binding Data.MenuBarViewModel, Source={StaticResource proxy}}"
+    <Menu Background="{StaticResource MenuBarBackgroundBrush}"  DataContext="{Binding Data.MenuBarViewModel, Source={StaticResource proxy}}"
             IsEnabled="{Binding Data.DebugViewModel.IsDebuging, Source={StaticResource proxy}, Converter={StaticResource InvertConverter}}"
           >
         <Menu.ItemsPanel>
@@ -46,6 +46,7 @@
             Style="{StaticResource MenuItemIconStyle}"  
             attach:IconElement.Geometry="{StaticResource ConfirmGeometry}"
             Header="OK"  
+            Command="{Binding Confirm}"
             HorizontalAlignment="Right"
            DockPanel.Dock="Right"/>
         <MenuItem 
@@ -66,6 +67,7 @@
             Style="{StaticResource MenuItemIconStyle}"  
             attach:IconElement.Geometry="{StaticResource TestGeometry}"
             Header="运行"  
+            Command="{Binding Run}"
             HorizontalAlignment="Right"
            DockPanel.Dock="Right"/>
     </Menu>

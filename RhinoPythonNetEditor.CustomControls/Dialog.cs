@@ -20,6 +20,7 @@ namespace RhinoPythonNetEditor.CustomControls
         public static readonly DependencyProperty IsClosedProperty = DependencyProperty.Register(
             "IsClosed", typeof(bool), typeof(Dialog), new PropertyMetadata(false));
 
+        public object Result { get; set; }
         public bool IsClosed
         {
             get => (bool)GetValue(IsClosedProperty);
@@ -128,5 +129,7 @@ namespace RhinoPythonNetEditor.CustomControls
                 }
             }
         }
+
+
     }
 }

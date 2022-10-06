@@ -1,4 +1,5 @@
 using Eto.Forms;
+using GH_IO.Serialization;
 using Grasshopper;
 using Grasshopper.GUI.Script;
 using Grasshopper.Kernel;
@@ -14,6 +15,7 @@ using Rhino;
 using Rhino.Geometry;
 using Rhino.Runtime;
 using Rhino.Runtime.InProcess;
+using RhinoPythonNetEditor.Interface;
 using RhinoPythonNetEditor.ViewModel;
 using System;
 using System.CodeDom.Compiler;
@@ -24,11 +26,13 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
+using System.Windows.Forms;
 
 namespace RhinoPythonNetEditor.Component
 {
-    public class PythonNetScriptComponent : GH_Component, IGH_VariableParameterComponent
+    public class PythonNetScriptComponent : GH_Component, IGH_VariableParameterComponent, IScriptComponent
     {
         /// <summary>
         /// Each implementation of GH_Component must provide a public 
@@ -46,11 +50,25 @@ namespace RhinoPythonNetEditor.Component
             ScriptSource.References.Add(AssemblyPath + @"\Python.Runtime.dll");
         }
 
+
+
+        private void Document_ObjectsDeleted(object sender, GH_DocObjectEventArgs e)
+        {
+            Editor?.Hide();
+        }
+
+        public override void RemovedFromDocument(GH_Document document)
+        {
+            Editor?.Hide();
+            base.RemovedFromDocument(document);
+        }
+
         static PythonNetScriptComponent()
         {
             AssemblyPath = Path.GetDirectoryName(typeof(PythonNetScriptComponent).Assembly.Location);
         }
         public static bool IsPythonInitialized { get; set; } = false;
+
 
         public static void PythonInitialized()
         {
@@ -88,12 +106,13 @@ namespace RhinoPythonNetEditor.Component
             Editor.Loaded += Editor_Loaded;
         }
 
+        internal ViewModelLocator Locator { get; set; }
         private void Editor_Loaded(object sender, System.Windows.RoutedEventArgs e)
         {
             if (!IsInjected)
             {
-                var locator = Editor.DataContext as ViewModelLocator;
-                locator.ComponentHost = this;
+                Locator = Editor.DataContext as ViewModelLocator;
+                Locator.ComponentHost = this;
             }
             else
             {
@@ -214,7 +233,7 @@ namespace RhinoPythonNetEditor.Component
                             var errorLines = exception.StackTrace.Split('\n');
                             var lCount = errorLines.Length;
                             var pyError = new List<string>();
-                            for (int i = 0; i < lCount; )
+                            for (int i = 0; i < lCount;)
                             {
                                 if (errorLines[i].StartsWith("  File") && i + 1 < lCount)
                                 {
@@ -359,7 +378,11 @@ namespace RhinoPythonNetEditor.Component
         }
 
 
-        public bool DestroyParameter(GH_ParameterSide side, int index) => true;
+        public bool DestroyParameter(GH_ParameterSide side, int index)
+        {
+            ScriptAssembly = null;
+            return true;
+        }
 
         public void VariableParameterMaintenance()
         {
@@ -375,7 +398,6 @@ namespace RhinoPythonNetEditor.Component
                     variable.AllowTreeAccess = true;
                     variable.Optional = true;
                     variable.ShowHints = true;
-                    variable.Hints = this.AvailableTypeHints;
                 }
             }
             int num3 = this.Params.Output.Count - 1;
@@ -387,44 +409,6 @@ namespace RhinoPythonNetEditor.Component
             }
         }
 
-        protected virtual List<IGH_TypeHint> AvailableTypeHints
-        {
-            get
-            {
-                List<IGH_TypeHint> list1 = new List<IGH_TypeHint>();
-                list1.Add(new GH_DynamicHint());
-                list1.Add(new GH_HintSeparator());
-                list1.Add(new GH_BooleanHint_CS());
-                list1.Add(new GH_IntegerHint_CS());
-                list1.Add(new GH_DoubleHint_CS());
-                list1.Add(new GH_ComplexHint());
-                list1.Add(new GH_StringHint_CS());
-                list1.Add(new GH_DateTimeHint());
-                list1.Add(new GH_ColorHint());
-                list1.Add(new GH_GuidHint());
-                list1.Add(new GH_HintSeparator());
-                list1.Add(new GH_Point3dHint());
-                list1.Add(new GH_Vector3dHint());
-                list1.Add(new GH_PlaneHint());
-                list1.Add(new GH_IntervalHint());
-                list1.Add(new GH_UVIntervalHint());
-                list1.Add(new GH_Rectangle3dHint());
-                list1.Add(new GH_BoxHint());
-                list1.Add(new GH_TransformHint());
-                list1.Add(new GH_HintSeparator());
-                list1.Add(new GH_LineHint());
-                list1.Add(new GH_CircleHint());
-                list1.Add(new GH_ArcHint());
-                list1.Add(new GH_PolylineHint());
-                list1.Add(new GH_CurveHint());
-                list1.Add(new GH_SurfaceHint());
-                list1.Add(new GH_BrepHint());
-                list1.Add(new GH_SubDHint());
-                list1.Add(new GH_MeshHint());
-                list1.Add(new GH_GeometryBaseHint());
-                return list1;
-            }
-        }
 
         internal int FirstOutputIndex
         {
@@ -452,6 +436,44 @@ namespace RhinoPythonNetEditor.Component
         public string TooltipDesc { get; internal set; }
 
         internal CompiledScript ScriptAssembly { get; set; }
+
+        protected override void AppendAdditionalComponentMenuItems(ToolStripDropDown menu)
+        {
+            if (this.HasOutParameter)
+            {
+                Menu_AppendItem(menu, "Remove out", new EventHandler(this.Menu_ReinstateOutClicked)).ToolTipText = "Hide the [out] parameter";
+            }
+            else
+            {
+                Menu_AppendItem(menu, "Reinstate out", new EventHandler(this.Menu_ReinstateOutClicked)).ToolTipText = "Display the [out] parameter again";
+            }
+
+        }
+
+        private void Menu_ReinstateOutClicked(object sender, EventArgs e)
+        {
+            if (this.HasOutParameter)
+            {
+                this.RecordUndoEvent("Remove out");
+                this.Params.UnregisterOutputParameter(this.Params.Output[0], true);
+                this.ExpireSolution(true);
+            }
+            else
+            {
+                this.RecordUndoEvent("Reinstate out");
+                Param_String str = new Param_String
+                {
+                    Access = GH_ParamAccess.list,
+                    Name = "out",
+                    NickName = "out",
+                    Description = "Print, Reflect and Error streams"
+                };
+                this.Params.RegisterOutputParam(str, 0);
+                this.ExpireSolution(true);
+            }
+
+        }
+
         private IGH_ScriptInstance GetScriptInstance()
         {
             IGH_ScriptInstance instance;
@@ -524,7 +546,7 @@ namespace RhinoPythonNetEditor.Component
         private static readonly SortedDictionary<Guid, List<string>> CachedFailures = new SortedDictionary<Guid, List<string>>();
         private readonly List<string> compilerErrors = new List<string>();
         private static readonly SortedDictionary<Guid, Type> CachedAssemblies = new SortedDictionary<Guid, Type>();
-        internal ScriptSource ScriptSource { get; }
+        public ScriptSource ScriptSource { get; }
         private Type CreateScriptType(ScriptSource source)
         {
             Type type;
@@ -740,18 +762,14 @@ namespace RhinoPythonNetEditor.Component
                 case GH_ObjectEventType.Preview:
                 case GH_ObjectEventType.PersistentData:
                 case GH_ObjectEventType.DataMapping:
-                    break;
-
+                    return;
                 case GH_ObjectEventType.NickNameAccepted:
                     this.ScriptAssembly = null;
                     this.ExpireSolution(true);
                     return;
-
-                default:
-                    this.ScriptAssembly = null;
-                    this.ExpireSolution(true);
-                    break;
             }
+            this.ScriptAssembly = null;
+            this.ExpireSolution(true);
         }
 
         private static readonly SortedDictionary<string, bool> IgnoreWarnings = new SortedDictionary<string, bool>();
@@ -776,5 +794,35 @@ namespace RhinoPythonNetEditor.Component
             return (warning.IsWarning ? IgnoreWarning(warning.ErrorNumber) : false);
         }
 
+        public override bool Read(GH_IReader reader)
+        {
+            ScriptSource.PythonCode = reader.GetString("code");
+            ScriptSource.References.Clear();
+            ScriptSource.References.AddRange(reader.GetString("reference").Split('\n'));
+            ScriptAssembly = null;
+            return base.Read(reader);
+        }
+
+        public override bool Write(GH_IWriter writer)
+        {
+            writer.SetString("code", ScriptSource.PythonCode);
+            writer.SetString("reference", String.Join("\n", ScriptSource.References));
+            return base.Write(writer);
+        }
+
+        public void SetSource(string code)
+        {
+            if (ScriptSource.PythonCode != code)
+            {
+                RecordUndoEvent("CodeChanged");
+                ScriptSource.PythonCode = code;
+            }
+            ScriptAssembly = null;
+        }
+
+        public void CloseEditor()
+        {
+            Editor?.Hide();
+        }
     }
 }

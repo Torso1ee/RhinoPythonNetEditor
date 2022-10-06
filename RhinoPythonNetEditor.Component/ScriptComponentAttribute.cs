@@ -21,8 +21,12 @@ namespace RhinoPythonNetEditor.Component
             if (Owner is PythonNetScriptComponent comp)
             {
                 if (comp.Editor == null) comp.SetWindow();
-                comp.Editor.Show();
-                comp.Editor.Focus();
+                if (comp.Editor.Visibility != System.Windows.Visibility.Visible)
+                {
+                    comp.Editor.Show();
+                    comp.Editor.Focus();
+                    comp.Locator.TextEditorViewModel.SetCode(comp.ScriptSource.PythonCode);
+                }
                 return GH_ObjectResponse.Handled;
             }
             else

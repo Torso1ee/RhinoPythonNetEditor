@@ -67,6 +67,13 @@ namespace RhinoPythonNetEditor.View.Pages
                     var t = Dialog.Show(window, messageBox).WaitingForClosed();
                     m.Reply(t);
                 });
+                messenger.Register<ConfirmDialogRequestMessage>(this, (r, m) =>
+                {
+                    var messageBox = new ConfirmDialog(m.Title, m.Message);
+                    var d = Dialog.Show(window, messageBox).WaitingForClosed();
+
+                    m.Reply(t);
+                });
             }
         }
 

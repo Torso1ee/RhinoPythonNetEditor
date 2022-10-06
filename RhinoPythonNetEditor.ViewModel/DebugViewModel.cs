@@ -131,7 +131,7 @@ namespace RhinoPythonNetEditor.ViewModel
             debugManager = new DebugManager();
             var port = debugManager.NextPort();
             var infos = Indicis;
-            var code = Messenger.Send<CodeRequestMessage>();
+            var code = Locator.TextEditorViewModel.Document.Text;
             var guid = Guid.NewGuid();
             var dir = CurrentDir + $@"\temp\{guid}\";
             if (!Directory.Exists(dir)) Directory.CreateDirectory(dir);
@@ -139,7 +139,7 @@ namespace RhinoPythonNetEditor.ViewModel
             SerializeInput(Time, $@"{dir}params_data");
             using (var fs = new FileStream($@"{dir}temp.py", FileMode.Create))
             {
-                var result = CodeFile(code.Response, $@"{dir}params_data");
+                var result = CodeFile(code, $@"{dir}params_data");
                 LineOffset = result.Item1;
                 var bytes = Encoding.UTF8.GetBytes(result.Item2);
                 await fs.WriteAsync(bytes, 0, bytes.Length);

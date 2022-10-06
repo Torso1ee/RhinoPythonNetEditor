@@ -14,7 +14,7 @@ namespace RhinoPythonNetEditor.ViewModel
         public ViewModelLocator()
         {
             Services = ConfigureServices();
-            ConfigureFinished.Invoke(this,EventArgs.Empty);
+            ConfigureFinished.Invoke(this, EventArgs.Empty);
         }
 
         public event EventHandler ConfigureFinished = delegate { };
@@ -26,6 +26,7 @@ namespace RhinoPythonNetEditor.ViewModel
 
         public TerminalViewModel TerminalViewModel => Services.GetService<TerminalViewModel>();
 
+        public TextEditorViewModel TextEditorViewModel => Services.GetService<TextEditorViewModel>();
 
         public DebugViewModel DebugViewModel => Services.GetService<DebugViewModel>();
 
@@ -38,6 +39,7 @@ namespace RhinoPythonNetEditor.ViewModel
             services.AddSingleton(new MenuBarViewModel(this));
             services.AddSingleton(new TerminalViewModel(this));
             services.AddSingleton(new DebugViewModel(this));
+            services.AddSingleton(new TextEditorViewModel(this));
             return services.BuildServiceProvider();
         }
     }

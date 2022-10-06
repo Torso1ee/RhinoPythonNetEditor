@@ -45,11 +45,9 @@ namespace RhinoPythonNetEditor.View.Controls
         public Editor()
         {
             InitializeComponent();
-            InstallHighlightDefinition();
-            InstallBreakPoint();
-            InstallFolding();
         }
 
+        private bool Installed { get; set; }
         private void BreakPointMargin_BreakPointChanged(object sender, BreakPointEventArgs e)
         {
             messenger.Send(new AllBreakPointInformationsMessage(e.Indicis));
@@ -88,13 +86,16 @@ namespace RhinoPythonNetEditor.View.Controls
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
+            if (!Installed)
+            {
+                InstallHighlightDefinition();
+                InstallBreakPoint();
+                InstallFolding();
+                Installed = true;
+            }
             if (messenger == null)
             {
                 messenger = (DataContext as ViewModelLocator).Messenger;
-                messenger.Register<CodeRequestMessage>(this, (r, m) =>
-                {
-                    Application.Current.Dispatcher.Invoke(() => m.Reply(textEditor.Document.Text));
-                });
                 messenger.Register<StepMessage>(this, (r, m) =>
                 {
                     Application.Current.Dispatcher.Invoke(() => breakPointMargin.Step(m.Line, m.Value));

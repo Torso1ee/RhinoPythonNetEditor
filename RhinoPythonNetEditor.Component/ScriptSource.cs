@@ -22,7 +22,7 @@ namespace RhinoPythonNetEditor.Component
         internal PythonNetScriptComponent Component { get; set; }
         internal List<string> References { get; } = new List<string>();
 
-        public string PythonCode { get; set; }
+        public string PythonCode { get; set; } = "";
 
         public bool Write(GH_IWriter writer)
         {
@@ -71,7 +71,6 @@ namespace RhinoPythonNetEditor.Component
             template = template.Replace("{miuradaisenbai}", CodeBlock_OutputParameterDeclarations());
             template = template.Replace("{bokusyu}", CodeBlock_PythonCode(id));
             template = template.Replace("{1145141919810}", CodeBlock_ParameterAssignment());
-            File.WriteAllText(PythonNetScriptComponent.CompiledPath + @"\test.cs", template);
             return template;
         }
 
@@ -80,7 +79,7 @@ namespace RhinoPythonNetEditor.Component
         {
             var sb = new StringBuilder();
             sb.AppendLine($"from System import *");
-            sb.AppendLine($"def func({CodeBlock_PyParameterSignature() + "," + CodeBlock_PyReturnSignature()}):");
+            sb.AppendLine($"def func({string.Join(",", new[] { CodeBlock_PyParameterSignature(), CodeBlock_PyReturnSignature() }.Where(s => !string.IsNullOrEmpty(s)))}):");
             var lines = PythonCode.Split('\n');
             var code = "";
             foreach (var l in lines) code += ("\t" + l);
@@ -109,7 +108,7 @@ namespace RhinoPythonNetEditor.Component
             var idName = id.ToString().Replace("-", "");
             pythonFunc.AppendLine($"dynamic module = Py.Import(\"{id}\");");
             pythonFunc.AppendLine("dynamic func = module.func;");
-            pythonFunc.AppendLine($"var result{idName} = func({CodeBlock_PyParameterSignature()+","+ CodeBlock_PyReturnSignature()});");
+            pythonFunc.AppendLine($"var result{idName} = func({string.Join(",", new[] { CodeBlock_PyParameterSignature(), CodeBlock_PyReturnSignature() }.Where(s => !string.IsNullOrEmpty(s)))});");
             List<string> list = new List<string>();
             int num = Component.Params.Output.Count - 1;
             int index = 0;

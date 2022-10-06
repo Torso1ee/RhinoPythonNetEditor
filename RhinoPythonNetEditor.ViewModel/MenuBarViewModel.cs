@@ -12,6 +12,7 @@ using RhinoPythonNetEditor.ViewModel.Messages;
 using System.Diagnostics;
 using System.Windows.Documents;
 using System.IO;
+using RhinoPythonNetEditor.Interface;
 
 namespace RhinoPythonNetEditor.ViewModel
 {
@@ -27,6 +28,23 @@ namespace RhinoPythonNetEditor.ViewModel
         private WeakReferenceMessenger Messenger => Locator?.Messenger;
 
         private ViewModelLocator Locator { get; set; }
+
+        public ICommand Run => new RelayCommand(() =>
+        {
+            if (Locator.ComponentHost != null && Locator.ComponentHost is IScriptComponent sc) sc.SetSource(Locator.TextEditorViewModel.Document.Text);
+            Locator.ComponentHost.ExpireSolution(true);
+        });
+
+        public ICommand Confirm=> new RelayCommand(() =>
+        {
+            if (Locator.ComponentHost != null && Locator.ComponentHost is IScriptComponent sc)
+            {
+                sc.SetSource(Locator.TextEditorViewModel.Document.Text);
+                sc.CloseEditor();
+            }
+            Locator.ComponentHost.ExpireSolution(true);
+
+        });
 
     }
 }
