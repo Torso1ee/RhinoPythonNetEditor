@@ -90,9 +90,9 @@ namespace RhinoPythonNetEditor.CustomControls
 
     public static class DialogExtension
     {
-        public static Task<bool> WaitingForClosed(this Dialog dialog)
+        public static Task<object> WaitingForClosed(this Dialog dialog)
         {
-            var tcs = new TaskCompletionSource<bool>();
+            var tcs = new TaskCompletionSource<object>();
             try
             {
                 if (dialog.IsClosed)
@@ -121,7 +121,7 @@ namespace RhinoPythonNetEditor.CustomControls
             {
                 try
                 {
-                    tcs.TrySetResult(dialog.IsClosed);
+                    tcs.TrySetResult(dialog.Result);
                 }
                 catch (Exception e)
                 {

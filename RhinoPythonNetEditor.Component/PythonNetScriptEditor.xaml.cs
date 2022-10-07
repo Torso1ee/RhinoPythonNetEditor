@@ -53,14 +53,6 @@ namespace RhinoPythonNetEditor.Component
             }
         }
 
-        private void Window_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
-        {
-            if (!(bool)e.NewValue)
-            {
-                var code = Locator.TextEditorViewModel.Document.Text;
-                Owner.SetSource(code);
-            }
-        }
 
         [DllImport("user32.dll", EntryPoint = "GetSystemMenu")]
         private static extern IntPtr GetSystemMenu(IntPtr hwnd, int revert);

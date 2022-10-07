@@ -19,6 +19,7 @@ namespace RhinoPythonNetEditor.Component
             Component = comp;
         }
 
+        internal Guid Id { get; set; }
         internal PythonNetScriptComponent Component { get; set; }
         internal List<string> References { get; } = new List<string>();
 

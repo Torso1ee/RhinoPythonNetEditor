@@ -5,6 +5,8 @@
 
     <Color x:Key="ButtonActiveBackgroundColor">#11E9E9E9</Color>
     <Color x:Key="ButtonActiveForegroundColor">White</Color>
+    <Color x:Key="ButtonActiveBackgroundColor1">#33C6C6C6</Color>
+    <Color x:Key="ButtonActiveForegroundColor1">black</Color>
 
 
     <Style TargetType="{x:Type Button}" x:Key="ButtonBaseStyle">
@@ -19,6 +21,33 @@
                         <Storyboard>
                             <ColorAnimation  Storyboard.TargetProperty="(Button.Background).(SolidColorBrush.Color)" Duration="0:0:0.3" To="{StaticResource ButtonActiveBackgroundColor}"/>
                             <ColorAnimation  Storyboard.TargetProperty="(Button.Foreground).(SolidColorBrush.Color)" Duration="0:0:0.3" To="{StaticResource  ButtonActiveForegroundColor}"/>
+                        </Storyboard>
+                    </BeginStoryboard>
+                </MultiTrigger.EnterActions>
+                <MultiTrigger.ExitActions>
+                    <BeginStoryboard>
+                        <Storyboard>
+                            <ColorAnimation  Storyboard.TargetProperty="(Button.Background).(SolidColorBrush.Color)" Duration="0:0:0.3"/>
+                            <ColorAnimation  Storyboard.TargetProperty="(Button.Foreground).(SolidColorBrush.Color)" Duration="0:0:0.3"/>
+                        </Storyboard>
+                    </BeginStoryboard>
+                </MultiTrigger.ExitActions>
+            </MultiTrigger>
+        </Style.Triggers>
+    </Style>
+
+    <Style TargetType="{x:Type Button}" x:Key="ButtonInvertBaseStyle">
+        <Style.Triggers>
+            <MultiTrigger>
+                <MultiTrigger.Conditions>
+                    <Condition Property="IsMouseOver" Value="True"/>
+                    <Condition Property="IsEnabled" Value="True"/>
+                </MultiTrigger.Conditions>
+                <MultiTrigger.EnterActions>
+                    <BeginStoryboard>
+                        <Storyboard>
+                            <ColorAnimation  Storyboard.TargetProperty="(Button.Background).(SolidColorBrush.Color)" Duration="0:0:0.3" To="{StaticResource ButtonActiveBackgroundColor1}"/>
+                            <ColorAnimation  Storyboard.TargetProperty="(Button.Foreground).(SolidColorBrush.Color)" Duration="0:0:0.3" To="{StaticResource  ButtonActiveForegroundColor1}"/>
                         </Storyboard>
                     </BeginStoryboard>
                 </MultiTrigger.EnterActions>
@@ -52,7 +81,7 @@
         </Setter>
     </Style>
 
-    <Style TargetType="{x:Type Button}" x:Key="TextButtonStyle" BasedOn="{StaticResource  ButtonBaseStyle}">
+    <Style TargetType="{x:Type Button}" x:Key="TextButtonStyle" BasedOn="{StaticResource  ButtonInvertBaseStyle}">
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type Button}">

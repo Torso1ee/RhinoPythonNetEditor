@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace RhinoPythonNetEditor.ViewModel.Messages
 {
-    public class DebugSettingDialogRequestMessage : AsyncRequestMessage<bool>
+    public class DebugSettingDialogRequestMessage : AsyncRequestMessage<object>
     {
     }
 }

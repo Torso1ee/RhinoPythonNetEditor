@@ -6,6 +6,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
+using RhinoPythonNetEditor.ViewModel.Messages;
+using CommunityToolkit.Mvvm.Messaging;
+using RhinoPythonNetEditor.Interface;
 
 namespace RhinoPythonNetEditor.ViewModel
 {
@@ -32,10 +35,18 @@ namespace RhinoPythonNetEditor.ViewModel
             Document.Text = text;
         }
 
-        //public bool CheckCode()
-        //{
-
-        //}
+        public async Task<bool> CheckCode()
+        {
+            if (Locator.ComponentHost is IScriptComponent sc)
+            {
+                if (sc.GetCode() != Document.Text)
+                {
+                    var result = await Locator.Messenger.Send(new ConfirmDialogRequestMessage { Message = $"代码发生变更，是否不应用就退出。", Title = "警告" });
+                    return (bool)result;
+                }
+            }
+            return true;
+        }
 
     }
 }

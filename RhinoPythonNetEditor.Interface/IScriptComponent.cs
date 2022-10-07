@@ -10,6 +10,9 @@ namespace RhinoPythonNetEditor.Interface
     {
         void SetSource(string code);
 
+        string GetCode();
+
         void CloseEditor();
+
     }
 }

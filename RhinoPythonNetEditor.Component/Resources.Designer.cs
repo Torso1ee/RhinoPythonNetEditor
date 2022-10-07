@@ -131,6 +131,16 @@ namespace RhinoPythonNetEditor.Component {
         }
         
         /// <summary>
+        ///   查找 System.Drawing.Bitmap 类型的本地化资源。
+        /// </summary>
+        internal static System.Drawing.Bitmap PythonIcon {
+            get {
+                object obj = ResourceManager.GetObject("PythonIcon", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 using Grasshopper.Kernel;
         ///using Python.Runtime;
         ///using System;

@@ -13,6 +13,7 @@ using Microsoft.VisualBasic.CompilerServices;
 using Python.Runtime;
 using Rhino;
 using Rhino.Geometry;
+using Rhino.Resources;
 using Rhino.Runtime;
 using Rhino.Runtime.InProcess;
 using RhinoPythonNetEditor.Interface;
@@ -219,7 +220,18 @@ namespace RhinoPythonNetEditor.Component
                     Exception ex = exception;
                     ProjectData.SetProjectError(ex);
                     Exception e = ex;
-                    if (HasOutParameter)
+                    if (ex.Message.Contains("EOL"))
+                    {
+                        var ma = Regex.Match(ex.Message, @"line (\d+)");
+                        if (ma.Groups.Count == 2)
+                        {
+                            var eLine = ma.Groups[0].Value.Replace(ma.Groups[1].Value, (int.Parse(ma.Groups[1].Value) - 2).ToString());
+                            eLine = ex.Message.Replace(ma.Groups[0].Value, eLine);
+                            DA.SetData(0, string.Format("error: {0})", eLine));
+                            AddRuntimeMessage(GH_RuntimeMessageLevel.Error, eLine);
+                        }
+                    }
+                    else if (HasOutParameter)
                     {
                         StackTrace trace = new StackTrace(e, true);
                         if (trace.FrameCount == 0)
@@ -423,7 +435,7 @@ namespace RhinoPythonNetEditor.Component
         /// You can add image files to your project resources and access them like this:
         /// return Resources.IconForThisComponent;
         /// </summary>
-        protected override System.Drawing.Bitmap Icon => null;
+        protected override System.Drawing.Bitmap Icon => Resources.PythonIcon;
 
         /// <summary>
         /// Each component must have a unique Guid to identify it. 
@@ -823,6 +835,11 @@ namespace RhinoPythonNetEditor.Component
         public void CloseEditor()
         {
             Editor?.Hide();
+        }
+
+        public string GetCode()
+        {
+            return ScriptSource.PythonCode;
         }
     }
 }

@@ -13,7 +13,6 @@
     <SolidColorBrush Color="#FFABABAB" x:Key="ButtonForegroundBrush"/>
     <SolidColorBrush Color="#FFC6C6C6" x:Key="EditorTextBrush"/>
     <SolidColorBrush Color="#FF333333" x:Key="DebugBarColor"/>
-
     <BooleanToVisibilityConverter x:Key="BoolToVisibility"/>
 
 </ResourceDictionary>

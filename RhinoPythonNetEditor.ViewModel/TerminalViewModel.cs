@@ -12,6 +12,7 @@ using System.Windows.Input;
 using System.Windows;
 using CommunityToolkit.Mvvm.Messaging;
 using RhinoPythonNetEditor.ViewModel.Messages;
+using System.Text.RegularExpressions;
 
 namespace RhinoPythonNetEditor.ViewModel
 {
@@ -69,6 +70,26 @@ namespace RhinoPythonNetEditor.ViewModel
 
         private void UpdateLine(ScriptLine line)
         {
+            if(line.State == ScriptLineState.Error)
+            {
+                var txt = line.Text.Split('\n');
+                var ls = new List<string>();
+                foreach(var l in txt)
+                {
+                    if (l.Contains("temp.py"))
+                    {
+                        var ma = Regex.Match(l, @"temp.py"", line (\d+)");
+                        if (ma.Groups.Count == 2)
+                        {
+                            var eLine = ma.Groups[0].Value.Replace(ma.Groups[1].Value, (int.Parse(ma.Groups[1].Value) - 5).ToString());
+                            ls.Add(l.Replace(ma.Groups[0].Value, eLine));
+                        }
+                        else ls.Add(l);
+                    }
+                    else if (!l.Contains("0.00s - ")) ls.Add(l);
+                }
+                line.Text = string.Join("\n", ls);
+            }
             Application.Current.Dispatcher.Invoke(() => OutputContent.Add(line));
         }
 

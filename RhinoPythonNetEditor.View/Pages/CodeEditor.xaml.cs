@@ -70,8 +70,7 @@ namespace RhinoPythonNetEditor.View.Pages
                 messenger.Register<ConfirmDialogRequestMessage>(this, (r, m) =>
                 {
                     var messageBox = new ConfirmDialog(m.Title, m.Message);
-                    var d = Dialog.Show(window, messageBox).WaitingForClosed();
-
+                    var t = Dialog.Show(window, messageBox).WaitingForClosed();
                     m.Reply(t);
                 });
             }
@@ -82,8 +81,14 @@ namespace RhinoPythonNetEditor.View.Pages
             window?.DragMove();
         }
 
-        private void CommandBinding_Executed(object sender, ExecutedRoutedEventArgs e)
+        private async void CommandBinding_Executed(object sender, ExecutedRoutedEventArgs e)
         {
+            if (DataContext is ViewModelLocator locator)
+            {
+                var result = await locator.TextEditorViewModel.CheckCode();
+                if (result) window?.Hide();
+                return;
+            }
             window?.Hide();
         }
 
