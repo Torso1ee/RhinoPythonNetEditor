@@ -468,6 +468,7 @@ namespace RhinoPythonNetEditor.Component
             {
                 this.RecordUndoEvent("Remove out");
                 this.Params.UnregisterOutputParameter(this.Params.Output[0], true);
+                ScriptAssembly = null;
                 this.ExpireSolution(true);
             }
             else
@@ -481,6 +482,7 @@ namespace RhinoPythonNetEditor.Component
                     Description = "Print, Reflect and Error streams"
                 };
                 this.Params.RegisterOutputParam(str, 0);
+                ScriptAssembly = null;
                 this.ExpireSolution(true);
             }
 
