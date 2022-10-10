@@ -57,7 +57,7 @@
                 <ControlTemplate TargetType="{x:Type MenuItem}">
                     <Grid  Height="{TemplateBinding Height}" Width="{TemplateBinding Width}">
                         <Border x:Name="bd" Background="{TemplateBinding Background}" CornerRadius="5" Margin="2" />
-                        <Grid HorizontalAlignment="Center">
+                        <Grid HorizontalAlignment="Center" Margin="5,0"  >
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto"/>
                                 <ColumnDefinition Width="Auto"/>

@@ -19,7 +19,7 @@
                 <Setter Property="Foreground" Value="{StaticResource MenuItemTextBrush}"/>
             </Style>
             <Style x:Key="MenuItemIconStyle" TargetType="{x:Type MenuItem}" BasedOn="{StaticResource  MenuItemActiveWithIconStyle  }">
-                <Setter Property="Width" Value="60"/>
+                <Setter Property="Width" Value="Auto"/>
                 <Setter Property="Height" Value="30"/>
                 <Setter Property="attach:IconElement.Height" Value="15"/>
                 <Setter Property="attach:IconElement.Width" Value="15"/>
@@ -35,13 +35,13 @@
           >
         <Menu.ItemsPanel>
             <ItemsPanelTemplate>
-                <DockPanel  HorizontalAlignment="Stretch"/>
+                <DockPanel Margin="5,0" HorizontalAlignment="Stretch"/>
             </ItemsPanelTemplate>
         </Menu.ItemsPanel>
-        <MenuItem Header="文件"/>
-        <MenuItem Header="编辑"/>
-        <MenuItem Header="工具"/>
-        <MenuItem Header="帮助"/>
+        <MenuItem Header="File"/>
+        <MenuItem Header="Edit"/>
+        <MenuItem Header="Tools"/>
+        <MenuItem Header="Help"/>
         <MenuItem 
             Style="{StaticResource MenuItemIconStyle}"  
             attach:IconElement.Geometry="{StaticResource ConfirmGeometry}"
@@ -52,21 +52,21 @@
         <MenuItem 
             Style="{StaticResource MenuItemIconStyle}"  
             attach:IconElement.Geometry="{StaticResource DebugGeometry}"
-            Header="测试"  
+            Header="Debug"  
             Command="{Binding Data.DebugViewModel.StartDebug, Source={StaticResource proxy}}"
             HorizontalAlignment="Right"
            DockPanel.Dock="Right"/>
         <MenuItem 
             Style="{StaticResource MenuItemIconStyle}"  
             attach:IconElement.Geometry="{StaticResource SettingGeometry}"
-            Header="设置"  
+            Header="Config"  
             Command="{Binding Data.DebugViewModel.Setting, Source={StaticResource proxy}}"
             HorizontalAlignment="Right"
            DockPanel.Dock="Right"/>
         <MenuItem 
             Style="{StaticResource MenuItemIconStyle}"  
             attach:IconElement.Geometry="{StaticResource TestGeometry}"
-            Header="运行"  
+            Header="Run"  
             Command="{Binding Run}"
             HorizontalAlignment="Right"
            DockPanel.Dock="Right"/>

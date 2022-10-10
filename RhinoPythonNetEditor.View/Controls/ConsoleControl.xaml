@@ -19,13 +19,13 @@
     </UserControl.Resources>
     <Grid Background="{StaticResource EditorBackgroundBrush}">
         <TabControl Background="{x:Null}" >
-            <TabItem  Header="问题">
+            <TabItem  Header="Problem">
             </TabItem>
-            <TabItem Header="输出">
+            <TabItem Header="Output">
             </TabItem>
-            <TabItem Header="帮助">
+            <TabItem Header="Help">
             </TabItem>
-            <TabItem Header="终端">
+            <TabItem Header="Terminal">
                 <local:TerminalControl/>
             </TabItem>
         </TabControl>
