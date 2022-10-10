@@ -190,18 +190,34 @@ using Grasshopper.Kernel.Parameters;
 
   public class PythonScriptInstance : GH_ScriptInstance
     {
-        private List&lt;string&gt; __err = new List&lt;string&gt;();
-        private List&lt;string&gt; __out = new List&lt;string&gt;();
+        public List&lt;string&gt; __err = new List&lt;string&gt;();
+        public List&lt;string&gt; __out = new List&lt;string&gt;();
 
         public override void InvokeRunScript(IGH_Component owner, object rhinoDocument, int iteration, List&lt;object&gt; inputs, IGH_DataAccess DA)
         {
             __out.Clear();
             __err.Clear();
+		      
             {tadokorokouji}
 		{miuradaisenbai}
             using (Py.GIL())
             {
+		dynamic sys = Py.Import("sys");
+        	string codeToRedirectOutput =
+            "import sys\n" +
+            "from io import StringIO\n" +
+            "sys.stdout = mystdout = StringIO()\n" +
+            "sys.stdout.flush()\n" +
+            "sys.stderr = mystderr = StringIO()\n" +
+            "sys.stderr.flush()\n";
+        	PythonEngine.Exec(codeToRedirectOutput); 
                 {bokusyu}
+		string pyStdout = sys.stdout.getvalue(); 
+            pyStdout = pyStdout.Replace("\n", "\r\n"); 
+            __out.Add(pyStdout);
+		string pyStderr = sys.stderr.getvalue(); 
+            pyStderr = pyStderr.Replace("\n", "\r\n"); 
+            __err.Add(pyStderr);
             }
             try
             {
