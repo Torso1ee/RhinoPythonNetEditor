@@ -211,13 +211,18 @@ using Grasshopper.Kernel.Parameters;
             "sys.stderr = mystderr = StringIO()\n" +
             "sys.stderr.flush()\n";
         	PythonEngine.Exec(codeToRedirectOutput); 
+		try{
                 {bokusyu}
+		}
+		catch{throw;}
+		finally{
 		string pyStdout = sys.stdout.getvalue(); 
             pyStdout = pyStdout.Replace("\n", "\r\n"); 
             __out.Add(pyStdout);
 		string pyStderr = sys.stderr.getvalue(); 
             pyStderr = pyStderr.Replace("\n", "\r\n"); 
             __err.Add(pyStderr);
+		}
             }
             try
             {

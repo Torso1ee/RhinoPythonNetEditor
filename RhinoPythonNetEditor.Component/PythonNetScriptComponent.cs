@@ -224,25 +224,25 @@ namespace RhinoPythonNetEditor.Component
                     Exception ex = exception;
                     ProjectData.SetProjectError(ex);
                     Exception e = ex;
-                    if (ex.Source == "Python.Runtime")
+                    if (ex.Message.Contains("EOL"))
                     {
                         var eLine = ex.Message;
                         var ma = Regex.Match(ex.Message, @"line (\d+)");
                         if (ma.Groups.Count == 2)
                         {
-                             eLine = ma.Groups[0].Value.Replace(ma.Groups[1].Value, (int.Parse(ma.Groups[1].Value) - 2).ToString());
+                            eLine = ma.Groups[0].Value.Replace(ma.Groups[1].Value, (int.Parse(ma.Groups[1].Value) - 2).ToString());
                             eLine = ex.Message.Replace(ma.Groups[0].Value, eLine);
                         }
                         result.Error = eLine;
                         DA.SetData(0, string.Format("error: {0})", eLine));
                         AddRuntimeMessage(GH_RuntimeMessageLevel.Error, eLine);
                     }
-                    else if (HasOutParameter)
+                    else
                     {
                         StackTrace trace = new StackTrace(e, true);
                         if (trace.FrameCount == 0)
                         {
-                            DA.SetData(0, string.Format("error: {0} (no line number available, sorry)", e.Message));
+                            if (HasOutParameter) DA.SetData(0, string.Format("error: {0} (no line number available, sorry)", e.Message));
                             AddRuntimeMessage(GH_RuntimeMessageLevel.Error, e.Message);
                         }
                         else
@@ -275,7 +275,7 @@ namespace RhinoPythonNetEditor.Component
                             }
                             var error = string.Join("\n", ls);
                             result.Error = error;
-                            DA.SetData(0, string.Format("error: {0})", error));
+                            if (HasOutParameter) DA.SetData(0, string.Format("error: {0})", error));
                             AddRuntimeMessage(GH_RuntimeMessageLevel.Error, error);
                         }
                     }
