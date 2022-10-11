@@ -233,7 +233,7 @@ namespace RhinoPythonNetEditor.Component
                             eLine = ma.Groups[0].Value.Replace(ma.Groups[1].Value, (int.Parse(ma.Groups[1].Value) - 2).ToString());
                             eLine = ex.Message.Replace(ma.Groups[0].Value, eLine);
                         }
-                        result.Error = eLine;
+                        result.Error =  eLine;
                         DA.SetData(0, string.Format("error: {0})", eLine));
                         AddRuntimeMessage(GH_RuntimeMessageLevel.Error, eLine);
                     }
@@ -264,6 +264,20 @@ namespace RhinoPythonNetEditor.Component
                                 }
                             }
                             var ls = new List<string>();
+
+                            var msg = ex.Message;
+                            var mh = Regex.Match(msg, @".py, line (\d+)");
+                            if (mh.Groups.Count == 2)
+                            {
+                                var er = mh.Groups[0].Value.Replace(mh.Groups[1].Value, (int.Parse(mh.Groups[1].Value) - 2).ToString());
+                                msg = msg.Replace(mh.Groups[0].Value, er);
+                            }
+                            ls.Add($"Runtime Error ({ex.GetType().ToString()}):{msg}");
+
+                            if (pyError.Count > 0)
+                            {
+                                ls.Add("Traceback:");
+                            }
                             foreach (var l in pyError)
                             {
                                 var ma = Regex.Match(l, @"line (\d+), in");
