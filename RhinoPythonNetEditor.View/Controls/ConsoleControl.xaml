@@ -22,6 +22,7 @@
             <TabItem  Header="Problem">
             </TabItem>
             <TabItem Header="Output">
+                <local:OutputControl/>
             </TabItem>
             <TabItem Header="Help">
             </TabItem>

@@ -12,10 +12,12 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualBasic.CompilerServices;
 using Python.Runtime;
 using Rhino;
+using Rhino.Commands;
 using Rhino.Geometry;
 using Rhino.Resources;
 using Rhino.Runtime;
 using Rhino.Runtime.InProcess;
+using RhinoPythonNetEditor.DataModels.Business;
 using RhinoPythonNetEditor.Interface;
 using RhinoPythonNetEditor.ViewModel;
 using System;
@@ -158,6 +160,7 @@ namespace RhinoPythonNetEditor.Component
         protected override void BeforeSolveInstance()
         {
             if (!IsPythonInitialized) PythonInitialized();
+            if (Locator != null) Locator.OutputViewModel.Results.Clear();
         }
 
         /// <summary>
@@ -189,6 +192,7 @@ namespace RhinoPythonNetEditor.Component
             }
             if (scriptInstance != null)
             {
+                var result = new OutputResult { Turn = DA.Iteration + 1 };
                 List<object> inputs = new List<object>();
                 var count = Params.Input.Count;
                 for (int i = 0; i < count; i++)
@@ -220,16 +224,18 @@ namespace RhinoPythonNetEditor.Component
                     Exception ex = exception;
                     ProjectData.SetProjectError(ex);
                     Exception e = ex;
-                    if (ex.Message.Contains("EOL"))
+                    if (ex.Source == "Python.Runtime")
                     {
+                        var eLine = ex.Message;
                         var ma = Regex.Match(ex.Message, @"line (\d+)");
                         if (ma.Groups.Count == 2)
                         {
-                            var eLine = ma.Groups[0].Value.Replace(ma.Groups[1].Value, (int.Parse(ma.Groups[1].Value) - 2).ToString());
+                             eLine = ma.Groups[0].Value.Replace(ma.Groups[1].Value, (int.Parse(ma.Groups[1].Value) - 2).ToString());
                             eLine = ex.Message.Replace(ma.Groups[0].Value, eLine);
-                            DA.SetData(0, string.Format("error: {0})", eLine));
-                            AddRuntimeMessage(GH_RuntimeMessageLevel.Error, eLine);
                         }
+                        result.Error = eLine;
+                        DA.SetData(0, string.Format("error: {0})", eLine));
+                        AddRuntimeMessage(GH_RuntimeMessageLevel.Error, eLine);
                     }
                     else if (HasOutParameter)
                     {
@@ -268,6 +274,7 @@ namespace RhinoPythonNetEditor.Component
                                 }
                             }
                             var error = string.Join("\n", ls);
+                            result.Error = error;
                             DA.SetData(0, string.Format("error: {0})", error));
                             AddRuntimeMessage(GH_RuntimeMessageLevel.Error, error);
                         }
@@ -275,8 +282,19 @@ namespace RhinoPythonNetEditor.Component
                     HostUtils.ExceptionReport(e);
                     ProjectData.ClearProjectError();
                 }
+                finally
+                {
+                    if (Locator != null)
+                    {
+                        dynamic sc = scriptInstance;
+                        var outs = sc.__out as List<string>;
+                        var output = string.Join("", outs);
+                        if (output.EndsWith("\r\n")) output = output.Substring(0, output.Length - "\r\n".Length);
+                        result.Output = output;
+                        Locator.OutputViewModel.Results.Add(result);
+                    }
+                }
             }
-
         }
 
         private object GetTreeFromParameter(IGH_DataAccess access, int index)

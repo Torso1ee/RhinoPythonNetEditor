@@ -30,6 +30,7 @@ namespace RhinoPythonNetEditor.ViewModel
 
         public DebugViewModel DebugViewModel => Services.GetService<DebugViewModel>();
 
+        public OutputViewModel OutputViewModel => Services.GetService<OutputViewModel>();
 
         public IServiceProvider ConfigureServices()
         {
@@ -40,6 +41,7 @@ namespace RhinoPythonNetEditor.ViewModel
             services.AddSingleton(new TerminalViewModel(this));
             services.AddSingleton(new DebugViewModel(this));
             services.AddSingleton(new TextEditorViewModel(this));
+            services.AddSingleton(new OutputViewModel(this));
             return services.BuildServiceProvider();
         }
     }
