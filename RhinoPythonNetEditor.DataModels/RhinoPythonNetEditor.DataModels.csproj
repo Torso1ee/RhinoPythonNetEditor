@@ -43,6 +43,7 @@
   <ItemGroup>
     <Compile Include="Business\OutputResult.cs" />
     <Compile Include="Business\ScriptLine.cs" />
+    <Compile Include="Business\SyntaxInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

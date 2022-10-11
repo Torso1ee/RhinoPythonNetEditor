@@ -20,6 +20,7 @@
     <Grid Background="{StaticResource EditorBackgroundBrush}">
         <TabControl Background="{x:Null}" >
             <TabItem  Header="Problem">
+                <local:HintControl/>
             </TabItem>
             <TabItem Header="Output">
                 <local:OutputControl/>

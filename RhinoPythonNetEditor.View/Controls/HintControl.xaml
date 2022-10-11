@@ -1,0 +1,38 @@
+﻿<UserControl x:Class="RhinoPythonNetEditor.View.Controls.HintControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:RhinoPythonNetEditor.View.Controls"
+            xmlns:model="clr-namespace:RhinoPythonNetEditor.DataModels.Business;assembly=RhinoPythonNetEditor.DataModels"
+             xmlns:attach="clr-namespace:RhinoPythonNetEditor.Styling.Attach;assembly=RhinoPythonNetEditor.Styling"
+           xmlns:tools="clr-namespace:RhinoPythonNetEditor.View.Tools"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <tools:BindingProxy x:Key="proxy" Data="{Binding}"/>
+            <SolidColorBrush x:Key="ScriptLineInputBrush" Color="#FF44B5D1" x:Shared="False"/>
+            <SolidColorBrush x:Key="ScriptLineErrorBrush" Color="#FFF04B4B" x:Shared="False"/>
+            <SolidColorBrush x:Key="ScriptLineNormalBrush" Color="#FFE9E9E9" x:Shared="False"/>
+            <SolidColorBrush x:Key="ScriptLineScriptBrush" Color="#FFF3F342" x:Shared="False"/>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/RhinoPythonNetEditor.View;component/ViewDictionary.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </UserControl.Resources>
+    <ScrollViewer Margin="5" attach:ScrollViewerExtensions.AlwaysScrollToEnd="True" DataContext="{Binding Data.OutputViewModel, Source={StaticResource proxy}}" >
+        <ItemsControl  ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Auto" Margin="10" Background="{x:Null}" ItemsSource="{Binding  SyntaxHints}" BorderBrush="{x:Null}">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate DataType="{x:Type model:SyntaxInfo}" >
+                    <Grid>
+                        <TextBlock  TextWrapping="Wrap" Margin="5,0" VerticalAlignment="Center" Text="{Binding Error}" FontSize="13" FontFamily="Consolas" Background="{x:Null}" Foreground="{StaticResource ScriptLineErrorBrush}"  />
+                        <Border Background="{StaticResource   MenuItemIconBrush}" CornerRadius="5" HorizontalAlignment="Left" VerticalAlignment="Top" Height="15" Width="Auto">
+                            <TextBlock Margin="5,0" Text="{Binding  Line}" VerticalAlignment="Center" Foreground="{StaticResource LabelTextBrush}" FontFamily="Consolas"/>
+                        </Border>
+                    </Grid>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+    </ScrollViewer>
+</UserControl>

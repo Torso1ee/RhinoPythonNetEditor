@@ -108,6 +108,7 @@
     <Compile Include="Messages\ConfirmDialogRequestMessage.cs" />
     <Compile Include="Messages\MessageDialogRequestMessage.cs" />
     <Compile Include="Messages\StepMessage.cs" />
+    <Compile Include="Messages\SyntaxHintChangedMessage.cs" />
     <Compile Include="OutputViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TerminalViewModel.cs" />

@@ -29,6 +29,9 @@ using ICSharpCode.AvalonEdit;
 using CommunityToolkit.Mvvm.Messaging;
 using RhinoPythonNetEditor.ViewModel;
 using RhinoPythonNetEditor.ViewModel.Messages;
+using System.Text.RegularExpressions;
+using RhinoPythonNetEditor.DataModels.Business;
+using System.Windows.Threading;
 
 namespace RhinoPythonNetEditor.View.Controls
 {
@@ -41,11 +44,45 @@ namespace RhinoPythonNetEditor.View.Controls
         BreakPointMargin breakPointMargin;
         IHighlightingDefinition defaultHighlighting;
         WeakReferenceMessenger messenger;
-
+        DispatcherTimer timer;
+        int time = 0;
         public Editor()
         {
             InitializeComponent();
+            timer = new DispatcherTimer();
+            timer.Interval = TimeSpan.FromMilliseconds(100);
+            timer.Tick += Timer_Tick;
         }
+
+        private void Document_TextChanged(object sender, EventArgs e)
+        {
+            time = 0;
+            if (!timer.IsEnabled) timer.Start();
+        }
+
+        private void Timer_Tick(object sender, EventArgs e)
+        {
+            time += 100;
+            if (time == 1000)
+            {
+                var result = SyntaxHelper.SyntaxCheck(textEditor.Document.Text);
+                var hints = new List<SyntaxInfo>();
+                var lines = result.Split('\n');
+                foreach (var l in lines)
+                {
+                    var ma = Regex.Match(l, @"temp.py:(\d+):(\d+): (.+)");
+                    if (ma.Success)
+                    {
+                        var info = new SyntaxInfo { Line = $"line {ma.Groups[1].Value},{ma.Groups[2].Value}" };
+                        info.Error = info.Line + "  " + ma.Groups[3].Value;
+                        hints.Add(info);
+                    }
+                }
+                messenger.Send(new SyntaxHintChangedMessage(hints));
+                timer.Stop();
+            }
+        }
+
 
         private bool Installed { get; set; }
         private void BreakPointMargin_BreakPointChanged(object sender, BreakPointEventArgs e)
@@ -102,6 +139,8 @@ namespace RhinoPythonNetEditor.View.Controls
                 });
                 breakPointMargin.BreakPointChanged += BreakPointMargin_BreakPointChanged;
             }
+            textEditor.Document.TextChanged += Document_TextChanged;
         }
+
     }
 }

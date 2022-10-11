@@ -46,6 +46,9 @@
     <Reference Include="Microsoft.Xaml.Behaviors, Version=1.1.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Xaml.Behaviors.Wpf.1.1.39\lib\net45\Microsoft.Xaml.Behaviors.dll</HintPath>
     </Reference>
+    <Reference Include="Python.Runtime, Version=3.0.0.0, Culture=neutral, PublicKeyToken=5000fea6cba702dd, processorArchitecture=MSIL">
+      <HintPath>..\packages\pythonnet.3.0.0\lib\netstandard2.0\Python.Runtime.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Buffers, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Buffers.4.5.1\lib\net461\System.Buffers.dll</HintPath>
@@ -93,6 +96,9 @@
     <Compile Include="Controls\Editor.xaml.cs">
       <DependentUpon>Editor.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\HintControl.xaml.cs">
+      <DependentUpon>HintControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\MenuBar.xaml.cs">
       <DependentUpon>MenuBar.xaml</DependentUpon>
     </Compile>
@@ -133,6 +139,7 @@
     <Compile Include="Tools\BindingProxy.cs" />
     <Compile Include="Tools\BreakPointMargin.cs" />
     <Compile Include="Tools\PythonFoldingStrategy.cs" />
+    <Compile Include="Tools\SyntaxHelper.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -179,6 +186,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Controls\HintControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Controls\MenuBar.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -215,6 +226,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="syntaxcheck.py">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

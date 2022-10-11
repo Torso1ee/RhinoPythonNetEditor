@@ -19,7 +19,6 @@ namespace RhinoPythonNetEditor.ViewModel
         public TextDocument Document
         {
             get { return document; }
-            set { SetProperty(ref document, value); }
         }
 
         public ViewModelLocator Locator { get; set; }
