@@ -31,7 +31,7 @@ namespace RhinoPythonNetEditor.View.Tools
                 dynamic sys = Py.Import("sys");
                 sys.path.append(AssemblyPath);
                 dynamic sc = Py.Import("syntaxcheck");
-                result = sc.syntax_check(text);
+                result = sc.syntax_check(text, AssemblyPath);
             }
             return result;
         }

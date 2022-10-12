@@ -27,12 +27,12 @@
                 <DataTemplate DataType="{x:Type model:OutputResult}" >
                     <Grid>
                         <Grid.RowDefinitions>
-                            <RowDefinition Height="20"/>
+                            <RowDefinition Height="15"/>
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
                         </Grid.RowDefinitions>
                         <Border Background="{StaticResource   MenuItemIconBrush}" CornerRadius="5"/>
-                        <TextBlock Margin="5" FontFamily="Consolas" Text="{Binding Turn, StringFormat='Iteration {0} :'}" VerticalAlignment="Center" Foreground="{StaticResource LabelTextBrush}"/>
+                        <TextBlock Margin="5,0" FontFamily="Consolas" Text="{Binding Turn, StringFormat='Iteration {0} :'}" FontSize="13"  VerticalAlignment="Center" Foreground="{StaticResource LabelTextBrush}"/>
                         <TextBox Grid.Row="1"  x:Name="tb" TextWrapping="Wrap" BorderThickness="0" IsReadOnly="True"  Text="{Binding  Output}" FontSize="13" FontFamily="Consolas" Background="{x:Null}" Foreground="{StaticResource ScriptLineNormalBrush}" BorderBrush="{x:Null}" />
                         <TextBox Grid.Row="2" x:Name="tb1" TextWrapping="Wrap" BorderThickness="0" IsReadOnly="True"  Text="{Binding  Error}" FontSize="13" FontFamily="Consolas" Background="{x:Null}" Foreground="{StaticResource ScriptLineErrorBrush}" BorderBrush="{x:Null}" />
                     </Grid>
