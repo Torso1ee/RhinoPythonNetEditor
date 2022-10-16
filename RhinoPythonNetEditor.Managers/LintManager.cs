@@ -11,6 +11,7 @@ using OmniSharp.Extensions.LanguageServer.Client;
 using System.Threading;
 using OmniSharp.Extensions.LanguageServer.Protocol.Client.Capabilities;
 using OmniSharp.Extensions.LanguageServer.Protocol.Models;
+using OmniSharp.Extensions.LanguageServer.Protocol.Document;
 
 namespace RhinoPythonNetEditor.Managers
 {
@@ -18,10 +19,10 @@ namespace RhinoPythonNetEditor.Managers
     {
         private static Process LSP { get; set; }
 
-        public LanguageClient Client { get; set; }
+        private static LanguageClient Client { get; set; }
 
-
-        public static void StartLSP()
+        public static bool IsInitialized { get; set; }
+        private static void StartLSP()
         {
             var path = Path.GetDirectoryName(typeof(LintManager).Assembly.Location);
             ProcessStartInfo info = new ProcessStartInfo();
@@ -36,8 +37,9 @@ namespace RhinoPythonNetEditor.Managers
             LSP.Start();
         }
 
-        public async Task InitialzeClientAsync()
+        public static async Task InitialzeClientAsync()
         {
+            StartLSP();
             Client = LanguageClient.Create(
             options =>
             {
@@ -64,6 +66,21 @@ namespace RhinoPythonNetEditor.Managers
         );
             CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
             await Client.Initialize(cancellationTokenSource.Token);
+            IsInitialized = true;
         }
+
+        public static  async Task<int> RequestCompletionAsync(string path, (int, int) posution)
+        {
+            var items = await Client.TextDocument.RequestCompletion(new CompletionParams
+            {
+                TextDocument = path,
+                Position = posution,
+            });
+            return items.Count();
+        }
+
+
+
     }
+
 }

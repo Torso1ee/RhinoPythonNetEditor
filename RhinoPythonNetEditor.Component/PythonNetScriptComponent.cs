@@ -19,6 +19,7 @@ using Rhino.Runtime;
 using Rhino.Runtime.InProcess;
 using RhinoPythonNetEditor.DataModels.Business;
 using RhinoPythonNetEditor.Interface;
+using RhinoPythonNetEditor.Managers;
 using RhinoPythonNetEditor.ViewModel;
 using System;
 using System.CodeDom.Compiler;

@@ -160,6 +160,10 @@
       <Project>{d295e2f0-fb3a-4b51-be94-c81c59cecfc0}</Project>
       <Name>RhinoPythonNetEditor.DataModels</Name>
     </ProjectReference>
+    <ProjectReference Include="..\RhinoPythonNetEditor.Managers\RhinoPythonNetEditor.Managers.csproj">
+      <Project>{61A41698-E18E-425C-99E8-7FB46814398D}</Project>
+      <Name>RhinoPythonNetEditor.Managers</Name>
+    </ProjectReference>
     <ProjectReference Include="..\RhinoPythonNetEditor.Resources\RhinoPythonNetEditor.Resources.csproj">
       <Project>{cae904b4-4dff-4291-82b1-584021351fb2}</Project>
       <Name>RhinoPythonNetEditor.Resources</Name>

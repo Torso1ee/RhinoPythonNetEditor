@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.Messaging;
+using RhinoPythonNetEditor.Managers;
 using RhinoPythonNetEditor.View.Pages;
 using RhinoPythonNetEditor.ViewModel;
 using RhinoPythonNetEditor.ViewModel.Messages;
@@ -40,8 +41,9 @@ namespace RhinoPythonNetEditor.Component
         }
 
 
-        private void Window_Loaded(object sender, RoutedEventArgs e)
+        private async void Window_Loaded(object sender, RoutedEventArgs e)
         {
+            if (!LintManager.IsInitialized) await LintManager.InitialzeClientAsync();
             Locator = DataContext as ViewModelLocator;
             var helper = new WindowInteropHelper(this);
             IntPtr windowHandle = helper.Handle; //Get the handle of this window

@@ -32,6 +32,10 @@ using RhinoPythonNetEditor.ViewModel.Messages;
 using System.Text.RegularExpressions;
 using RhinoPythonNetEditor.DataModels.Business;
 using System.Windows.Threading;
+using System.Configuration.Assemblies;
+using Path = System.IO.Path;
+using RhinoPythonNetEditor.Managers;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.TextBox;
 
 namespace RhinoPythonNetEditor.View.Controls
 {
@@ -49,10 +53,18 @@ namespace RhinoPythonNetEditor.View.Controls
         public Editor()
         {
             InitializeComponent();
+            Id = Guid.NewGuid();
+            CachePath = Path.GetDirectoryName(typeof(Editor).Assembly.Location) + @"\cache";
             timer = new DispatcherTimer();
             timer.Interval = TimeSpan.FromMilliseconds(100);
             timer.Tick += Timer_Tick;
         }
+
+        private string CachePath { get; set; }
+        private string CacheFile { get; set; }
+
+        private Guid Id { get; set; }
+
 
         private void Document_TextChanged(object sender, EventArgs e)
         {
@@ -60,11 +72,15 @@ namespace RhinoPythonNetEditor.View.Controls
             if (!timer.IsEnabled) timer.Start();
         }
 
-        private void Timer_Tick(object sender, EventArgs e)
+        private async void Timer_Tick(object sender, EventArgs e)
         {
             time += 100;
-            if (time == 1000)
+            if (time >= 1000)
             {
+                timer.Stop();
+                //File.WriteAllText(CacheFile, textEditor.Document.Text);
+                //var l = textEditor.Document.GetLineByOffset(textEditor.CaretOffset);
+                //await LintManager.RequestCompletionAsync(CacheFile, (l.LineNumber-1, textEditor.CaretOffset - l.Offset-1));
                 var result = SyntaxHelper.SyntaxCheck(textEditor.Document.Text);
                 var hints = new List<SyntaxInfo>();
                 var lines = result.Split('\n');
@@ -79,7 +95,6 @@ namespace RhinoPythonNetEditor.View.Controls
                     }
                 }
                 messenger.Send(new SyntaxHintChangedMessage(hints));
-                timer.Stop();
             }
         }
 
@@ -140,6 +155,8 @@ namespace RhinoPythonNetEditor.View.Controls
                 breakPointMargin.BreakPointChanged += BreakPointMargin_BreakPointChanged;
             }
             textEditor.Document.TextChanged += Document_TextChanged;
+            if (!Directory.Exists(CachePath)) Directory.CreateDirectory(CachePath);
+            CacheFile = $@"{CachePath}\{Id}.py";
         }
 
     }
