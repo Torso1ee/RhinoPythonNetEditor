@@ -14,7 +14,6 @@
     <Deterministic>true</Deterministic>
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
-	  <LangVersion>9.0</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -106,20 +105,20 @@
     <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.13.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
-    <Reference Include="OmniSharp.Extensions.JsonRpc, Version=0.19.0.0, Culture=neutral, PublicKeyToken=6d868dff454e6022, processorArchitecture=MSIL">
-      <HintPath>..\packages\OmniSharp.Extensions.JsonRpc.0.19.5\lib\netstandard2.0\OmniSharp.Extensions.JsonRpc.dll</HintPath>
+    <Reference Include="OmniSharp.Extensions.JsonRpc, Version=0.18.0.0, Culture=neutral, PublicKeyToken=6d868dff454e6022, processorArchitecture=MSIL">
+      <HintPath>..\packages\OmniSharp.Extensions.JsonRpc.0.18.3\lib\netstandard2.0\OmniSharp.Extensions.JsonRpc.dll</HintPath>
     </Reference>
     <Reference Include="OmniSharp.Extensions.JsonRpc.Generators, Version=0.19.0.0, Culture=neutral, PublicKeyToken=6d868dff454e6022, processorArchitecture=MSIL">
       <HintPath>..\packages\OmniSharp.Extensions.JsonRpc.Generators.0.19.5\lib\netstandard2.0\OmniSharp.Extensions.JsonRpc.Generators.dll</HintPath>
     </Reference>
-    <Reference Include="OmniSharp.Extensions.LanguageClient, Version=0.19.0.0, Culture=neutral, PublicKeyToken=6d868dff454e6022, processorArchitecture=MSIL">
-      <HintPath>..\packages\OmniSharp.Extensions.LanguageClient.0.19.5\lib\netstandard2.0\OmniSharp.Extensions.LanguageClient.dll</HintPath>
+    <Reference Include="OmniSharp.Extensions.LanguageClient, Version=0.18.0.0, Culture=neutral, PublicKeyToken=6d868dff454e6022, processorArchitecture=MSIL">
+      <HintPath>..\packages\OmniSharp.Extensions.LanguageClient.0.18.3\lib\netstandard2.0\OmniSharp.Extensions.LanguageClient.dll</HintPath>
     </Reference>
-    <Reference Include="OmniSharp.Extensions.LanguageProtocol, Version=0.19.0.0, Culture=neutral, PublicKeyToken=6d868dff454e6022, processorArchitecture=MSIL">
-      <HintPath>..\packages\OmniSharp.Extensions.LanguageProtocol.0.19.5\lib\netstandard2.0\OmniSharp.Extensions.LanguageProtocol.dll</HintPath>
+    <Reference Include="OmniSharp.Extensions.LanguageProtocol, Version=0.18.0.0, Culture=neutral, PublicKeyToken=6d868dff454e6022, processorArchitecture=MSIL">
+      <HintPath>..\packages\OmniSharp.Extensions.LanguageProtocol.0.18.3\lib\netstandard2.0\OmniSharp.Extensions.LanguageProtocol.dll</HintPath>
     </Reference>
-    <Reference Include="OmniSharp.Extensions.LanguageServer.Shared, Version=0.19.0.0, Culture=neutral, PublicKeyToken=6d868dff454e6022, processorArchitecture=MSIL">
-      <HintPath>..\packages\OmniSharp.Extensions.LanguageServer.Shared.0.19.5\lib\netstandard2.0\OmniSharp.Extensions.LanguageServer.Shared.dll</HintPath>
+    <Reference Include="OmniSharp.Extensions.LanguageServer.Shared, Version=0.18.0.0, Culture=neutral, PublicKeyToken=6d868dff454e6022, processorArchitecture=MSIL">
+      <HintPath>..\packages\OmniSharp.Extensions.LanguageServer.Shared.0.18.3\lib\netstandard2.0\OmniSharp.Extensions.LanguageServer.Shared.dll</HintPath>
     </Reference>
     <Reference Include="Rhino.UI, Version=7.0.20314.3000, Culture=neutral, PublicKeyToken=552281e97c755530, processorArchitecture=MSIL">
       <HintPath>..\packages\RhinoCommon.7.0.20314.3001\lib\net45\Rhino.UI.dll</HintPath>

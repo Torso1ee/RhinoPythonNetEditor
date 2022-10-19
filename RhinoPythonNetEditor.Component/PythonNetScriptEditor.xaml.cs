@@ -43,7 +43,6 @@ namespace RhinoPythonNetEditor.Component
 
         private async void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            if (!LintManager.IsInitialized) await LintManager.InitialzeClientAsync();
             Locator = DataContext as ViewModelLocator;
             var helper = new WindowInteropHelper(this);
             IntPtr windowHandle = helper.Handle; //Get the handle of this window
@@ -53,6 +52,7 @@ namespace RhinoPythonNetEditor.Component
             {
                 RemoveMenu(hmenu, i, MF_DISABLED | MF_BYPOSITION);
             }
+            if (!LintManager.IsInitialized) await LintManager.InitialzeClientAsync();
         }
 
 

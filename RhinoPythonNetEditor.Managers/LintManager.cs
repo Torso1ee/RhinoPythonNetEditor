@@ -12,6 +12,8 @@ using System.Threading;
 using OmniSharp.Extensions.LanguageServer.Protocol.Client.Capabilities;
 using OmniSharp.Extensions.LanguageServer.Protocol.Models;
 using OmniSharp.Extensions.LanguageServer.Protocol.Document;
+using OmniSharp.Extensions.LanguageServer.Protocol.Workspace;
+using Newtonsoft.Json.Linq;
 
 namespace RhinoPythonNetEditor.Managers
 {
@@ -40,6 +42,7 @@ namespace RhinoPythonNetEditor.Managers
         public static async Task InitialzeClientAsync()
         {
             StartLSP();
+            await Task.Delay(500);
             Client = LanguageClient.Create(
             options =>
             {
