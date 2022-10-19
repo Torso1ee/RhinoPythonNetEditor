@@ -78,23 +78,23 @@ namespace RhinoPythonNetEditor.View.Controls
             if (time >= 1000)
             {
                 timer.Stop();
-                //File.WriteAllText(CacheFile, textEditor.Document.Text);
-                //var l = textEditor.Document.GetLineByOffset(textEditor.CaretOffset);
-                //await LintManager.RequestCompletionAsync(CacheFile, (l.LineNumber-1, textEditor.CaretOffset - l.Offset-1));
-                var result = SyntaxHelper.SyntaxCheck(textEditor.Document.Text);
-                var hints = new List<SyntaxInfo>();
-                var lines = result.Split('\n');
-                foreach (var l in lines)
-                {
-                    var ma = Regex.Match(l, @"temp.py:(\d+):(\d+): (.+)");
-                    if (ma.Success)
-                    {
-                        var info = new SyntaxInfo { Line = $"line {ma.Groups[1].Value},{ma.Groups[2].Value}" };
-                        info.Error = info.Line + "  " + ma.Groups[3].Value;
-                        hints.Add(info);
-                    }
-                }
-                messenger.Send(new SyntaxHintChangedMessage(hints));
+                File.WriteAllText(CacheFile, textEditor.Document.Text);
+                var l = textEditor.Document.GetLineByOffset(textEditor.CaretOffset);
+                await LintManager.RequestCompletionAsync(CacheFile, (l.LineNumber - 1, textEditor.CaretOffset - l.Offset - 1));
+                //var result = SyntaxHelper.SyntaxCheck(textEditor.Document.Text);
+                //var hints = new List<SyntaxInfo>();
+                //var lines = result.Split('\n');
+                //foreach (var l in lines)
+                //{
+                //    var ma = Regex.Match(l, @"temp.py:(\d+):(\d+): (.+)");
+                //    if (ma.Success)
+                //    {
+                //        var info = new SyntaxInfo { Line = $"line {ma.Groups[1].Value},{ma.Groups[2].Value}" };
+                //        info.Error = info.Line + "  " + ma.Groups[3].Value;
+                //        hints.Add(info);
+                //    }
+                //}
+                //messenger.Send(new SyntaxHintChangedMessage(hints));
             }
         }
 
