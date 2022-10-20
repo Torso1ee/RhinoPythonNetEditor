@@ -81,25 +81,13 @@ namespace RhinoPythonNetEditor.View.Controls
                 File.WriteAllText(CacheFile, textEditor.Document.Text);
                 var l = textEditor.Document.GetLineByOffset(textEditor.CaretOffset);
                 await LintManager.RequestCompletionAsync(CacheFile, (l.LineNumber - 1, textEditor.CaretOffset - l.Offset - 1));
-                //var result = SyntaxHelper.SyntaxCheck(textEditor.Document.Text);
-                //var hints = new List<SyntaxInfo>();
-                //var lines = result.Split('\n');
-                //foreach (var l in lines)
-                //{
-                //    var ma = Regex.Match(l, @"temp.py:(\d+):(\d+): (.+)");
-                //    if (ma.Success)
-                //    {
-                //        var info = new SyntaxInfo { Line = $"line {ma.Groups[1].Value},{ma.Groups[2].Value}" };
-                //        info.Error = info.Line + "  " + ma.Groups[3].Value;
-                //        hints.Add(info);
-                //    }
-                //}
-                //messenger.Send(new SyntaxHintChangedMessage(hints));
             }
         }
 
 
         private bool Installed { get; set; }
+
+
         private void BreakPointMargin_BreakPointChanged(object sender, BreakPointEventArgs e)
         {
             messenger.Send(new AllBreakPointInformationsMessage(e.Indicis));
@@ -136,13 +124,19 @@ namespace RhinoPythonNetEditor.View.Controls
             textEditor.Document.Changed += (s, e) => strategy.UpdateFoldings(manager, textEditor.Document);
         }
 
-        private void UserControl_Loaded(object sender, RoutedEventArgs e)
+        private async void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
             if (!Installed)
             {
                 InstallHighlightDefinition();
                 InstallBreakPoint();
                 InstallFolding();
+                textEditor.Document.TextChanged += Document_TextChanged;
+                if (!LintManager.IsInitialized) await LintManager.InitialzeClientAsync();
+                if (!Directory.Exists(CachePath)) Directory.CreateDirectory(CachePath);
+                CacheFile = $@"{CachePath}\{Id}.py";
+                File.WriteAllText(CacheFile, textEditor.Document.Text);
+                LintManager.DidOpen(CacheFile);
                 Installed = true;
             }
             if (messenger == null)
@@ -154,10 +148,7 @@ namespace RhinoPythonNetEditor.View.Controls
                 });
                 breakPointMargin.BreakPointChanged += BreakPointMargin_BreakPointChanged;
             }
-            textEditor.Document.TextChanged += Document_TextChanged;
-            if (!Directory.Exists(CachePath)) Directory.CreateDirectory(CachePath);
-            CacheFile = $@"{CachePath}\{Id}.py";
+            
         }
-
     }
 }

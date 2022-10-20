@@ -52,7 +52,6 @@ namespace RhinoPythonNetEditor.Component
             {
                 RemoveMenu(hmenu, i, MF_DISABLED | MF_BYPOSITION);
             }
-            if (!LintManager.IsInitialized) await LintManager.InitialzeClientAsync();
         }
 
 

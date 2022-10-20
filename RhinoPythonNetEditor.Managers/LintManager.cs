@@ -14,6 +14,8 @@ using OmniSharp.Extensions.LanguageServer.Protocol.Models;
 using OmniSharp.Extensions.LanguageServer.Protocol.Document;
 using OmniSharp.Extensions.LanguageServer.Protocol.Workspace;
 using Newtonsoft.Json.Linq;
+using Microsoft.VisualStudio.Shared.VSCodeDebugProtocol.Messages;
+using CompletionItem = OmniSharp.Extensions.LanguageServer.Protocol.Models.CompletionItem;
 
 namespace RhinoPythonNetEditor.Managers
 {
@@ -57,6 +59,9 @@ namespace RhinoPythonNetEditor.Managers
                             DocumentationFormat = new Container<MarkupKind>(MarkupKind.Markdown, MarkupKind.PlainText),
                             PreselectSupport = true,
                             SnippetSupport = true,
+                            InsertReplaceSupport = true,
+                            ResolveAdditionalTextEditsSupport = true,
+                            ResolveSupport = new CompletionItemCapabilityResolveSupportOptions { Properties = new string[] { "sortText", "filterText", "insertText", "textEdit" } },
                             TagSupport = new CompletionItemTagSupportCapabilityOptions
                             {
                                 ValueSet = new[] { CompletionItemTag.Deprecated }
@@ -72,18 +77,26 @@ namespace RhinoPythonNetEditor.Managers
             IsInitialized = true;
         }
 
-        public static  async Task<int> RequestCompletionAsync(string path, (int, int) posution)
+        public static async Task<int> RequestCompletionAsync(string path, (int, int) posution)
         {
             var items = await Client.TextDocument.RequestCompletion(new CompletionParams
             {
                 TextDocument = path,
                 Position = posution,
             });
-            return items.Count();
+            var results = new List<CompletionItem>();
+            foreach (var item in items)
+            {
+                var result = await Client.TextDocument.ResolveCompletion(item);
+                results.Add(result);
+            }
+            return results.Count();
         }
 
-
-
+        public static void DidOpen(string path)
+        {
+            Client.DidOpenTextDocument(new DidOpenTextDocumentParams { TextDocument = new TextDocumentItem { Uri = path } });
+        }
     }
-
 }
+
