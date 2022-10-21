@@ -36,6 +36,7 @@ using System.Configuration.Assemblies;
 using Path = System.IO.Path;
 using RhinoPythonNetEditor.Managers;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.TextBox;
+using ICSharpCode.AvalonEdit.CodeCompletion;
 
 namespace RhinoPythonNetEditor.View.Controls
 {
@@ -48,41 +49,67 @@ namespace RhinoPythonNetEditor.View.Controls
         BreakPointMargin breakPointMargin;
         IHighlightingDefinition defaultHighlighting;
         WeakReferenceMessenger messenger;
-        DispatcherTimer timer;
-        int time = 0;
+        private CompletionWindow completionWindow;
+        private OverloadInsightWindow insightWindow;
+
+
         public Editor()
         {
             InitializeComponent();
             Id = Guid.NewGuid();
             CachePath = Path.GetDirectoryName(typeof(Editor).Assembly.Location) + @"\cache";
-            timer = new DispatcherTimer();
-            timer.Interval = TimeSpan.FromMilliseconds(100);
-            timer.Tick += Timer_Tick;
+            textEditor.TextArea.TextEntered += TextArea_TextEntered;
+            textEditor.TextArea.TextEntering += TextArea_TextEntering;
+        }
+
+        private void TextArea_TextEntering(object sender, TextCompositionEventArgs e)
+        {
+            if (e.Text.Length > 0 && completionWindow != null)
+            {
+                if (!char.IsLetterOrDigit(e.Text[0]))
+                {
+                    completionWindow.CompletionList.RequestInsertion(e);
+                }
+            }
+            insightWindow?.Hide();
+        }
+
+        private async void TextArea_TextEntered(object sender, TextCompositionEventArgs e)
+        {
+            if (!string.IsNullOrWhiteSpace(e.Text) && e.Text != "(")
+            {
+                File.WriteAllText(CacheFile, textEditor.Document.Text);
+                var items = await LintManager.RequestCompletionAsync(CacheFile, (textEditor.TextArea.Caret.Line - 1, textEditor.TextArea.Caret.Column - 1));
+                var itemList = items.ToArray();
+                if (itemList.Length > 0)
+                {
+                    completionWindow = new CompletionWindow(textEditor.TextArea);
+                    completionWindow.Style = FindResource("CompletionWindowStyle") as Style;
+                    completionWindow.CompletionList.Style = FindResource("CompletionListStyle") as Style;
+                    completionWindow.Closed += (o, args) => completionWindow = null;
+                    var data = completionWindow.CompletionList.CompletionData;
+                    foreach (var item in items) data.Add(new CompletionData(item));
+                    completionWindow.Show();
+                }
+            }
+            else if (e.Text == "(")
+            {
+                File.WriteAllText(CacheFile, textEditor.Document.Text);
+                var help = LintManager.RequestSignature(CacheFile, (textEditor.TextArea.Caret.Line - 1, textEditor.TextArea.Caret.Column -1));
+                if (help != null)
+                {
+                    insightWindow = new OverloadInsightWindow(textEditor.TextArea);
+                    insightWindow.Closed += (o, args) => insightWindow = null;
+                    insightWindow.Provider = new OverloadProvider(help);
+                    insightWindow.Show();
+                }
+            }
         }
 
         private string CachePath { get; set; }
         private string CacheFile { get; set; }
 
         private Guid Id { get; set; }
-
-
-        private void Document_TextChanged(object sender, EventArgs e)
-        {
-            time = 0;
-            if (!timer.IsEnabled) timer.Start();
-        }
-
-        private async void Timer_Tick(object sender, EventArgs e)
-        {
-            time += 100;
-            if (time >= 1000)
-            {
-                timer.Stop();
-                File.WriteAllText(CacheFile, textEditor.Document.Text);
-                var l = textEditor.Document.GetLineByOffset(textEditor.CaretOffset);
-                await LintManager.RequestCompletionAsync(CacheFile, (l.LineNumber - 1, textEditor.CaretOffset - l.Offset - 1));
-            }
-        }
 
 
         private bool Installed { get; set; }
@@ -131,7 +158,6 @@ namespace RhinoPythonNetEditor.View.Controls
                 InstallHighlightDefinition();
                 InstallBreakPoint();
                 InstallFolding();
-                textEditor.Document.TextChanged += Document_TextChanged;
                 if (!LintManager.IsInitialized) await LintManager.InitialzeClientAsync();
                 if (!Directory.Exists(CachePath)) Directory.CreateDirectory(CachePath);
                 CacheFile = $@"{CachePath}\{Id}.py";
@@ -148,7 +174,12 @@ namespace RhinoPythonNetEditor.View.Controls
                 });
                 breakPointMargin.BreakPointChanged += BreakPointMargin_BreakPointChanged;
             }
-            
+
+        }
+
+        private void UserControl_Unloaded(object sender, RoutedEventArgs e)
+        {
+            LintManager.DidClose(CacheFile);
         }
     }
 }

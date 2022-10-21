@@ -5,8 +5,9 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:RhinoPythonNetEditor.View.Controls"
              xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+             xmlns:ac="clr-namespace:ICSharpCode.AvalonEdit.CodeCompletion;assembly=ICSharpCode.AvalonEdit"
              xmlns:viewModels="clr-namespace:RhinoPythonNetEditor.ViewModel;assembly=RhinoPythonNetEditor.ViewModel"
-             mc:Ignorable="d" Loaded="UserControl_Loaded" 
+             mc:Ignorable="d" Loaded="UserControl_Loaded"  Unloaded="UserControl_Unloaded"
              xmlns:tools="clr-namespace:RhinoPythonNetEditor.View.Tools"
              d:DataContext="{d:DesignInstance {x:Type viewModels:TextEditorViewModel}}"
              xmlns:avalonEdit="http://icsharpcode.net/sharpdevelop/avalonedit" 
@@ -14,6 +15,40 @@
     <UserControl.Resources>
         <ResourceDictionary>
             <tools:BindingProxy x:Key="proxy" Data="{Binding}"/>
+            <Style  x:Key="CompletionWindowStyle" TargetType="ac:CompletionWindow">
+                <Setter Property="WindowStyle" Value="None"/>
+                <Setter Property="AllowsTransparency" Value="True"/>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type Window}">
+                            <Border BorderThickness="0"  Background="Transparent">
+                                <ContentPresenter Effect="{StaticResource  CmdDropShadowEffect}" Margin="5"/>
+                            </Border>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+            <Style x:Key="CompletionListStyle" TargetType="ac:CompletionList">
+                <Style.Resources>
+                    <Style TargetType="ScrollViewer" BasedOn="{StaticResource AutoHideScrollViewer}"/>
+                </Style.Resources>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate>
+                            <ac:CompletionListBox Name="PART_ListBox" Background="#FF252526"  >
+                                <ac:CompletionListBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <StackPanel  x:Name="sp" Orientation="Horizontal" VerticalAlignment="Center" Height="18">
+                                            <Image Source="{Binding Image}"  Width="15"   Height="15"  />
+                                            <TextBlock VerticalAlignment="Center" Margin="10,0,0,0" Text="{Binding Content}" FontSize="15" FontFamily="Consolas" Foreground="White"/>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </ac:CompletionListBox.ItemTemplate>
+                            </ac:CompletionListBox>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="/RhinoPythonNetEditor.View;component/ViewDictionary.xaml"/>
             </ResourceDictionary.MergedDictionaries>

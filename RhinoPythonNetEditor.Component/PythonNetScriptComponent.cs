@@ -32,6 +32,7 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
+using System.Windows.Controls;
 using System.Windows.Forms;
 
 namespace RhinoPythonNetEditor.Component

@@ -61,12 +61,25 @@ namespace RhinoPythonNetEditor.Managers
                             SnippetSupport = true,
                             InsertReplaceSupport = true,
                             ResolveAdditionalTextEditsSupport = true,
-                            ResolveSupport = new CompletionItemCapabilityResolveSupportOptions { Properties = new string[] { "sortText", "filterText", "insertText", "textEdit" } },
+                            InsertTextModeSupport = new CompletionItemInsertTextModeSupportCapabilityOptions { ValueSet = new[] { InsertTextMode.AsIs } },
                             TagSupport = new CompletionItemTagSupportCapabilityOptions
                             {
                                 ValueSet = new[] { CompletionItemTag.Deprecated }
                             },
                             CommitCharactersSupport = true
+                        }
+                    },
+                    new SignatureHelpCapability
+                    {
+                        ContextSupport = true,
+                        SignatureInformation = new SignatureInformationCapabilityOptions
+                        {
+                            ActiveParameterSupport = true,
+                            DocumentationFormat = new Container<MarkupKind>(MarkupKind.Markdown, MarkupKind.PlainText),
+                            ParameterInformation = new SignatureParameterInformationCapabilityOptions
+                            {
+                                LabelOffsetSupport = true,
+                            }
                         }
                     }
                 );
@@ -77,26 +90,44 @@ namespace RhinoPythonNetEditor.Managers
             IsInitialized = true;
         }
 
-        public static async Task<int> RequestCompletionAsync(string path, (int, int) posution)
+        public static async Task<IEnumerable<CompletionItem>> RequestCompletionAsync(string path, (int, int) posution)
         {
             var items = await Client.TextDocument.RequestCompletion(new CompletionParams
             {
                 TextDocument = path,
                 Position = posution,
             });
-            var results = new List<CompletionItem>();
-            foreach (var item in items)
-            {
-                var result = await Client.TextDocument.ResolveCompletion(item);
-                results.Add(result);
-            }
-            return results.Count();
+            return items;
         }
 
         public static void DidOpen(string path)
         {
             Client.DidOpenTextDocument(new DidOpenTextDocumentParams { TextDocument = new TextDocumentItem { Uri = path } });
         }
+
+        public static void DidClose(string path)
+        {
+            Client.DidCloseTextDocument(new DidCloseTextDocumentParams { TextDocument = new TextDocumentItem { Uri = path } });
+        }
+
+        public static CompletionItem ResolveCompletionItem(CompletionItem item)
+        {
+            var task = Client.ResolveCompletion(item);
+            task.Wait();
+            return task.Result;
+        }
+
+        public static SignatureHelp RequestSignature(string path, (int, int) posution)
+        {
+            var task =  Client.TextDocument.RequestSignatureHelp(new SignatureHelpParams
+            {
+                TextDocument = path,
+                Position = posution
+            });
+            task.Wait();
+            return task.Result;
+        }
+
     }
 }
 
