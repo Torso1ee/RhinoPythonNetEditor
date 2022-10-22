@@ -11,7 +11,7 @@ using RhinoPythonNetEditor.ViewModel.Messages;
 
 namespace RhinoPythonNetEditor.ViewModel
 {
-    public class OutputViewModel:ObservableRecipient
+    public class OutputViewModel : ObservableRecipient
     {
         private WeakReferenceMessenger Messenger => Locator?.Messenger;
 
@@ -19,7 +19,11 @@ namespace RhinoPythonNetEditor.ViewModel
         public OutputViewModel(ViewModelLocator locator)
         {
             Locator = locator;
-            Locator.ConfigureFinished += (s, e) => Messenger.Register<SyntaxHintChangedMessage>(this, Receive);
+            Locator.ConfigureFinished += (s, e) =>
+            {
+                Messenger.Register<SyntaxHintChangedMessage>(this, Receive);
+                Messenger.Register<SetDocumentMessage>(this, Receive);
+            };
             IsActive = true;
         }
 
@@ -27,10 +31,26 @@ namespace RhinoPythonNetEditor.ViewModel
 
         public ObservableCollection<SyntaxInfo> SyntaxHints { get; set; } = new ObservableCollection<SyntaxInfo>();
 
+        private string documentation;
+
+        public string Documentation
+        {
+            get { return documentation; }
+            set { SetProperty(ref documentation, value); }
+        }
+
+
         void Receive(object recipient, SyntaxHintChangedMessage message)
         {
             SyntaxHints.Clear();
             foreach (var m in message.Value) SyntaxHints.Add(m);
-         }
+        }
+
+        void Receive(object recipient, SetDocumentMessage message)
+        {
+            Documentation = message.Value;
+        }
+
+
     }
 }

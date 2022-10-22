@@ -1,8 +1,10 @@
-﻿using ICSharpCode.AvalonEdit.CodeCompletion;
+﻿using CommunityToolkit.Mvvm.Messaging;
+using ICSharpCode.AvalonEdit.CodeCompletion;
 using ICSharpCode.AvalonEdit.Document;
 using ICSharpCode.AvalonEdit.Editing;
 using OmniSharp.Extensions.LanguageServer.Protocol.Models;
 using RhinoPythonNetEditor.Managers;
+using RhinoPythonNetEditor.ViewModel.Messages;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,12 +16,14 @@ namespace RhinoPythonNetEditor.View.Tools
 {
     public class CompletionData : ICompletionData
     {
-        public CompletionData(CompletionItem item)
+        public CompletionData(CompletionItem item, WeakReferenceMessenger messager)
         {
+            Messager = messager;
             Item = item;
         }
         public ImageSource Image => null;
 
+        private WeakReferenceMessenger Messager;
         public CompletionItem Item { get; set; }
         public string Text => Item.InsertText;
 
@@ -29,6 +33,8 @@ namespace RhinoPythonNetEditor.View.Tools
 
         public double Priority => 0;
 
+        public string Kind => Item.Kind.ToString();
+
         public void Complete(TextArea textArea, ISegment completionSegment, EventArgs insertionRequestEventArgs)
         {
             Item = LintManager.ResolveCompletionItem(Item);
@@ -36,6 +42,8 @@ namespace RhinoPythonNetEditor.View.Tools
             if (!tryResult) likeTextLegth = 0;
             var segment = new CompletionSegment { Offset = completionSegment.Offset - likeTextLegth, EndOffset = completionSegment.EndOffset, Length = completionSegment.Length + likeTextLegth };
             textArea.Document.Replace(segment, Text);
+            Messager.Send(new SetDocumentMessage(Item.Documentation.ToString()));
         }
+
     }
 }

@@ -34,6 +34,7 @@ namespace RhinoPythonNetEditor.Managers
             info.RedirectStandardInput = true;
             info.RedirectStandardOutput = true;
             info.UseShellExecute = false;
+            info.CreateNoWindow = true;
             LSP = new Process
             {
                 StartInfo = info
@@ -96,7 +97,7 @@ namespace RhinoPythonNetEditor.Managers
             {
                 TextDocument = path,
                 Position = posution,
-            });
+            }).AsTask().ConfigureAwait(false);
             return items;
         }
 
@@ -119,7 +120,7 @@ namespace RhinoPythonNetEditor.Managers
 
         public static SignatureHelp RequestSignature(string path, (int, int) posution)
         {
-            var task =  Client.TextDocument.RequestSignatureHelp(new SignatureHelpParams
+            var task = Client.TextDocument.RequestSignatureHelp(new SignatureHelpParams
             {
                 TextDocument = path,
                 Position = posution

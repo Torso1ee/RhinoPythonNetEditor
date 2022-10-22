@@ -22,7 +22,13 @@
 
     <Style TargetType="{x:Type custom:Dialog}" BasedOn="{StaticResource   DialogBaseStyle}"/>
 
+
+
+
     <converters:InvertBooleanConverter x:Key="InvertConverter"/>
+    <converters:KindToGeometryConverter x:Key="KindToGeometryConverter"/>
+    <converters:KindToColorConverter x:Key="KindToColorConverter"/>
+
 
 
 </ResourceDictionary>

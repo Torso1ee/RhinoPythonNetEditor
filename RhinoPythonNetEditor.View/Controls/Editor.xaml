@@ -5,6 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:RhinoPythonNetEditor.View.Controls"
              xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+             xmlns:attach="clr-namespace:RhinoPythonNetEditor.Styling.Attach;assembly=RhinoPythonNetEditor.Styling"
              xmlns:ac="clr-namespace:ICSharpCode.AvalonEdit.CodeCompletion;assembly=ICSharpCode.AvalonEdit"
              xmlns:viewModels="clr-namespace:RhinoPythonNetEditor.ViewModel;assembly=RhinoPythonNetEditor.ViewModel"
              mc:Ignorable="d" Loaded="UserControl_Loaded"  Unloaded="UserControl_Unloaded"
@@ -28,8 +29,69 @@
                     </Setter.Value>
                 </Setter>
             </Style>
+            <Style  x:Key="InsightWindowStyle" TargetType="ac:OverloadInsightWindow">
+                <Style.Resources>
+                    <SolidColorBrush x:Key="OverlayBrush" Color="#55E9E9E9" />
+                    <SolidColorBrush x:Key="ActiveBrush" Color="#FFE9E9E9" />
+                    <Style TargetType="ScrollViewer" BasedOn="{StaticResource AutoHideScrollViewer}"/>
+                    <Style TargetType="{x:Type Button}" BasedOn="{StaticResource  IconButtonStyle}">
+                        <Setter Property="Width" Value="25"/>
+                        <Setter Property="Height" Value="15"/>
+                        <Setter Property="attach:IconElement.Height" Value="20"/>
+                        <Setter Property="attach:IconElement.Width" Value="10"/>
+                        <Setter Property="Background" Value="Transparent"/>
+                        <Setter Property="Foreground" Value="White"/>
+                    </Style>
+                    <Style  TargetType="ac:OverloadViewer">
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="ac:OverloadViewer">
+                                    <Border Background="#FF252526">
+                                        <Grid  >
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto"/>
+                                                <RowDefinition Height="100"/>
+                                            </Grid.RowDefinitions>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition Width="300"/>
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock Margin="5" Grid.Column="1" TextWrapping="Wrap"  FontFamily="Consolas" Foreground="White"  Text="{Binding Provider.CurrentHeader, RelativeSource={RelativeSource Mode=TemplatedParent}}"/>
+                                            <StackPanel x:Name="PART_PANEL" 
+                                                        Visibility="{Binding Provider.IsShowPanel, RelativeSource={RelativeSource Mode=TemplatedParent}, Converter={StaticResource BoolToVisibility}}"
+                                                        Margin="5" Grid.RowSpan="2" Orientation="Vertical" VerticalAlignment="Bottom">
+                                                <Button attach:IconElement.Geometry="{StaticResource UpGeometry }" x:Name="PART_UP"/>
+                                                <Label Foreground="White"   FontFamily="Consolas" Content="{Binding Provider.Text, RelativeSource={RelativeSource Mode=TemplatedParent}}"/>
+                                                <Button  attach:IconElement.Geometry="{StaticResource DownGeometry }"  x:Name="PART_DOWN"/>
+                                            </StackPanel>
+                                            <ScrollViewer Margin="5" Grid.Row="1"  Grid.Column="1"  VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                                                <TextBlock TextWrapping="Wrap" Foreground="White"  FontFamily="Consolas"  Text="{Binding Provider.CurrentContent, RelativeSource={RelativeSource Mode=TemplatedParent}}"/>
+                                            </ScrollViewer>
+                                            <Border Grid.RowSpan="2"  HorizontalAlignment="Right" Width="1" Background="{StaticResource OverlayBrush}"/>
+                                            <Border Grid.Column="1" VerticalAlignment="Bottom"  Height="1" Background="{StaticResource OverlayBrush}"/>
+                                        </Grid>
+                                    </Border>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </Style.Resources>
+                <Setter Property="WindowStyle" Value="None"/>
+                <Setter Property="AllowsTransparency" Value="True"/>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type Window}">
+                            <Border BorderThickness="0"  Background="Transparent">
+                                <ContentPresenter Effect="{StaticResource  CmdDropShadowEffect}" Margin="5"/>
+                            </Border>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
             <Style x:Key="CompletionListStyle" TargetType="ac:CompletionList">
                 <Style.Resources>
+                    <SolidColorBrush x:Key="OverlayBrush" Color="#55E9E9E9" />
+                    <SolidColorBrush x:Key="ActiveBrush" Color="#FFE9E9E9" />
                     <Style TargetType="ScrollViewer" BasedOn="{StaticResource AutoHideScrollViewer}"/>
                 </Style.Resources>
                 <Setter Property="Template">
@@ -39,7 +101,7 @@
                                 <ac:CompletionListBox.ItemTemplate>
                                     <DataTemplate>
                                         <StackPanel  x:Name="sp" Orientation="Horizontal" VerticalAlignment="Center" Height="18">
-                                            <Image Source="{Binding Image}"  Width="15"   Height="15"  />
+                                            <Path Width="15" Height="15" Data="{Binding Kind, Converter={StaticResource KindToGeometryConverter}}" Stretch="Uniform" Fill="{Binding Kind, Converter={StaticResource  KindToColorConverter }}" />
                                             <TextBlock VerticalAlignment="Center" Margin="10,0,0,0" Text="{Binding Content}" FontSize="15" FontFamily="Consolas" Foreground="White"/>
                                         </StackPanel>
                                     </DataTemplate>

@@ -38,6 +38,7 @@ using RhinoPythonNetEditor.Managers;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.TextBox;
 using ICSharpCode.AvalonEdit.CodeCompletion;
 
+
 namespace RhinoPythonNetEditor.View.Controls
 {
     /// <summary>
@@ -45,7 +46,6 @@ namespace RhinoPythonNetEditor.View.Controls
     /// </summary>
     public partial class Editor : UserControl
     {
-
         BreakPointMargin breakPointMargin;
         IHighlightingDefinition defaultHighlighting;
         WeakReferenceMessenger messenger;
@@ -57,28 +57,33 @@ namespace RhinoPythonNetEditor.View.Controls
         {
             InitializeComponent();
             Id = Guid.NewGuid();
-            CachePath = Path.GetDirectoryName(typeof(Editor).Assembly.Location) + @"\cache";
+            CachePath = Path.GetDirectoryName(typeof(Editor).Assembly.Location) + $@"\cache\{Id}";
             textEditor.TextArea.TextEntered += TextArea_TextEntered;
+            textEditor.TextArea.PreviewKeyDown += TextArea_PreviewKeyDown;
             textEditor.TextArea.TextEntering += TextArea_TextEntering;
+        }
+
+        private void TextArea_PreviewKeyDown(object sender, KeyEventArgs e)
+        {
+
+            if ((e.Key == Key.Enter || e.Key == Key.Tab) && completionWindow != null)
+            {
+                completionWindow.CompletionList.RequestInsertion(e);
+            }
+            insightWindow?.Hide();
         }
 
         private void TextArea_TextEntering(object sender, TextCompositionEventArgs e)
         {
-            if (e.Text.Length > 0 && completionWindow != null)
-            {
-                if (!char.IsLetterOrDigit(e.Text[0]))
-                {
-                    completionWindow.CompletionList.RequestInsertion(e);
-                }
-            }
             insightWindow?.Hide();
         }
 
         private async void TextArea_TextEntered(object sender, TextCompositionEventArgs e)
         {
-            if (!string.IsNullOrWhiteSpace(e.Text) && e.Text != "(")
+            if (char.IsLetter(e.Text[0]) || e.Text == ".")
             {
-                File.WriteAllText(CacheFile, textEditor.Document.Text);
+                var t = textEditor.Document.Text;
+                await Task.Run(() => File.WriteAllText(CacheFile, t));
                 var items = await LintManager.RequestCompletionAsync(CacheFile, (textEditor.TextArea.Caret.Line - 1, textEditor.TextArea.Caret.Column - 1));
                 var itemList = items.ToArray();
                 if (itemList.Length > 0)
@@ -88,21 +93,33 @@ namespace RhinoPythonNetEditor.View.Controls
                     completionWindow.CompletionList.Style = FindResource("CompletionListStyle") as Style;
                     completionWindow.Closed += (o, args) => completionWindow = null;
                     var data = completionWindow.CompletionList.CompletionData;
-                    foreach (var item in items) data.Add(new CompletionData(item));
+                    foreach (var item in items) data.Add(new CompletionData(item,messenger));
+                    completionWindow.CompletionList.ListBox.SelectedIndex = 0;
                     completionWindow.Show();
                 }
+                else
+                {
+                    if (completionWindow != null) completionWindow.Close();
+                }
             }
-            else if (e.Text == "(")
+            else if (e.Text == "(" || e.Text == "," || e.Text=="=")
             {
-                File.WriteAllText(CacheFile, textEditor.Document.Text);
-                var help = LintManager.RequestSignature(CacheFile, (textEditor.TextArea.Caret.Line - 1, textEditor.TextArea.Caret.Column -1));
-                if (help != null)
+                if (completionWindow != null) completionWindow.Close();
+                var t = textEditor.Document.Text;
+                await Task.Run(() => File.WriteAllText(CacheFile, t));
+                var help = LintManager.RequestSignature(CacheFile, (textEditor.TextArea.Caret.Line - 1, textEditor.TextArea.Caret.Column - 1));
+                if (help != null && help.Signatures.Count() > 0)
                 {
                     insightWindow = new OverloadInsightWindow(textEditor.TextArea);
+                    insightWindow.Style = FindResource("InsightWindowStyle") as Style;
                     insightWindow.Closed += (o, args) => insightWindow = null;
-                    insightWindow.Provider = new OverloadProvider(help);
+                    insightWindow.Provider = new OverloadProvider(help,messenger);
                     insightWindow.Show();
                 }
+            }
+            else
+            {
+                if (completionWindow != null) completionWindow.Close();
             }
         }
 

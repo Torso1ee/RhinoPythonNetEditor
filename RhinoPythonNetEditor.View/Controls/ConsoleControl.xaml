@@ -22,10 +22,11 @@
             <TabItem  Header="Problem">
                 <local:HintControl/>
             </TabItem>
+            <TabItem Header="Help">
+                <local:HelpControl/>
+            </TabItem>
             <TabItem Header="Output">
                 <local:OutputControl/>
-            </TabItem>
-            <TabItem Header="Help">
             </TabItem>
             <TabItem Header="Terminal">
                 <local:TerminalControl/>
