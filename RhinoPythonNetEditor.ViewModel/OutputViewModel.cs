@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
 using RhinoPythonNetEditor.DataModels.Business;
@@ -42,8 +43,11 @@ namespace RhinoPythonNetEditor.ViewModel
 
         void Receive(object recipient, SyntaxHintChangedMessage message)
         {
-            SyntaxHints.Clear();
-            foreach (var m in message.Value) SyntaxHints.Add(m);
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                SyntaxHints.Clear();
+                foreach (var m in message.Value) SyntaxHints.Add(m);
+            });
         }
 
         void Receive(object recipient, SetDocumentMessage message)

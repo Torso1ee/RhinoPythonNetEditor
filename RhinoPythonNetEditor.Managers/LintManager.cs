@@ -16,17 +16,29 @@ using OmniSharp.Extensions.LanguageServer.Protocol.Workspace;
 using Newtonsoft.Json.Linq;
 using Microsoft.VisualStudio.Shared.VSCodeDebugProtocol.Messages;
 using CompletionItem = OmniSharp.Extensions.LanguageServer.Protocol.Models.CompletionItem;
+using OmniSharp.Extensions.LanguageServer.Protocol.Client;
+using RhinoPythonNetEditor.DataModels.Business;
 
 namespace RhinoPythonNetEditor.Managers
 {
     public class LintManager
     {
-        private static Process LSP { get; set; }
+        private LintManager() { }
+        private static LintManager instance;
+        public static LintManager Instance
+        {
+            get
+            {
+                if (instance == null) instance = new LintManager();
+                return instance;
+            }
+        }
+        private Process LSP { get; set; }
 
-        private static LanguageClient Client { get; set; }
+        private LanguageClient Client { get; set; }
 
-        public static bool IsInitialized { get; set; }
-        private static void StartLSP()
+        public bool IsInitialized { get; set; }
+        private void StartLSP()
         {
             var path = Path.GetDirectoryName(typeof(LintManager).Assembly.Location);
             ProcessStartInfo info = new ProcessStartInfo();
@@ -42,7 +54,7 @@ namespace RhinoPythonNetEditor.Managers
             LSP.Start();
         }
 
-        public static async Task InitialzeClientAsync()
+        public async Task InitialzeClientAsync()
         {
             StartLSP();
             await Task.Delay(500);
@@ -82,16 +94,24 @@ namespace RhinoPythonNetEditor.Managers
                                 LabelOffsetSupport = true,
                             }
                         }
+                    },
+                    new PublishDiagnosticsCapability
+                    {
+                        CodeDescriptionSupport = true,
+                        DataSupport = true,
+                        RelatedInformation = true,
+                        VersionSupport = true,
                     }
                 );
             }
         );
+            Client.Register(RegisterDiagnostic);
             CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
             await Client.Initialize(cancellationTokenSource.Token);
             IsInitialized = true;
         }
 
-        public static async Task<IEnumerable<CompletionItem>> RequestCompletionAsync(string path, (int, int) posution)
+        public async Task<IEnumerable<CompletionItem>> RequestCompletionAsync(string path, (int, int) posution)
         {
             var items = await Client.TextDocument.RequestCompletion(new CompletionParams
             {
@@ -101,34 +121,66 @@ namespace RhinoPythonNetEditor.Managers
             return items;
         }
 
-        public static void DidOpen(string path)
+        public void DidSave(string path)
+        {
+            Client.DidSaveTextDocument(new DidSaveTextDocumentParams { TextDocument = new TextDocumentIdentifier { Uri = path } });
+        }
+
+        public void DidOpen(string path)
         {
             Client.DidOpenTextDocument(new DidOpenTextDocumentParams { TextDocument = new TextDocumentItem { Uri = path } });
         }
 
-        public static void DidClose(string path)
+        public void DidClose(string path)
         {
             Client.DidCloseTextDocument(new DidCloseTextDocumentParams { TextDocument = new TextDocumentItem { Uri = path } });
         }
 
-        public static CompletionItem ResolveCompletionItem(CompletionItem item)
+        public CompletionItem ResolveCompletionItem(CompletionItem item)
         {
             var task = Client.ResolveCompletion(item);
             task.Wait();
             return task.Result;
         }
 
-        public static SignatureHelp RequestSignature(string path, (int, int) posution)
+        public async Task<SignatureHelp> RequestSignatureAsync(string path, (int, int) posution)
         {
-            var task = Client.TextDocument.RequestSignatureHelp(new SignatureHelpParams
+            var help = await Client.TextDocument.RequestSignatureHelp(new SignatureHelpParams
             {
                 TextDocument = path,
                 Position = posution
             });
-            task.Wait();
-            return task.Result;
+            return help;
         }
 
+        public void RegisterDiagnostic(ILanguageClientRegistry register)
+        {
+            PublishDiagnosticsExtensions.OnPublishDiagnostics(register, DiagnosticPublished);
+        }
+
+        private void DiagnosticPublished(PublishDiagnosticsParams p)
+        {
+            OnDiagnosticPublished?.Invoke(this, new DiagnosticPublishedEventArgs { PublishDiagnostics = p.Diagnostics.Select(d => DiagnosticToSyntaxInfo(d)).ToList(), File = Path.GetFileNameWithoutExtension(p.Uri.Path)});
+        
+        }
+
+        private SyntaxInfo DiagnosticToSyntaxInfo(Diagnostic diagnostic)
+        {
+            var info = new SyntaxInfo();
+            info.Servity = (Servity)Enum.Parse(typeof(Servity), diagnostic.Severity.ToString());
+            info.Message = diagnostic.Message;
+            info.Source = diagnostic.Source;
+            info.Range = $"[Line {diagnostic.Range.Start.Line + 1}, Column {diagnostic.Range.Start.Character}]";
+            return info;
+        }
+
+        public event EventHandler<DiagnosticPublishedEventArgs> OnDiagnosticPublished = delegate { };
+    }
+
+    public class DiagnosticPublishedEventArgs : EventArgs
+    {
+        public string File { get; set; }
+        public List<SyntaxInfo> PublishDiagnostics { get; set; }
     }
 }
 

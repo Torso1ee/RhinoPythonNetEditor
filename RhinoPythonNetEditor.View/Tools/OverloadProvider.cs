@@ -33,7 +33,7 @@ namespace RhinoPythonNetEditor.View.Tools
             set
             {
                 _selectedIndex = value;
-                Messager.Send(new SetDocumentMessage(Help[_selectedIndex].Documentation.ToString()));
+                Messager.Send(new SetDocumentMessage(Help[_selectedIndex].Documentation?.ToString()));
                 OnPropertyChanged();
                 OnPropertyChanged(nameof(CurrentHeader));
                 OnPropertyChanged(nameof(CurrentContent));

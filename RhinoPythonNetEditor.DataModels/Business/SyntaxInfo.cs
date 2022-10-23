@@ -8,7 +8,19 @@ namespace RhinoPythonNetEditor.DataModels.Business
 {
     public class SyntaxInfo
     {
-        public string Line { get; set; }
-        public string Error { get; set; }
+        public string Message { get; set; }
+        public Servity Servity { get; set; }
+
+        public string Range { get; set; }
+
+        public string Source { get; set; }
+    }
+
+    public enum Servity
+    {
+        Error,
+        Warning,
+        Information,
+        Hint
     }
 }

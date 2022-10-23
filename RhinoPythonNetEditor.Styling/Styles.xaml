@@ -28,7 +28,7 @@
     <converters:InvertBooleanConverter x:Key="InvertConverter"/>
     <converters:KindToGeometryConverter x:Key="KindToGeometryConverter"/>
     <converters:KindToColorConverter x:Key="KindToColorConverter"/>
-
-
+    <converters:ServityToGeometryConverter x:Key="ServityToGeometryConverter"/>
+    <converters:ServityToColorConverter x:Key="ServityToColorConverter"/>
 
 </ResourceDictionary>

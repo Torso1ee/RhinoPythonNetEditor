@@ -37,12 +37,12 @@ namespace RhinoPythonNetEditor.View.Tools
 
         public void Complete(TextArea textArea, ISegment completionSegment, EventArgs insertionRequestEventArgs)
         {
-            Item = LintManager.ResolveCompletionItem(Item);
+            Item = LintManager.Instance.ResolveCompletionItem(Item);
             var tryResult = int.TryParse(Item.FilterText, out int likeTextLegth);
             if (!tryResult) likeTextLegth = 0;
             var segment = new CompletionSegment { Offset = completionSegment.Offset - likeTextLegth, EndOffset = completionSegment.EndOffset, Length = completionSegment.Length + likeTextLegth };
             textArea.Document.Replace(segment, Text);
-            Messager.Send(new SetDocumentMessage(Item.Documentation.ToString()));
+            Messager.Send(new SetDocumentMessage(Item.Documentation?.ToString()));
         }
 
     }

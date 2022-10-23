@@ -37,6 +37,7 @@ using Path = System.IO.Path;
 using RhinoPythonNetEditor.Managers;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.TextBox;
 using ICSharpCode.AvalonEdit.CodeCompletion;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.TaskbarClock;
 
 
 namespace RhinoPythonNetEditor.View.Controls
@@ -51,16 +52,53 @@ namespace RhinoPythonNetEditor.View.Controls
         WeakReferenceMessenger messenger;
         private CompletionWindow completionWindow;
         private OverloadInsightWindow insightWindow;
-
+        public LintManager LintManager = LintManager.Instance;
+        private static Dictionary<string, WeakReferenceMessenger> MessengerRecord = new Dictionary<string, WeakReferenceMessenger>();
+        private DispatcherTimer timer;
+        private int time = 0;
 
         public Editor()
         {
             InitializeComponent();
             Id = Guid.NewGuid();
+            timer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(50) };
+            timer.Tick += Timer_Tick;
             CachePath = Path.GetDirectoryName(typeof(Editor).Assembly.Location) + $@"\cache\{Id}";
             textEditor.TextArea.TextEntered += TextArea_TextEntered;
             textEditor.TextArea.PreviewKeyDown += TextArea_PreviewKeyDown;
+            textEditor.TextArea.PreviewKeyUp += TextArea_PreviewKeyUp;
             textEditor.TextArea.TextEntering += TextArea_TextEntering;
+            IsVisibleChanged += Editor_IsVisibleChanged;
+        }
+
+        private async void Editor_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            if ((bool)e.NewValue && textEditor.Document!= null)
+            {
+                await Task.Delay(100);
+                var t = textEditor.Document.Text;
+                File.WriteAllText(CacheFile, t);
+                LintManager.DidSave(CacheFile);
+            }
+        }
+
+        private void Timer_Tick(object sender, EventArgs e)
+        {
+            time += 50;
+            if (time > 300)
+            {
+                timer.Stop();
+                var t = textEditor.Document.Text;
+                File.WriteAllText(CacheFile, t);
+                LintManager.DidSave(CacheFile);
+                time = 0;
+            }
+        }
+
+        private void TextArea_PreviewKeyUp(object sender, KeyEventArgs e)
+        {
+            time = 0;
+            if (!timer.IsEnabled) timer.Start();
         }
 
         private void TextArea_PreviewKeyDown(object sender, KeyEventArgs e)
@@ -93,7 +131,7 @@ namespace RhinoPythonNetEditor.View.Controls
                     completionWindow.CompletionList.Style = FindResource("CompletionListStyle") as Style;
                     completionWindow.Closed += (o, args) => completionWindow = null;
                     var data = completionWindow.CompletionList.CompletionData;
-                    foreach (var item in items) data.Add(new CompletionData(item,messenger));
+                    foreach (var item in items) data.Add(new CompletionData(item, messenger));
                     completionWindow.CompletionList.ListBox.SelectedIndex = 0;
                     completionWindow.Show();
                 }
@@ -102,18 +140,18 @@ namespace RhinoPythonNetEditor.View.Controls
                     if (completionWindow != null) completionWindow.Close();
                 }
             }
-            else if (e.Text == "(" || e.Text == "," || e.Text=="=")
+            else if (e.Text == "(" || e.Text == "," || e.Text == "=")
             {
-                if (completionWindow != null) completionWindow.Close();
                 var t = textEditor.Document.Text;
                 await Task.Run(() => File.WriteAllText(CacheFile, t));
-                var help = LintManager.RequestSignature(CacheFile, (textEditor.TextArea.Caret.Line - 1, textEditor.TextArea.Caret.Column - 1));
+                if (completionWindow != null) completionWindow.Close();
+                var help = await LintManager.RequestSignatureAsync(CacheFile, (textEditor.TextArea.Caret.Line - 1, textEditor.TextArea.Caret.Column - 1));
                 if (help != null && help.Signatures.Count() > 0)
                 {
                     insightWindow = new OverloadInsightWindow(textEditor.TextArea);
                     insightWindow.Style = FindResource("InsightWindowStyle") as Style;
                     insightWindow.Closed += (o, args) => insightWindow = null;
-                    insightWindow.Provider = new OverloadProvider(help,messenger);
+                    insightWindow.Provider = new OverloadProvider(help, messenger);
                     insightWindow.Show();
                 }
             }
@@ -175,7 +213,14 @@ namespace RhinoPythonNetEditor.View.Controls
                 InstallHighlightDefinition();
                 InstallBreakPoint();
                 InstallFolding();
-                if (!LintManager.IsInitialized) await LintManager.InitialzeClientAsync();
+                if (!LintManager.IsInitialized)
+                {
+                    await LintManager.InitialzeClientAsync();
+                    LintManager.OnDiagnosticPublished += (s, arg) =>
+                    {
+                        MessengerRecord[arg.File].Send(new SyntaxHintChangedMessage(arg.PublishDiagnostics));
+                    };
+                }
                 if (!Directory.Exists(CachePath)) Directory.CreateDirectory(CachePath);
                 CacheFile = $@"{CachePath}\{Id}.py";
                 File.WriteAllText(CacheFile, textEditor.Document.Text);
@@ -185,6 +230,7 @@ namespace RhinoPythonNetEditor.View.Controls
             if (messenger == null)
             {
                 messenger = (DataContext as ViewModelLocator).Messenger;
+                MessengerRecord[Id.ToString()] = messenger;
                 messenger.Register<StepMessage>(this, (r, m) =>
                 {
                     Application.Current.Dispatcher.Invoke(() => breakPointMargin.Step(m.Line, m.Value));

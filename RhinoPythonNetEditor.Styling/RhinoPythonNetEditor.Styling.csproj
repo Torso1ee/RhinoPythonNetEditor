@@ -57,6 +57,8 @@
     <Compile Include="Converters\InvertBooleanConverter.cs" />
     <Compile Include="Converters\KindToColorConverter.cs" />
     <Compile Include="Converters\KindToGeometryConverter.cs" />
+    <Compile Include="Converters\ServityToColorConverter.cs" />
+    <Compile Include="Converters\ServityToGeometryConverter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>

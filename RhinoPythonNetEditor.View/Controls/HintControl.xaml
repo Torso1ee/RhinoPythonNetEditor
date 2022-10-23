@@ -10,27 +10,30 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <UserControl.Resources>
+
         <ResourceDictionary>
             <tools:BindingProxy x:Key="proxy" Data="{Binding}"/>
-            <SolidColorBrush x:Key="ScriptLineInputBrush" Color="#FF44B5D1" x:Shared="False"/>
-            <SolidColorBrush x:Key="ScriptLineErrorBrush" Color="#FFF04B4B" x:Shared="False"/>
-            <SolidColorBrush x:Key="ScriptLineNormalBrush" Color="#FFE9E9E9" x:Shared="False"/>
-            <SolidColorBrush x:Key="ScriptLineScriptBrush" Color="#FFF3F342" x:Shared="False"/>
+            <Style TargetType="TextBlock">
+                <Setter Property="Foreground" Value="{StaticResource HintBrush}"/>
+                <Setter Property="Height" Value="15"/>
+                <Setter Property="FontFamily" Value="Consolas"/>
+                <Setter Property="HorizontalAlignment" Value="Left"/>
+            </Style>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="/RhinoPythonNetEditor.View;component/ViewDictionary.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </UserControl.Resources>
-    <ScrollViewer Margin="5" attach:ScrollViewerExtensions.AlwaysScrollToEnd="True" DataContext="{Binding Data.OutputViewModel, Source={StaticResource proxy}}" >
+    <ScrollViewer Margin="5"  DataContext="{Binding Data.OutputViewModel, Source={StaticResource proxy}}" >
         <ItemsControl  ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Auto" Margin="10" Background="{x:Null}" ItemsSource="{Binding  SyntaxHints}" BorderBrush="{x:Null}">
             <ItemsControl.ItemTemplate>
                 <DataTemplate DataType="{x:Type model:SyntaxInfo}" >
-                    <Grid>
-                        <TextBlock  TextWrapping="Wrap" Margin="5,0" VerticalAlignment="Center" Text="{Binding Error}" FontSize="13" FontFamily="Consolas" Background="{x:Null}" Foreground="{StaticResource ScriptLineErrorBrush}"  />
-                        <Border Background="{StaticResource   MenuItemIconBrush}" CornerRadius="5" HorizontalAlignment="Left" VerticalAlignment="Top" Height="15" Width="Auto">
-                            <TextBlock Margin="5,0" Text="{Binding  Line}" VerticalAlignment="Center" Foreground="{StaticResource LabelTextBrush}" FontFamily="Consolas"/>
-                        </Border>
-                    </Grid>
+                    <DockPanel Margin="3" HorizontalAlignment="Left">
+                        <Path DockPanel.Dock="Left" Height="15" Width="15" Data="{Binding Servity, Converter={StaticResource ServityToGeometryConverter}}" Fill="{Binding Servity, Converter={StaticResource ServityToColorConverter}}" Stretch="Uniform"/>
+                        <TextBlock Margin="5,0" DockPanel.Dock="Right" Text="{Binding  Range}" Foreground="{StaticResource MenuItemTextBrush}"/>
+                        <TextBlock Margin="5,0" DockPanel.Dock="Right" Text="{Binding Source, StringFormat={}(From {0})}" Foreground="{StaticResource MenuItemTextBrush}" />
+                        <TextBlock Margin="5,0" DockPanel.Dock="Right"  Text="{Binding Message}"/>
+                    </DockPanel>
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
         </ItemsControl>

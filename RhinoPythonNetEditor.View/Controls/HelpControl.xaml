@@ -18,8 +18,8 @@
         </ResourceDictionary>
     </UserControl.Resources>
     <Grid>
-        <ScrollViewer Margin="5" attach:ScrollViewerExtensions.AlwaysScrollToEnd="True" DataContext="{Binding Data.OutputViewModel, Source={StaticResource proxy}}" >
-            <TextBox x:Name="tb" TextWrapping="Wrap" BorderThickness="0" IsReadOnly="True"  Text="{Binding Documentation}" FontSize="13" FontFamily="Consolas" Background="{x:Null}" Foreground="#FFE9E9E9" BorderBrush="{x:Null}" />
+        <ScrollViewer Margin="5" HorizontalScrollBarVisibility="Disabled" DataContext="{Binding Data.OutputViewModel, Source={StaticResource proxy}}" >
+            <TextBox x:Name="tb" Margin="10" TextWrapping="Wrap" BorderThickness="0" IsReadOnly="True"  Text="{Binding Documentation}" FontSize="13" FontFamily="Consolas" Background="{x:Null}" Foreground="{StaticResource HintBrush}" BorderBrush="{x:Null}" />
         </ScrollViewer>
     </Grid>
 </UserControl>

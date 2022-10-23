@@ -218,6 +218,7 @@
     <Compile Include="Tools\OverloadProvider.cs" />
     <Compile Include="Tools\PythonFoldingStrategy.cs" />
     <Compile Include="Tools\SyntaxHelper.cs" />
+    <Compile Include="Tools\UnderLineTransformer.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
