@@ -54,19 +54,14 @@ namespace RhinoPythonNetEditor.View.Controls
         private OverloadInsightWindow insightWindow;
         public LintManager LintManager = LintManager.Instance;
         private static Dictionary<string, WeakReferenceMessenger> MessengerRecord = new Dictionary<string, WeakReferenceMessenger>();
-        private DispatcherTimer timer;
-        private int time = 0;
 
         public Editor()
         {
             InitializeComponent();
             Id = Guid.NewGuid();
-            timer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(50) };
-            timer.Tick += Timer_Tick;
             CachePath = Path.GetDirectoryName(typeof(Editor).Assembly.Location) + $@"\cache\{Id}";
             textEditor.TextArea.TextEntered += TextArea_TextEntered;
             textEditor.TextArea.PreviewKeyDown += TextArea_PreviewKeyDown;
-            textEditor.TextArea.PreviewKeyUp += TextArea_PreviewKeyUp;
             textEditor.TextArea.TextEntering += TextArea_TextEntering;
             IsVisibleChanged += Editor_IsVisibleChanged;
         }
@@ -77,28 +72,8 @@ namespace RhinoPythonNetEditor.View.Controls
             {
                 await Task.Delay(100);
                 var t = textEditor.Document.Text;
-                File.WriteAllText(CacheFile, t);
-                LintManager.DidSave(CacheFile);
+                LintManager.DidChange(CacheFile, t);
             }
-        }
-
-        private void Timer_Tick(object sender, EventArgs e)
-        {
-            time += 50;
-            if (time > 300)
-            {
-                timer.Stop();
-                var t = textEditor.Document.Text;
-                File.WriteAllText(CacheFile, t);
-                LintManager.DidSave(CacheFile);
-                time = 0;
-            }
-        }
-
-        private void TextArea_PreviewKeyUp(object sender, KeyEventArgs e)
-        {
-            time = 0;
-            if (!timer.IsEnabled) timer.Start();
         }
 
         private void TextArea_PreviewKeyDown(object sender, KeyEventArgs e)
@@ -121,7 +96,7 @@ namespace RhinoPythonNetEditor.View.Controls
             if (char.IsLetter(e.Text[0]) || e.Text == ".")
             {
                 var t = textEditor.Document.Text;
-                await Task.Run(() => File.WriteAllText(CacheFile, t));
+                LintManager.DidChange(CacheFile, t);
                 var items = await LintManager.RequestCompletionAsync(CacheFile, (textEditor.TextArea.Caret.Line - 1, textEditor.TextArea.Caret.Column - 1));
                 var itemList = items.ToArray();
                 if (itemList.Length > 0)
@@ -143,7 +118,7 @@ namespace RhinoPythonNetEditor.View.Controls
             else if (e.Text == "(" || e.Text == "," || e.Text == "=")
             {
                 var t = textEditor.Document.Text;
-                await Task.Run(() => File.WriteAllText(CacheFile, t));
+                LintManager.DidChange(CacheFile, t);
                 if (completionWindow != null) completionWindow.Close();
                 var help = await LintManager.RequestSignatureAsync(CacheFile, (textEditor.TextArea.Caret.Line - 1, textEditor.TextArea.Caret.Column - 1));
                 if (help != null && help.Signatures.Count() > 0)
@@ -221,9 +196,7 @@ namespace RhinoPythonNetEditor.View.Controls
                         MessengerRecord[arg.File].Send(new SyntaxHintChangedMessage(arg.PublishDiagnostics));
                     };
                 }
-                if (!Directory.Exists(CachePath)) Directory.CreateDirectory(CachePath);
                 CacheFile = $@"{CachePath}\{Id}.py";
-                File.WriteAllText(CacheFile, textEditor.Document.Text);
                 LintManager.DidOpen(CacheFile);
                 Installed = true;
             }

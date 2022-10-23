@@ -126,6 +126,11 @@ namespace RhinoPythonNetEditor.Managers
             Client.DidSaveTextDocument(new DidSaveTextDocumentParams { TextDocument = new TextDocumentIdentifier { Uri = path } });
         }
 
+        public void DidChange(string path, string content)
+        {
+            Client.DidChangeTextDocument(new DidChangeTextDocumentParams { TextDocument = new VersionedTextDocumentIdentifier { Uri = path }, ContentChanges = new[] { new TextDocumentContentChangeEvent { Text = content } } });
+        }
+
         public void DidOpen(string path)
         {
             Client.DidOpenTextDocument(new DidOpenTextDocumentParams { TextDocument = new TextDocumentItem { Uri = path } });
@@ -160,8 +165,8 @@ namespace RhinoPythonNetEditor.Managers
 
         private void DiagnosticPublished(PublishDiagnosticsParams p)
         {
-            OnDiagnosticPublished?.Invoke(this, new DiagnosticPublishedEventArgs { PublishDiagnostics = p.Diagnostics.Select(d => DiagnosticToSyntaxInfo(d)).ToList(), File = Path.GetFileNameWithoutExtension(p.Uri.Path)});
-        
+            OnDiagnosticPublished?.Invoke(this, new DiagnosticPublishedEventArgs { PublishDiagnostics = p.Diagnostics.Select(d => DiagnosticToSyntaxInfo(d)).ToList(), File = Path.GetFileNameWithoutExtension(p.Uri.Path) });
+
         }
 
         private SyntaxInfo DiagnosticToSyntaxInfo(Diagnostic diagnostic)
