@@ -54,7 +54,7 @@
                                             </Grid.RowDefinitions>
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition Width="Auto"/>
-                                                <ColumnDefinition Width="300"/>
+                                                <ColumnDefinition Width="300" />
                                             </Grid.ColumnDefinitions>
                                             <TextBlock Margin="5" Grid.Column="1" TextWrapping="Wrap"  FontFamily="Consolas" Foreground="White"  Text="{Binding Provider.CurrentHeader, RelativeSource={RelativeSource Mode=TemplatedParent}}"/>
                                             <StackPanel x:Name="PART_PANEL" 

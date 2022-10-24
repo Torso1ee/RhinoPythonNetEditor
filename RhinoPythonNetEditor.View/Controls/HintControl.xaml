@@ -32,7 +32,7 @@
                         <Path DockPanel.Dock="Left" Height="15" Width="15" Data="{Binding Servity, Converter={StaticResource ServityToGeometryConverter}}" Fill="{Binding Servity, Converter={StaticResource ServityToColorConverter}}" Stretch="Uniform"/>
                         <TextBlock Margin="5,0" DockPanel.Dock="Right" Text="{Binding  Range}" Foreground="{StaticResource MenuItemTextBrush}"/>
                         <TextBlock Margin="5,0" DockPanel.Dock="Right" Text="{Binding Source, StringFormat={}(From {0})}" Foreground="{StaticResource MenuItemTextBrush}" />
-                        <TextBlock Margin="5,0" DockPanel.Dock="Right"  Text="{Binding Message}"/>
+                        <TextBlock Margin="5,0" DockPanel.Dock="Right"  Text="{Binding Message}" TextTrimming="CharacterEllipsis"/>
                     </DockPanel>
                 </DataTemplate>
             </ItemsControl.ItemTemplate>

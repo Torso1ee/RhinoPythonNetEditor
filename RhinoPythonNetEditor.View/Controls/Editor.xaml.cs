@@ -62,13 +62,23 @@ namespace RhinoPythonNetEditor.View.Controls
             CachePath = Path.GetDirectoryName(typeof(Editor).Assembly.Location) + $@"\cache\{Id}";
             textEditor.TextArea.TextEntered += TextArea_TextEntered;
             textEditor.TextArea.PreviewKeyDown += TextArea_PreviewKeyDown;
+            textEditor.TextArea.PreviewKeyUp += TextArea_PreviewKeyUp;
             textEditor.TextArea.TextEntering += TextArea_TextEntering;
             IsVisibleChanged += Editor_IsVisibleChanged;
         }
 
+        private void TextArea_PreviewKeyUp(object sender, KeyEventArgs e)
+        {
+          if(e.Key == Key.Back)
+            {
+                var t = textEditor.Document.Text;
+                LintManager.DidChange(CacheFile, t);
+            }
+        }
+
         private async void Editor_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
-            if ((bool)e.NewValue && textEditor.Document!= null)
+            if ((bool)e.NewValue && textEditor.Document != null)
             {
                 await Task.Delay(100);
                 var t = textEditor.Document.Text;
@@ -78,7 +88,6 @@ namespace RhinoPythonNetEditor.View.Controls
 
         private void TextArea_PreviewKeyDown(object sender, KeyEventArgs e)
         {
-
             if ((e.Key == Key.Enter || e.Key == Key.Tab) && completionWindow != null)
             {
                 completionWindow.CompletionList.RequestInsertion(e);

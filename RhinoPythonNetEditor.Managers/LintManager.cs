@@ -46,6 +46,7 @@ namespace RhinoPythonNetEditor.Managers
             info.RedirectStandardInput = true;
             info.RedirectStandardOutput = true;
             info.UseShellExecute = false;
+            //info.Arguments = " --log-file pylsp.log";
             info.CreateNoWindow = true;
             LSP = new Process
             {
