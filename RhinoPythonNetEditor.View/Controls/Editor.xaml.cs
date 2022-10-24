@@ -38,6 +38,7 @@ using RhinoPythonNetEditor.Managers;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.TextBox;
 using ICSharpCode.AvalonEdit.CodeCompletion;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.TaskbarClock;
+using static System.Windows.Forms.AxHost;
 
 
 namespace RhinoPythonNetEditor.View.Controls
@@ -50,15 +51,21 @@ namespace RhinoPythonNetEditor.View.Controls
         BreakPointMargin breakPointMargin;
         IHighlightingDefinition defaultHighlighting;
         WeakReferenceMessenger messenger;
+        TextMarkerService textMarkerService;
         private CompletionWindow completionWindow;
         private OverloadInsightWindow insightWindow;
         public LintManager LintManager = LintManager.Instance;
         private static Dictionary<string, WeakReferenceMessenger> MessengerRecord = new Dictionary<string, WeakReferenceMessenger>();
+        private bool canReDraw = true;
+        private DispatcherTimer timer;
+        private int time = 0;
 
         public Editor()
         {
             InitializeComponent();
             Id = Guid.NewGuid();
+            timer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(30) };
+            timer.Tick += Timer_Tick;
             CachePath = Path.GetDirectoryName(typeof(Editor).Assembly.Location) + $@"\cache\{Id}";
             textEditor.TextArea.TextEntered += TextArea_TextEntered;
             textEditor.TextArea.PreviewKeyDown += TextArea_PreviewKeyDown;
@@ -67,13 +74,23 @@ namespace RhinoPythonNetEditor.View.Controls
             IsVisibleChanged += Editor_IsVisibleChanged;
         }
 
-        private void TextArea_PreviewKeyUp(object sender, KeyEventArgs e)
+        private void Timer_Tick(object sender, EventArgs e)
         {
-          if(e.Key == Key.Back)
+            time += 10;
+            if (time > 100 && canReDraw)
             {
+                canReDraw = false;
+                time = 0;
+                timer.Stop();
                 var t = textEditor.Document.Text;
                 LintManager.DidChange(CacheFile, t);
             }
+        }
+
+        private void TextArea_PreviewKeyUp(object sender, KeyEventArgs e)
+        {
+            time = 0;
+            if (!timer.IsEnabled) timer.Start();
         }
 
         private async void Editor_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
@@ -81,13 +98,35 @@ namespace RhinoPythonNetEditor.View.Controls
             if ((bool)e.NewValue && textEditor.Document != null)
             {
                 await Task.Delay(100);
+
                 var t = textEditor.Document.Text;
                 LintManager.DidChange(CacheFile, t);
             }
         }
 
+        private void AddHighLight(int start, int offset, Color color)
+        {
+            ITextMarker marker = textMarkerService.Create(start, offset);
+            marker.ForegroundColor = color;
+            marker.Reason = MarkerReason.HighLight;
+        }
+
+        private void AddErrorHint(int start, int offset, Color color)
+        {
+            ITextMarker marker = textMarkerService.Create(start, offset);
+            marker.MarkerTypes = TextMarkerTypes.SquigglyUnderline;
+            marker.MarkerColor = color;
+            marker.Reason = MarkerReason.Hint;
+        }
+        private void InstallTextMarkerService()
+        {
+            textMarkerService = new TextMarkerService(textEditor.Document);
+            textEditor.TextArea.TextView.BackgroundRenderers.Add(textMarkerService);
+            textEditor.TextArea.TextView.LineTransformers.Add(textMarkerService);
+        }
         private void TextArea_PreviewKeyDown(object sender, KeyEventArgs e)
         {
+            time = 0;
             if ((e.Key == Key.Enter || e.Key == Key.Tab) && completionWindow != null)
             {
                 completionWindow.CompletionList.RequestInsertion(e);
@@ -197,6 +236,7 @@ namespace RhinoPythonNetEditor.View.Controls
                 InstallHighlightDefinition();
                 InstallBreakPoint();
                 InstallFolding();
+                InstallTextMarkerService();
                 if (!LintManager.IsInitialized)
                 {
                     await LintManager.InitialzeClientAsync();
@@ -216,6 +256,40 @@ namespace RhinoPythonNetEditor.View.Controls
                 messenger.Register<StepMessage>(this, (r, m) =>
                 {
                     Application.Current.Dispatcher.Invoke(() => breakPointMargin.Step(m.Line, m.Value));
+                });
+                messenger.Register<SyntaxHintChangedMessage>(this, (r, m) =>
+                {
+                    Dispatcher.Invoke(() =>
+                    {
+                        textMarkerService.RemoveAll(t => t.Reason == MarkerReason.Hint);
+                        foreach (var s in m.Value)
+                        {
+                            var color = Colors.Transparent;
+                            switch (s.Servity)
+                            {
+                                case Servity.Error:
+                                    color = Colors.DarkRed;
+                                    break;
+                                case Servity.Warning:
+                                    color = Colors.DarkOrange;
+                                    break;
+                                default:
+                                    color = Colors.DarkBlue;
+                                    break;
+                            }
+                            if (s.Start.Item1 < textEditor.Document.Lines.Count)
+                            {
+                                var start = Math.Min(textEditor.Document.Lines[s.Start.Item1].EndOffset, textEditor.Document.Lines[s.Start.Item1].Offset + s.Start.Item2);
+                                var end = Math.Min(textEditor.Document.Lines[s.End.Item1].EndOffset, textEditor.Document.Lines[s.End.Item1].Offset + s.End.Item2);
+                                AddErrorHint(start, Math.Max(0, end - start), color);
+                            }
+                            else
+                            {
+                                AddErrorHint(textEditor.Document.TextLength - 1, 0, color);
+                            }
+                        }
+                    });
+                    canReDraw = true;
                 });
                 breakPointMargin.BreakPointChanged += BreakPointMargin_BreakPointChanged;
             }

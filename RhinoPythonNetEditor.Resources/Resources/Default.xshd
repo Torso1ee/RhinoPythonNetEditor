@@ -93,6 +93,13 @@
 			[\d\w_]+  # an identifier
 			(?=\s*\() # followed by (
 		</Rule>
+
+		<Rule color="MethodCall">
+			\b
+			[\d\w_]+  # an identifier
+			(?=\s*\() # followed by (
+		</Rule>
+		
 		<Rule color="NumberLiteral">
 			\b0[xX][0-9a-fA-F]+  # hex number
 			|

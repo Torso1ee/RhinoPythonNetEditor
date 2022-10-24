@@ -177,6 +177,8 @@ namespace RhinoPythonNetEditor.Managers
             info.Message = diagnostic.Message;
             info.Source = diagnostic.Source;
             info.Range = $"[Line {diagnostic.Range.Start.Line + 1}, Column {diagnostic.Range.Start.Character}]";
+            info.Start = (diagnostic.Range.Start.Line, diagnostic.Range.Start.Character);
+            info.End = (diagnostic.Range.End.Line, diagnostic.Range.End.Character);
             return info;
         }
 

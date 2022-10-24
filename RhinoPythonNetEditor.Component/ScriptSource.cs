@@ -72,7 +72,7 @@ namespace RhinoPythonNetEditor.Component
             template = template.Replace("{miuradaisenbai}", CodeBlock_OutputParameterDeclarations());
             template = template.Replace("{bokusyu}", CodeBlock_PythonCode(id));
             template = template.Replace("{1145141919810}", CodeBlock_ParameterAssignment());
-            File.WriteAllText(PythonNetScriptComponent.CompiledPath + @"\test.cs", template);
+            //File.WriteAllText(PythonNetScriptComponent.CompiledPath + @"\test.cs", template);
             return template;
         }
 

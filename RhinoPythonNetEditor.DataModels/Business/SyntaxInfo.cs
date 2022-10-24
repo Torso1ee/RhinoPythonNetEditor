@@ -13,6 +13,9 @@ namespace RhinoPythonNetEditor.DataModels.Business
 
         public string Range { get; set; }
 
+        public (int,int) Start { get; set; }
+        public (int,int) End { get; set; }
+
         public string Source { get; set; }
     }
 
