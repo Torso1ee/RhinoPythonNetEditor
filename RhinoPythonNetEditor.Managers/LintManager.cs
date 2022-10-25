@@ -41,12 +41,14 @@ namespace RhinoPythonNetEditor.Managers
         private void StartLSP()
         {
             var path = Path.GetDirectoryName(typeof(LintManager).Assembly.Location);
+            var lspPath = $@"{path}\python_env\Scripts\pylsp.exe";
             ProcessStartInfo info = new ProcessStartInfo();
-            info.FileName = $@"{path}\python_env\Scripts\pylsp.exe";
+            info.FileName = $@"{path}\python_env\python.exe";
             info.RedirectStandardInput = true;
             info.RedirectStandardOutput = true;
             info.UseShellExecute = false;
             info.CreateNoWindow = true;
+            info.Arguments = lspPath;
             LSP = new Process
             {
                 StartInfo = info

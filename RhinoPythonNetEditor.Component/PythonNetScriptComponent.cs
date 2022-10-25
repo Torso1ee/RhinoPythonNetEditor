@@ -159,7 +159,7 @@ namespace RhinoPythonNetEditor.Component
         {
             if (!IsPythonInitialized)
             {
-                AssemblyPath = Path.GetDirectoryName(typeof(PythonNetScriptComponent).Assembly.Location);
+                AssemblyPath = Path.GetDirectoryName(typeof(ViewModelLocator).Assembly.Location);
                 PythonInitialized();
             }
             if (!PythonLibAdded)
