@@ -50,7 +50,7 @@
                                         <Grid  >
                                             <Grid.RowDefinitions>
                                                 <RowDefinition Height="Auto"/>
-                                                <RowDefinition Height="100"/>
+                                                <RowDefinition Height="Auto"/>
                                             </Grid.RowDefinitions>
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition Width="Auto"/>
@@ -64,7 +64,7 @@
                                                 <Label Foreground="White"   FontFamily="Consolas" Content="{Binding Provider.Text, RelativeSource={RelativeSource Mode=TemplatedParent}}"/>
                                                 <Button  attach:IconElement.Geometry="{StaticResource DownGeometry }"  x:Name="PART_DOWN"/>
                                             </StackPanel>
-                                            <ScrollViewer Margin="5" Grid.Row="1"  Grid.Column="1"  VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                                            <ScrollViewer MaxHeight="100"  Margin="5" Grid.Row="1"  Grid.Column="1"  VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
                                                 <TextBlock TextWrapping="Wrap" Foreground="White"  FontFamily="Consolas"  Text="{Binding Provider.CurrentContent, RelativeSource={RelativeSource Mode=TemplatedParent}}"/>
                                             </ScrollViewer>
                                             <Border Grid.RowSpan="2"  HorizontalAlignment="Right" Width="1" Background="{StaticResource OverlayBrush}"/>
@@ -123,7 +123,7 @@
                                Foreground="#D4D4D4"
                                HorizontalScrollBarVisibility="Auto"
                                VerticalScrollBarVisibility="Auto"
-                                 ShowLineNumbers="True"
+                               ShowLineNumbers="True"
                                Background="Transparent"
                                Document="{Binding Document, Mode=OneTime}"
                                LineNumbersForeground="{StaticResource EditorTextBrush}"
@@ -131,10 +131,11 @@
                                FontSize="16">
             <avalonEdit:TextEditor.Options>
                 <avalonEdit:TextEditorOptions 
-                    ShowSpaces="False" 
+                    ShowSpaces="True" 
                     ColumnRulerPosition="10" 
                     WordWrapIndentation="4" 
                     HighlightCurrentLine="True"
+                    ConvertTabsToSpaces="True"
                     InheritWordWrapIndentation="true"
                     />
             </avalonEdit:TextEditor.Options>

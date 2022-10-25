@@ -46,7 +46,6 @@ namespace RhinoPythonNetEditor.Managers
             info.RedirectStandardInput = true;
             info.RedirectStandardOutput = true;
             info.UseShellExecute = false;
-            //info.Arguments = " --log-file pylsp.log";
             info.CreateNoWindow = true;
             LSP = new Process
             {
@@ -114,11 +113,24 @@ namespace RhinoPythonNetEditor.Managers
 
         public async Task<IEnumerable<CompletionItem>> RequestCompletionAsync(string path, (int, int) posution)
         {
-            var items = await Client.TextDocument.RequestCompletion(new CompletionParams
+            var source = new CancellationTokenSource(TimeSpan.FromSeconds(1));
+            IEnumerable<CompletionItem> items = null;
+            try
             {
-                TextDocument = path,
-                Position = posution,
-            }).AsTask().ConfigureAwait(false);
+                items = await Client.TextDocument.RequestCompletion(new CompletionParams
+                {
+                    TextDocument = path,
+                    Position = posution,
+                }).AsTask().ConfigureAwait(false);
+            }
+            catch
+            {
+                items = null;
+            }
+            finally
+            {
+                source.Dispose();
+            }
             return items;
         }
 
@@ -142,21 +154,43 @@ namespace RhinoPythonNetEditor.Managers
             Client.DidCloseTextDocument(new DidCloseTextDocumentParams { TextDocument = new TextDocumentItem { Uri = path } });
         }
 
-        public CompletionItem ResolveCompletionItem(CompletionItem item)
+        public async Task<CompletionItem> ResolveCompletionItemAsync(CompletionItem item)
         {
-            var task = Client.ResolveCompletion(item);
-            task.Wait();
-            return task.Result;
+            var source = new CancellationTokenSource(TimeSpan.FromSeconds(1));
+            CompletionItem result = null;
+            try
+            {
+                result = await Client.ResolveCompletion(item, source.Token);
+            }
+            catch
+            {
+                result = null;
+            }
+            finally
+            {
+                source.Dispose();
+            }
+            return result;
         }
 
         public async Task<SignatureHelp> RequestSignatureAsync(string path, (int, int) posution)
         {
-            var help = await Client.TextDocument.RequestSignatureHelp(new SignatureHelpParams
+            var source = new CancellationTokenSource(TimeSpan.FromSeconds(1));
+            SignatureHelp result = null;
+            try
             {
-                TextDocument = path,
-                Position = posution
-            });
-            return help;
+                result = await Client.TextDocument.RequestSignatureHelp(new SignatureHelpParams
+                {
+                    TextDocument = path,
+                    Position = posution
+                }, source.Token);
+            }
+            catch { result = null; }
+            finally
+            {
+                source.Dispose();
+            }
+            return result;
         }
 
         public void RegisterDiagnostic(ILanguageClientRegistry register)

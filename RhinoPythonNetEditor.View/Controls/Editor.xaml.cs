@@ -146,8 +146,7 @@ namespace RhinoPythonNetEditor.View.Controls
                 var t = textEditor.Document.Text;
                 LintManager.DidChange(CacheFile, t);
                 var items = await LintManager.RequestCompletionAsync(CacheFile, (textEditor.TextArea.Caret.Line - 1, textEditor.TextArea.Caret.Column - 1));
-                var itemList = items.ToArray();
-                if (itemList.Length > 0)
+                if (items != null && items.Count() > 0)
                 {
                     completionWindow = new CompletionWindow(textEditor.TextArea);
                     completionWindow.Style = FindResource("CompletionWindowStyle") as Style;
@@ -231,6 +230,7 @@ namespace RhinoPythonNetEditor.View.Controls
 
         private async void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
+            IsEnabled = false;
             if (!Installed)
             {
                 InstallHighlightDefinition();
@@ -293,7 +293,7 @@ namespace RhinoPythonNetEditor.View.Controls
                 });
                 breakPointMargin.BreakPointChanged += BreakPointMargin_BreakPointChanged;
             }
-
+            IsEnabled = true;
         }
 
         private void UserControl_Unloaded(object sender, RoutedEventArgs e)

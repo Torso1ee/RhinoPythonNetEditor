@@ -35,9 +35,10 @@ namespace RhinoPythonNetEditor.View.Tools
 
         public string Kind => Item.Kind.ToString();
 
-        public void Complete(TextArea textArea, ISegment completionSegment, EventArgs insertionRequestEventArgs)
+        public async void Complete(TextArea textArea, ISegment completionSegment, EventArgs insertionRequestEventArgs)
         {
-            Item = LintManager.Instance.ResolveCompletionItem(Item);
+            Item = await LintManager.Instance.ResolveCompletionItemAsync(Item);
+            if (Item == null) return;
             var tryResult = int.TryParse(Item.FilterText, out int likeTextLegth);
             if (!tryResult) likeTextLegth = 0;
             var segment = new CompletionSegment { Offset = completionSegment.Offset - likeTextLegth, EndOffset = completionSegment.EndOffset, Length = completionSegment.Length + likeTextLegth };
