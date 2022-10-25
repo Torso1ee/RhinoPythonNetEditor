@@ -52,7 +52,6 @@ namespace RhinoPythonNetEditor.Component
             "Maths", "Script")
         {
             ScriptSource = new ScriptSource(this);
-            ScriptSource.References.Add(AssemblyPath + @"\Python.Runtime.dll");
         }
 
 
@@ -68,13 +67,10 @@ namespace RhinoPythonNetEditor.Component
             base.RemovedFromDocument(document);
         }
 
-        static PythonNetScriptComponent()
-        {
-            AssemblyPath = Path.GetDirectoryName(typeof(PythonNetScriptComponent).Assembly.Location);
-        }
+
         public static bool IsPythonInitialized { get; set; } = false;
 
-
+        private bool PythonLibAdded { get; set; }
         public static void PythonInitialized()
         {
             var p = AssemblyPath + @"\compiled";
@@ -161,7 +157,16 @@ namespace RhinoPythonNetEditor.Component
 
         protected override void BeforeSolveInstance()
         {
-            if (!IsPythonInitialized) PythonInitialized();
+            if (!IsPythonInitialized)
+            {
+                AssemblyPath = Path.GetDirectoryName(typeof(PythonNetScriptComponent).Assembly.Location);
+                PythonInitialized();
+            }
+            if (!PythonLibAdded)
+            {
+                ScriptSource.References.Add(AssemblyPath + @"\Python.Runtime.dll");
+                PythonLibAdded = true;
+            }
             if (Locator != null) Locator.OutputViewModel.Results.Clear();
         }
 
@@ -235,7 +240,7 @@ namespace RhinoPythonNetEditor.Component
                             eLine = ma.Groups[0].Value.Replace(ma.Groups[1].Value, (int.Parse(ma.Groups[1].Value) - 2).ToString());
                             eLine = ex.Message.Replace(ma.Groups[0].Value, eLine);
                         }
-                        result.Error =  eLine;
+                        result.Error = eLine;
                         DA.SetData(0, string.Format("error: {0})", eLine));
                         AddRuntimeMessage(GH_RuntimeMessageLevel.Error, eLine);
                     }
