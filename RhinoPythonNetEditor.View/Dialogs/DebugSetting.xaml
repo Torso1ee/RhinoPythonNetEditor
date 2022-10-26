@@ -28,14 +28,14 @@
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="30"/>
-                <RowDefinition Height="60" />
+                <RowDefinition Height="Auto" />
                 <RowDefinition Height="40" />
             </Grid.RowDefinitions>
             <Border Background="{StaticResource TitleBarBrush}" CornerRadius="5,5,0,0">
                 <Grid>
                     <StackPanel Orientation="Horizontal">
                         <Path Margin="10,0,0,0" Height="20" Stretch="Uniform" Data="{StaticResource SettingGeometry}" Fill="{StaticResource   TitleBarBrush}"/>
-                        <Label x:Name="lb" Content="调试设置" HorizontalAlignment="Left"/>
+                        <Label x:Name="lb" Content="Debug Setting" HorizontalAlignment="Left"/>
                     </StackPanel>
                     <Button  HorizontalAlignment="Right" attach:IconElement.Geometry="{StaticResource CloseGeometry}" Click="Button_Click"/>
                 </Grid>
@@ -43,16 +43,15 @@
             <Border  Grid.Row="1"  Background="{StaticResource ActiveBrush}" >
                 <StackPanel Orientation="Vertical">
                     <TextBlock Margin="5" TextBlock.TextWrapping="Wrap"  Background="{StaticResource ActiveBrush}" >
-                        <TextBlock.Text>
-                            注意：调试功能只针对某一次迭代，需要自行设定某一次的迭代轮次,默认调试第一次迭代。
-                        </TextBlock.Text>
+                            Note:<LineBreak/>
+                            The debugging  is only for a certain iteration, you need to set a certain iteration round by yourself, and the first iteration is debugged by default.
                     </TextBlock>
-                    <TextBlock Margin="5,0" Text="{Binding Times, StringFormat=当前迭代次数上限为{0}}" Background="{StaticResource ActiveBrush}" />
+                    <TextBlock Margin="5,0" Text="{Binding Times, StringFormat=The current iteration limit is {0}}" Background="{StaticResource ActiveBrush}" />
                 </StackPanel>
             </Border>
             <Border  Grid.Row="2"  Background="{StaticResource ActiveBrush}" CornerRadius="0,0,5,5" >
                 <StackPanel Orientation="Horizontal">
-                    <Label Content="选择当前迭代轮次："/>
+                    <Label Content="Select the current iteration round:"/>
                     <TextBox Style="{StaticResource TextBoxBaseStyle}" Margin="0,5" Height="20" Text="{Binding Time, UpdateSourceTrigger=PropertyChanged}"/>
                 </StackPanel>
             </Border>

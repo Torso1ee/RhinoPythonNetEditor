@@ -102,6 +102,11 @@ namespace RhinoPythonNetEditor.View.Controls
                 var t = textEditor.Document.Text;
                 LintManager.DidChange(CacheFile, t);
             }
+            else
+            {
+                insightWindow?.Close();
+                completionWindow?.Close();
+            }
         }
 
         private void AddHighLight(int start, int offset, Color color)

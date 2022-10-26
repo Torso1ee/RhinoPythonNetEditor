@@ -218,10 +218,10 @@ using Grasshopper.Kernel.Parameters;
 		finally{
 		string pyStdout = sys.stdout.getvalue(); 
             pyStdout = pyStdout.Replace("\n", "\r\n"); 
-            __out.Add(pyStdout);
+		if(pyStdout.Length &gt;0) __out.Add(pyStdout);
 		string pyStderr = sys.stderr.getvalue(); 
             pyStderr = pyStderr.Replace("\n", "\r\n"); 
-            __err.Add(pyStderr);
+            if(pyStderr.Length &gt;0)__err.Add(pyStderr);
 		}
             }
             try
@@ -237,11 +237,11 @@ using Grasshopper.Kernel.Parameters;
                 if ((owner.Params.Output.Count &gt; 0) &amp;&amp; (owner.Params.Output[0] is Param_String))
                 {
                     List&lt;string&gt; data = new List&lt;string&gt;();
-                    if (!ReferenceEquals(this.__err, null))
+                    if (!ReferenceEquals(this.__err, null) &amp;&amp; this.__err.Count &gt;0)
                     {
                         data.AddRange(this.__err);
                     }
-                    if (!ReferenceEquals(this.__out, null))
+                    if (!ReferenceEquals(this.__out, null) &amp;&amp; this.__out.Count &gt;0)
                     {
                         data.AddRange(this.__out);
                     }

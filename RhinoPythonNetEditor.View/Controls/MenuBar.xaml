@@ -14,11 +14,18 @@
         <ResourceDictionary>
             <tools:BindingProxy x:Key="proxy" Data="{Binding}"/>
             <Style TargetType="{x:Type MenuItem}" BasedOn="{StaticResource MenuItemActiveStyle  }">
-                <Setter Property="Width" Value="50"/>
+                <Setter Property="Width"  Value="50"/>
                 <Setter Property="Height" Value="30"/>
                 <Setter Property="Foreground" Value="{StaticResource MenuItemTextBrush}"/>
             </Style>
             <Style x:Key="MenuItemIconStyle" TargetType="{x:Type MenuItem}" BasedOn="{StaticResource  MenuItemActiveWithIconStyle  }">
+                <Setter Property="Width" Value="Auto"/>
+                <Setter Property="Height" Value="30"/>
+                <Setter Property="attach:IconElement.Height" Value="15"/>
+                <Setter Property="attach:IconElement.Width" Value="15"/>
+                <Setter Property="Foreground" Value="{StaticResource MenuItemTextBrush}"/>
+            </Style>
+            <Style x:Key="MenuItemIconKeyStyle" TargetType="{x:Type MenuItem}" BasedOn="{StaticResource  MenuItemActiveWithIconAndKeyStyle  }">
                 <Setter Property="Width" Value="Auto"/>
                 <Setter Property="Height" Value="30"/>
                 <Setter Property="attach:IconElement.Height" Value="15"/>
@@ -38,10 +45,101 @@
                 <DockPanel Margin="5,0" HorizontalAlignment="Stretch"/>
             </ItemsPanelTemplate>
         </Menu.ItemsPanel>
-        <MenuItem Header="File"/>
-        <MenuItem Header="Edit"/>
-        <MenuItem Header="Tools"/>
-        <MenuItem Header="Help"/>
+        <MenuItem Header="File">
+            <MenuItem 
+            Style="{StaticResource MenuItemIconKeyStyle}"  
+            attach:IconElement.Geometry="{StaticResource TestGeometry}"
+            attach:IconElement.AttachedKey="Ctrl+F5"
+            Header="Run"  
+            Command="{Binding Run}"/>
+            <MenuItem 
+            Style="{StaticResource MenuItemIconKeyStyle}"  
+            attach:IconElement.Geometry="{StaticResource DebugGeometry}"
+            attach:IconElement.AttachedKey="Ctrl+F5"
+            Header="Debug"  
+            Command="{Binding Data.DebugViewModel.StartDebug, Source={StaticResource proxy}}"/>
+            <MenuItem 
+            Style="{StaticResource MenuItemIconKeyStyle}"  
+            attach:IconElement.Geometry="{StaticResource ImportFromGeometry}"
+            attach:IconElement.AttachedKey="Ctrl+I"
+            Header="Import From..."/>
+            <MenuItem 
+            Style="{StaticResource MenuItemIconKeyStyle}"  
+            attach:IconElement.Geometry="{StaticResource  SaveAsGeometry}"
+            attach:IconElement.AttachedKey="Ctrl+E"
+                
+            Header="Export As..."/>
+            <MenuItem 
+            Style="{StaticResource MenuItemIconKeyStyle}"  
+            attach:IconElement.Geometry="{StaticResource ConfirmGeometry}"
+            attach:IconElement.AttachedKey="Ctrl+S"
+            Header="Save"  
+            Command="{Binding Confirm}"/>
+            <MenuItem 
+            Style="{StaticResource MenuItemIconKeyStyle}"  
+            attach:IconElement.Geometry="{StaticResource CloseGeometry}"
+            attach:IconElement.AttachedKey="Alt+F4"
+            Header="Close"/>
+        </MenuItem>
+        <MenuItem Header="Edit">
+            <MenuItem 
+            Style="{StaticResource MenuItemIconKeyStyle}"  
+            attach:IconElement.Geometry="{StaticResource UndoGeometry}"
+            attach:IconElement.AttachedKey="Ctrl+Z"
+            Header="Undo"/>
+            <MenuItem 
+            Style="{StaticResource MenuItemIconKeyStyle}"  
+            attach:IconElement.Geometry="{StaticResource RedoGeometry}"
+            attach:IconElement.AttachedKey="Ctrl+Y"
+            Header="Redo"/>
+            <MenuItem 
+            Style="{StaticResource MenuItemIconKeyStyle}"  
+            attach:IconElement.Geometry="{StaticResource CutGeometry}"
+            attach:IconElement.AttachedKey="Ctrl+X"
+            Header="Cut"/>
+            <MenuItem 
+            Style="{StaticResource MenuItemIconKeyStyle}"  
+            attach:IconElement.Geometry="{StaticResource CopyGeometry}"
+            attach:IconElement.AttachedKey="Ctrl+C"
+            Header="Copy"/>
+            <MenuItem 
+            Style="{StaticResource MenuItemIconKeyStyle}"  
+            attach:IconElement.Geometry="{StaticResource PasteGeometry}"
+            attach:IconElement.AttachedKey="Ctrl+V"
+            Header="Paste"/>
+            <MenuItem 
+            Style="{StaticResource MenuItemIconKeyStyle}"  
+            attach:IconElement.Geometry="{StaticResource SelectAllGeometry}"
+            attach:IconElement.AttachedKey="Ctrl+A"
+            Header="SelectAll"/>
+        </MenuItem>
+        <MenuItem Header="Tools">
+            <MenuItem 
+            Style="{StaticResource MenuItemIconKeyStyle}"  
+            attach:IconElement.Geometry="{StaticResource ReplaceGeometry}"
+            attach:IconElement.AttachedKey="Ctrl+F"
+            Header="Find &amp; Replace..."/>
+            <MenuItem 
+            Style="{StaticResource MenuItemIconKeyStyle}"  
+            attach:IconElement.Geometry="{StaticResource AppearanceGeometry}"
+            Header="Appearance"/>
+            <MenuItem 
+            Style="{StaticResource MenuItemIconKeyStyle}"  
+            attach:IconElement.Geometry="{StaticResource SettingGeometry}"
+            Header="Config"  
+            Command="{Binding Data.DebugViewModel.Setting, Source={StaticResource proxy}}"/>
+            <MenuItem 
+            Style="{StaticResource MenuItemIconKeyStyle}"  
+            attach:IconElement.Geometry="{StaticResource PipGeometry}"
+            Header="Pip"/>
+        </MenuItem>
+        <MenuItem Header="Help">
+            <MenuItem Width="Auto" Header="Python.org" Command="{Binding OpenWebsite}" CommandParameter="https://www.python.org/"/>
+            <MenuItem Width="Auto" Header="RhinoDeveloper"  Command="{Binding OpenWebsite}" CommandParameter="https://developer.rhino3d.com/api/"/>
+            <MenuItem Width="Auto" Header="PythonNet"  Command="{Binding OpenWebsite}" CommandParameter="http://pythonnet.github.io/"/>
+            <MenuItem Width="Auto" Header="RhinoForum"  Command="{Binding OpenWebsite}" CommandParameter="https://discourse.mcneel.com/"/>
+            <MenuItem Width="Auto" Header="Contact"/>
+        </MenuItem>
         <MenuItem 
             Style="{StaticResource MenuItemIconStyle}"  
             attach:IconElement.Geometry="{StaticResource ConfirmGeometry}"

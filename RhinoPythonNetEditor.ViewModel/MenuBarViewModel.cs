@@ -29,13 +29,18 @@ namespace RhinoPythonNetEditor.ViewModel
 
         private ViewModelLocator Locator { get; set; }
 
+        public ICommand OpenWebsite => new RelayCommand<string>(uri =>
+        {
+            Process.Start(new ProcessStartInfo("cmd", $"/c start {uri}"));
+        });
+
         public ICommand Run => new RelayCommand(() =>
         {
             if (Locator.ComponentHost != null && Locator.ComponentHost is IScriptComponent sc) sc.SetSource(Locator.TextEditorViewModel.Document.Text);
             Locator.ComponentHost.ExpireSolution(true);
         });
 
-        public ICommand Confirm=> new RelayCommand(() =>
+        public ICommand Confirm => new RelayCommand(() =>
         {
             if (Locator.ComponentHost != null && Locator.ComponentHost is IScriptComponent sc)
             {
