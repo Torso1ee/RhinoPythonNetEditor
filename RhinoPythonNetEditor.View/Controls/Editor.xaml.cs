@@ -262,6 +262,38 @@ namespace RhinoPythonNetEditor.View.Controls
                 {
                     Application.Current.Dispatcher.Invoke(() => breakPointMargin.Step(m.Line, m.Value));
                 });
+                messenger.Register<SetCodeMessage>(this, (r, m) => Application.Current.Dispatcher.Invoke(() =>
+                {
+                    textEditor.Text = m.Value;
+                    textMarkerService.RemoveAll(t => true);
+                    LintManager.DidChange(CacheFile, m.Value);
+                }));
+                messenger.Register<EditorEditMessage>(this, (r, m) => {
+                    Application.Current.Dispatcher.Invoke(() => {
+                        switch (m.Value)
+                        {
+                            case EditBehaviors.Copy:
+                                textEditor.Copy();
+                                break;
+                            case EditBehaviors.Paste:
+                                textEditor.Paste();
+                                break;
+                            case EditBehaviors.Cut:
+                                textEditor.Cut();
+                                break;
+                            case EditBehaviors.Redo:
+                                textEditor.Redo();
+                                break;
+                            case EditBehaviors.Undo:
+                                textEditor.Undo();
+                                break;
+                            case EditBehaviors.SelectAll:
+                                textEditor.SelectAll();
+                                break;
+                        }
+                    
+                    });
+                });
                 messenger.Register<SyntaxHintChangedMessage>(this, (r, m) =>
                 {
                     Dispatcher.Invoke(() =>

@@ -60,21 +60,23 @@
             Command="{Binding Data.DebugViewModel.StartDebug, Source={StaticResource proxy}}"/>
             <MenuItem 
             Style="{StaticResource MenuItemIconKeyStyle}"  
+                Command="{Binding ImportFrom}"
             attach:IconElement.Geometry="{StaticResource ImportFromGeometry}"
             attach:IconElement.AttachedKey="Ctrl+I"
             Header="Import From..."/>
             <MenuItem 
-            Style="{StaticResource MenuItemIconKeyStyle}"  
+            Style="{StaticResource MenuItemIconKeyStyle}" 
+                Command="{Binding ExportAs}"
             attach:IconElement.Geometry="{StaticResource  SaveAsGeometry}"
             attach:IconElement.AttachedKey="Ctrl+E"
                 
             Header="Export As..."/>
             <MenuItem 
             Style="{StaticResource MenuItemIconKeyStyle}"  
+                Command="{Binding ExportAs}"
             attach:IconElement.Geometry="{StaticResource ConfirmGeometry}"
             attach:IconElement.AttachedKey="Ctrl+S"
-            Header="Save"  
-            Command="{Binding Confirm}"/>
+            Header="Save"  />
             <MenuItem 
             Style="{StaticResource MenuItemIconKeyStyle}"  
             attach:IconElement.Geometry="{StaticResource CloseGeometry}"
@@ -84,31 +86,43 @@
         <MenuItem Header="Edit">
             <MenuItem 
             Style="{StaticResource MenuItemIconKeyStyle}"  
+                Command="{Binding Edit}"
+                CommandParameter="{Binding Header, RelativeSource={RelativeSource Self}}"
             attach:IconElement.Geometry="{StaticResource UndoGeometry}"
             attach:IconElement.AttachedKey="Ctrl+Z"
             Header="Undo"/>
             <MenuItem 
             Style="{StaticResource MenuItemIconKeyStyle}"  
+                    Command="{Binding Edit}"
+                CommandParameter="{Binding Header, RelativeSource={RelativeSource Self}}"
             attach:IconElement.Geometry="{StaticResource RedoGeometry}"
             attach:IconElement.AttachedKey="Ctrl+Y"
             Header="Redo"/>
             <MenuItem 
             Style="{StaticResource MenuItemIconKeyStyle}"  
+                    Command="{Binding Edit}"
+                CommandParameter="{Binding Header, RelativeSource={RelativeSource Self}}"
             attach:IconElement.Geometry="{StaticResource CutGeometry}"
             attach:IconElement.AttachedKey="Ctrl+X"
             Header="Cut"/>
             <MenuItem 
-            Style="{StaticResource MenuItemIconKeyStyle}"  
+            Style="{StaticResource MenuItemIconKeyStyle}"
+                    Command="{Binding Edit}"
+                CommandParameter="{Binding Header, RelativeSource={RelativeSource Self}}"
             attach:IconElement.Geometry="{StaticResource CopyGeometry}"
             attach:IconElement.AttachedKey="Ctrl+C"
             Header="Copy"/>
             <MenuItem 
             Style="{StaticResource MenuItemIconKeyStyle}"  
+                    Command="{Binding Edit}"
+                CommandParameter="{Binding Header, RelativeSource={RelativeSource Self}}"
             attach:IconElement.Geometry="{StaticResource PasteGeometry}"
             attach:IconElement.AttachedKey="Ctrl+V"
             Header="Paste"/>
             <MenuItem 
-            Style="{StaticResource MenuItemIconKeyStyle}"  
+            Style="{StaticResource MenuItemIconKeyStyle}"
+                    Command="{Binding Edit}"
+                CommandParameter="{Binding Header, RelativeSource={RelativeSource Self}}"
             attach:IconElement.Geometry="{StaticResource SelectAllGeometry}"
             attach:IconElement.AttachedKey="Ctrl+A"
             Header="SelectAll"/>

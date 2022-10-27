@@ -106,7 +106,9 @@
     <Compile Include="Messages\DebugRequestMessage.cs" />
     <Compile Include="Messages\DebugSettingDialogRequestMessage.cs" />
     <Compile Include="Messages\ConfirmDialogRequestMessage.cs" />
+    <Compile Include="Messages\EditorEditMessage.cs" />
     <Compile Include="Messages\MessageDialogRequestMessage.cs" />
+    <Compile Include="Messages\SetCodeMessage.cs" />
     <Compile Include="Messages\SetDocumentMessage.cs" />
     <Compile Include="Messages\StepMessage.cs" />
     <Compile Include="Messages\SyntaxHintChangedMessage.cs" />

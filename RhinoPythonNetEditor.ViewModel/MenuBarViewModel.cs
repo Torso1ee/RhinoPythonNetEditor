@@ -13,6 +13,8 @@ using System.Diagnostics;
 using System.Windows.Documents;
 using System.IO;
 using RhinoPythonNetEditor.Interface;
+using Microsoft.Win32;
+
 
 namespace RhinoPythonNetEditor.ViewModel
 {
@@ -48,6 +50,40 @@ namespace RhinoPythonNetEditor.ViewModel
                 sc.CloseEditor();
             }
             Locator.ComponentHost.ExpireSolution(true);
+
+        });
+
+        public ICommand ImportFrom => new RelayCommand(() =>
+        {
+            OpenFileDialog dialog = new OpenFileDialog
+            {
+                Title = "Please select file",
+                Filter = "Python Code File(*.py)|*py"
+            };
+            if (dialog.ShowDialog() == true)
+            {
+                var text = File.ReadAllText(dialog.FileName);
+                Messenger.Send(new SetCodeMessage(text));
+            }
+        });
+
+        public ICommand ExportAs => new RelayCommand(() =>
+        {
+            SaveFileDialog dialog = new SaveFileDialog
+            {
+                Title = "Save As",
+                Filter = "Python Code File(*.py)|*py"
+            };
+            if (dialog.ShowDialog() == true)
+            {
+                File.WriteAllText(dialog.FileName + ".py", Locator.TextEditorViewModel.Document.Text);
+            }
+        });
+
+        public ICommand Edit => new RelayCommand<string>(txt =>
+        {
+            if (Enum.TryParse(txt, out EditBehaviors behavior))
+                Messenger.Send(new EditorEditMessage(behavior));
 
         });
 
