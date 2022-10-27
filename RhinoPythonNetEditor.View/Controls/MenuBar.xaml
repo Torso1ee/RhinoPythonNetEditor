@@ -132,6 +132,18 @@
             Style="{StaticResource MenuItemIconKeyStyle}"  
             attach:IconElement.Geometry="{StaticResource PipGeometry}"
             Header="Pip"/>
+            <MenuItem 
+            Style="{StaticResource MenuItemIconKeyStyle}"  
+            attach:IconElement.Geometry="{StaticResource MarkGeometry}"
+            Header="Mark"/>
+            <MenuItem 
+            Style="{StaticResource MenuItemIconKeyStyle}"  
+            attach:IconElement.Geometry="{StaticResource NoMarkGeometry}"
+            Header="Unmark"/>
+            <MenuItem 
+            Style="{StaticResource MenuItemIconKeyStyle}"  
+            attach:IconElement.Geometry="{StaticResource UnmarkAllGeometry}"
+            Header="UnmarkAll"/>
         </MenuItem>
         <MenuItem Header="Help">
             <MenuItem Width="Auto" Header="Python.org" Command="{Binding OpenWebsite}" CommandParameter="https://www.python.org/"/>
