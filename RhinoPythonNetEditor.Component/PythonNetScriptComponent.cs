@@ -851,6 +851,7 @@ namespace RhinoPythonNetEditor.Component
             ScriptSource.PythonCode = reader.GetString("code");
             ScriptSource.References.Clear();
             ScriptSource.References.AddRange(reader.GetString("reference").Split('\n'));
+            ScriptSource.AdditionalReferences.AddRange(reader.GetString("additionalReference").Split('\n'));
             ScriptAssembly = null;
             return base.Read(reader);
         }
@@ -859,6 +860,7 @@ namespace RhinoPythonNetEditor.Component
         {
             writer.SetString("code", ScriptSource.PythonCode);
             writer.SetString("reference", String.Join("\n", ScriptSource.References));
+            writer.SetString("additionalReference", String.Join("\n", ScriptSource.AdditionalReferences));
             return base.Write(writer);
         }
 
@@ -880,6 +882,17 @@ namespace RhinoPythonNetEditor.Component
         public string GetCode()
         {
             return ScriptSource.PythonCode;
+        }
+
+        public void SetReference(List<string> references)
+        {
+            ScriptSource.AdditionalReferences.Clear();
+            ScriptSource.AdditionalReferences.AddRange(references);
+        }
+
+        public List<string> GetReference()
+        {
+            return ScriptSource.AdditionalReferences;
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.Messaging;
 using Grasshopper.Kernel;
 using Microsoft.Extensions.DependencyInjection;
+using RhinoPythonNetEditor.Interface;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,6 +22,9 @@ namespace RhinoPythonNetEditor.ViewModel
         public IServiceProvider Services { get; set; }
 
         public GH_Component ComponentHost { get; set; }
+
+        public IScriptComponent IScriptComponent => ComponentHost as IScriptComponent;
+
         public WeakReferenceMessenger Messenger => Services.GetService<WeakReferenceMessenger>();
         public MenuBarViewModel MenuBarViewModel => Services.GetService<MenuBarViewModel>();
 

@@ -43,7 +43,7 @@
             </Border>
             <Border  Grid.Row="1"  Background="{StaticResource ActiveBrush}" CornerRadius="0,0,5,5">
                 <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" Margin="10">
-                    <TextBlock x:Name="tb" />
+                    <TextBlock x:Name="tb" TextWrapping="Wrap" />
                 </ScrollViewer>
             </Border>
 

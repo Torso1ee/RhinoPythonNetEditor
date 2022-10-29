@@ -3,7 +3,7 @@
 
     <SolidColorBrush x:Key="TextBox.Static.Border" Color="#FFABAdB3"/>
     <SolidColorBrush x:Key="TextBox.MouseOver.Border" Color="#FFABABAB"/>
-    <SolidColorBrush x:Key="TextBox.Focus.Background" Color="#FFE6E6E6"/>
+    <SolidColorBrush x:Key="TextBox.Focus.Background" Color="White"/>
     
     <Style x:Key="TextBoxBaseStyle" TargetType="{x:Type TextBox}">
         <Setter Property="Background" Value="Transparent"/>

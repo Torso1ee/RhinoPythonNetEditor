@@ -61,11 +61,21 @@ namespace RhinoPythonNetEditor.View.Pages
                     var t = Dialog.Show(window, messageBox).WaitingForClosed();
                     m.Reply(t);
                 });
-                messenger.Register<DebugSettingDialogRequestMessage>(this, (r, m) =>
+                messenger.Register<PipMessage>(this, (r, m) =>
                 {
-                    var messageBox = new DebugSetting();
+                    var messageBox = new PipDialog { DataContext = m.DataContext };
                     var t = Dialog.Show(window, messageBox).WaitingForClosed();
                     m.Reply(t);
+                });
+                messenger.Register<DebugSettingDialogRequestMessage>(this, (r, m) =>
+                {
+                    if (DataContext is ViewModelLocator vm && vm.IScriptComponent != null)
+                    {
+                        var messageBox = new DebugSetting(vm.IScriptComponent.GetReference());
+                        var t = Dialog.Show(window, messageBox).WaitingForClosed();
+                        vm.IScriptComponent.SetReference(messageBox.References.ToList());
+                        m.Reply(t);
+                    }
                 });
                 messenger.Register<ConfirmDialogRequestMessage>(this, (r, m) =>
                 {

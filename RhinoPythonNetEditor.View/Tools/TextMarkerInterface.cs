@@ -88,7 +88,8 @@ namespace RhinoPythonNetEditor.View.Tools
     public enum MarkerReason
     {
         Hint,
-        HighLight
+        HighLight,
+        Mark
     }
 
     [Flags]

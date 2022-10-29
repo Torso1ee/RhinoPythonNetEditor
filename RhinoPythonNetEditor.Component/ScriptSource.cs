@@ -22,6 +22,7 @@ namespace RhinoPythonNetEditor.Component
         internal Guid Id { get; set; }
         internal PythonNetScriptComponent Component { get; set; }
         internal List<string> References { get; } = new List<string>();
+        internal List<string> AdditionalReferences { get; } = new List<string>();
 
         public string PythonCode { get; set; } = "";
 
@@ -33,6 +34,12 @@ namespace RhinoPythonNetEditor.Component
             for (int i = 0; i < count; i++)
             {
                 writer.SetString("Reference", i, References[i]);
+            }
+            writer.SetInt32("AdditionalReferenceCount", this.AdditionalReferences.Count);
+            count = AdditionalReferences.Count;
+            for (int i = 0; i < count; i++)
+            {
+                writer.SetString("AdditionalReferenceCount", i, References[i]);
             }
             return true;
         }
@@ -47,6 +54,15 @@ namespace RhinoPythonNetEditor.Component
                 for (int i = 0; i < count; i++)
                 {
                     References.Add(reader.GetString("Reference", i));
+                }
+
+            }
+            if (reader.ItemExists("AdditionalReferenceCount"))
+            {
+                var count = reader.GetInt32("AdditionalReferenceCount");
+                for (int i = 0; i < count; i++)
+                {
+                    AdditionalReferences.Add(reader.GetString("AdditionalReference", i));
                 }
 
             }

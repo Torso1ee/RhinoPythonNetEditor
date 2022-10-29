@@ -7,7 +7,7 @@
              xmlns:tools="clr-namespace:RhinoPythonNetEditor.View.Tools"
              xmlns:attach="clr-namespace:RhinoPythonNetEditor.Styling.Attach;assembly=RhinoPythonNetEditor.Styling"
              mc:Ignorable="d" 
-             Width="300" Height="Auto">
+             Width="500" Height="Auto">
     <UserControl.Resources>
         <ResourceDictionary>
             <tools:BindingProxy x:Key="proxy" Data="{Binding}"/>
@@ -19,6 +19,15 @@
                 <Setter Property="Background" Value="Transparent"/>
                 <Setter Property="Foreground" Value="{StaticResource ButtonForegroundBrush}"/>
             </Style>
+            <Style TargetType="{x:Type Button}" x:Key="IconButtonStyle1" BasedOn="{StaticResource  IconButtonStyle}">
+                <Setter Property="Width" Value="30"/>
+                <Setter Property="Height" Value="25"/>
+                <Setter Property="attach:IconElement.Height" Value="15"/>
+                <Setter Property="attach:IconElement.Width" Value="15"/>
+                <Setter Property="Background" Value="Transparent"/>
+                <Setter Property="Foreground" Value="{StaticResource ButtonForegroundBrush}"/>
+                <Setter Property="attach:IconElement.ActiveBackground" Value="{StaticResource ButtonForegroundBrush}"/>
+            </Style>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="/RhinoPythonNetEditor.View;component/ViewDictionary.xaml"/>
             </ResourceDictionary.MergedDictionaries>
@@ -29,33 +38,69 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="30"/>
                 <RowDefinition Height="Auto" />
-                <RowDefinition Height="40" />
+                <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
             <Border Background="{StaticResource TitleBarBrush}" CornerRadius="5,5,0,0">
                 <Grid>
                     <StackPanel Orientation="Horizontal">
                         <Path Margin="10,0,0,0" Height="20" Stretch="Uniform" Data="{StaticResource SettingGeometry}" Fill="{StaticResource   TitleBarBrush}"/>
-                        <Label x:Name="lb" Content="Debug Setting" HorizontalAlignment="Left"/>
+                        <Label x:Name="lb" Content="Config" HorizontalAlignment="Left"/>
                     </StackPanel>
                     <Button  HorizontalAlignment="Right" attach:IconElement.Geometry="{StaticResource CloseGeometry}" Click="Button_Click"/>
                 </Grid>
             </Border>
-            <Border  Grid.Row="1"  Background="{StaticResource ActiveBrush}" >
-                <StackPanel Orientation="Vertical">
-                    <TextBlock Margin="5" TextBlock.TextWrapping="Wrap"  Background="{StaticResource ActiveBrush}" >
+            <Grid Grid.Row="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="40"/>
+                </Grid.RowDefinitions>
+                <Border    Background="{StaticResource ActiveBrush}" >
+                    <StackPanel Orientation="Vertical">
+                        <TextBlock Margin="5" TextBlock.TextWrapping="Wrap"  Background="{StaticResource ActiveBrush}" >
                             Note:<LineBreak/>
                             The debugging  is only for a certain iteration, you need to set a certain iteration round by yourself, and the first iteration is debugged by default.
-                    </TextBlock>
-                    <TextBlock Margin="5,0" Text="{Binding Times, StringFormat=The current iteration limit is {0}}" Background="{StaticResource ActiveBrush}" />
-                </StackPanel>
+                        </TextBlock>
+                        <TextBlock Margin="5,0" Text="{Binding Times, StringFormat=The current iteration limit is {0}}" Background="{StaticResource ActiveBrush}" />
+                    </StackPanel>
+                </Border>
+                <Border  Grid.Row="1"  Background="{StaticResource ActiveBrush}"  >
+                    <StackPanel Orientation="Horizontal">
+                        <Label Content="Select the current iteration round:"/>
+                        <TextBox Style="{StaticResource TextBoxBaseStyle}" Margin="0,5" Height="20" Text="{Binding Time, UpdateSourceTrigger=PropertyChanged}"/>
+                    </StackPanel>
+                </Border>
+            </Grid>
+            <Border  Grid.Row="3" CornerRadius="0,0,5,5"  Background="{StaticResource ActiveBrush}"  >
+                <Grid Margin="5,0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="30"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <TextBlock Height="15" Text="Add Reference"/>
+                    <Button Style="{StaticResource IconButtonStyle1}"  HorizontalAlignment="Right" Command="{Binding AddReference , RelativeSource={RelativeSource AncestorType=local:DebugSetting} }"  attach:IconElement.Geometry="{StaticResource AddGeometry}"/>
+                    <Border Grid.Row="1" Margin="0,5" Height="100" Background="{StaticResource TitleBarBrush}" CornerRadius="3">
+                        <ScrollViewer   HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+                            <ItemsControl  ScrollViewer.VerticalScrollBarVisibility="Auto" ItemsSource="{Binding References, RelativeSource={RelativeSource AncestorType=local:DebugSetting}}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Border Margin="0,1" BorderBrush="{StaticResource ActiveBrush}">
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                    <ColumnDefinition/>
+                                                </Grid.ColumnDefinitions>
+                                                <Button Command="{Binding RemoveReference, RelativeSource={RelativeSource AncestorType=local:DebugSetting}}" CommandParameter="{Binding}" Margin="5,0" Style="{StaticResource IconButtonStyle1}" attach:IconElement.Geometry="{StaticResource MinimizeGeometry}"/>
+                                                <TextBlock Margin="5,0"   Grid.Column="1" Foreground="{StaticResource ActiveBrush}" Height="15" Text="{Binding}" TextTrimming="CharacterEllipsis"/>
+                                            </Grid>
+                                        </Border>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </ScrollViewer>
+                    </Border>
+                </Grid>
             </Border>
-            <Border  Grid.Row="2"  Background="{StaticResource ActiveBrush}" CornerRadius="0,0,5,5" >
-                <StackPanel Orientation="Horizontal">
-                    <Label Content="Select the current iteration round:"/>
-                    <TextBox Style="{StaticResource TextBoxBaseStyle}" Margin="0,5" Height="20" Text="{Binding Time, UpdateSourceTrigger=PropertyChanged}"/>
-                </StackPanel>
-            </Border>
-
+            <Border Margin="5,0" Grid.Row="3" VerticalAlignment="Top" Background="{StaticResource  TitleBarBrush}" Height="1"/>
         </Grid>
     </Border>
 </UserControl>

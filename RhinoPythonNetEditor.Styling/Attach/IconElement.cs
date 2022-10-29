@@ -36,6 +36,12 @@ namespace RhinoPythonNetEditor.Styling.Attach
 
         public static void SetAttachedKey(DependencyObject dependencyObject, string value) => dependencyObject.SetValue(AttachedKeyProperty, value);
 
+        public static readonly DependencyProperty ActiveBackgroundProperty = DependencyProperty.RegisterAttached("ActiveBackground", typeof(SolidColorBrush), typeof(IconElement), new PropertyMetadata(Brushes.White));
+
+        public static SolidColorBrush GetActiveBackground(DependencyObject dependencyObject) => (SolidColorBrush)dependencyObject.GetValue(ActiveBackgroundProperty);
+
+        public static void SetActiveBackground(DependencyObject dependencyObject, SolidColorBrush value) => dependencyObject.SetValue(ActiveBackgroundProperty, value);
+
 
     }
 }

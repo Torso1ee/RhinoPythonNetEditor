@@ -49,13 +49,13 @@
             </Border>
             <Border  Grid.Row="1"  Background="{StaticResource ActiveBrush}" >
                 <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" Margin="10">
-                    <TextBlock x:Name="tb" />
+                    <TextBlock x:Name="tb" TextWrapping="Wrap" />
                 </ScrollViewer>
             </Border>
             <Border  Grid.Row="2"  Background="{StaticResource ActiveBrush}" CornerRadius="0,0,5,5">
                 <StackPanel Orientation="Horizontal"  FlowDirection="RightToLeft">
-                    <Button Margin="5,0" Content="Confirm" Style="{StaticResource ButtonStyle}" Click="Button_Click_1"/>
-                    <Button Content="Cancel" Style="{StaticResource ButtonStyle}" Click="Button_Click"/>
+                    <Button Margin="5,0" Width="60" Content="Confirm" Style="{StaticResource ButtonStyle}" Click="Button_Click_1"/>
+                    <Button Content="Cancel" Width="60" Style="{StaticResource ButtonStyle}" Click="Button_Click"/>
                 </StackPanel>
             </Border>
         </Grid>

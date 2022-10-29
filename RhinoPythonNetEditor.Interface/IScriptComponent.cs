@@ -14,5 +14,9 @@ namespace RhinoPythonNetEditor.Interface
 
         void CloseEditor();
 
+        void SetReference(List<string> references);
+        List<string>  GetReference();
+
+
     }
 }

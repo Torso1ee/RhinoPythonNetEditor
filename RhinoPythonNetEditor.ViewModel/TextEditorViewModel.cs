@@ -40,7 +40,7 @@ namespace RhinoPythonNetEditor.ViewModel
             {
                 if (sc.GetCode() != Document.Text)
                 {
-                    var result = await Locator.Messenger.Send(new ConfirmDialogRequestMessage { Message = $"代码发生变更，是否不应用就退出。", Title = "警告" });
+                    var result = await Locator.Messenger.Send(new ConfirmDialogRequestMessage { Message = $"Code has changed compared to last version .Do you want to exit without applying changes?", Title = "Warning" });
                     return (bool)result;
                 }
             }

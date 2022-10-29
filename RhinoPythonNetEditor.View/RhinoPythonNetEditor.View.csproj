@@ -195,6 +195,9 @@
     <Compile Include="Controls\TitleBar.xaml.cs">
       <DependentUpon>TitleBar.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Dialogs\PipDialog.xaml.cs">
+      <DependentUpon>PipDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Pages\CodeEditor.xaml.cs">
       <DependentUpon>CodeEditor.xaml</DependentUpon>
     </Compile>
@@ -240,6 +243,10 @@
     <ProjectReference Include="..\RhinoPythonNetEditor.DataModels\RhinoPythonNetEditor.DataModels.csproj">
       <Project>{d295e2f0-fb3a-4b51-be94-c81c59cecfc0}</Project>
       <Name>RhinoPythonNetEditor.DataModels</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\RhinoPythonNetEditor.Interface\RhinoPythonNetEditor.Interface.csproj">
+      <Project>{312606DF-E1F0-4FE1-9129-8141381E7151}</Project>
+      <Name>RhinoPythonNetEditor.Interface</Name>
     </ProjectReference>
     <ProjectReference Include="..\RhinoPythonNetEditor.Managers\RhinoPythonNetEditor.Managers.csproj">
       <Project>{61A41698-E18E-425C-99E8-7FB46814398D}</Project>
@@ -304,6 +311,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\TitleBar.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Dialogs\PipDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

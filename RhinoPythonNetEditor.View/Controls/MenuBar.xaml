@@ -133,10 +133,10 @@
             attach:IconElement.Geometry="{StaticResource ReplaceGeometry}"
             attach:IconElement.AttachedKey="Ctrl+F"
             Header="Find &amp; Replace..."/>
-            <MenuItem 
+            <!--<MenuItem 
             Style="{StaticResource MenuItemIconKeyStyle}"  
             attach:IconElement.Geometry="{StaticResource AppearanceGeometry}"
-            Header="Appearance"/>
+            Header="Appearance"/>-->
             <MenuItem 
             Style="{StaticResource MenuItemIconKeyStyle}"  
             attach:IconElement.Geometry="{StaticResource SettingGeometry}"
@@ -144,18 +144,25 @@
             Command="{Binding Data.DebugViewModel.Setting, Source={StaticResource proxy}}"/>
             <MenuItem 
             Style="{StaticResource MenuItemIconKeyStyle}"  
+            Command="{Binding PipDialog}"
             attach:IconElement.Geometry="{StaticResource PipGeometry}"
             Header="Pip"/>
             <MenuItem 
             Style="{StaticResource MenuItemIconKeyStyle}"  
+            Command="{Binding Mark}"
+            CommandParameter="{Binding Header, RelativeSource={RelativeSource Self}}"
             attach:IconElement.Geometry="{StaticResource MarkGeometry}"
             Header="Mark"/>
             <MenuItem 
             Style="{StaticResource MenuItemIconKeyStyle}"  
+             Command="{Binding Mark}"
+            CommandParameter="{Binding Header, RelativeSource={RelativeSource Self}}"
             attach:IconElement.Geometry="{StaticResource NoMarkGeometry}"
             Header="Unmark"/>
             <MenuItem 
             Style="{StaticResource MenuItemIconKeyStyle}"  
+            Command="{Binding Mark}"
+            CommandParameter="{Binding Header, RelativeSource={RelativeSource Self}}"
             attach:IconElement.Geometry="{StaticResource UnmarkAllGeometry}"
             Header="UnmarkAll"/>
         </MenuItem>

@@ -39,7 +39,7 @@ namespace RhinoPythonNetEditor.ViewModel
             IsActive = true;
         }
 
-        private string PythonPath { get; set; }
+        internal string PythonPath { get; set; }
 
         private int times;
 
@@ -69,7 +69,7 @@ namespace RhinoPythonNetEditor.ViewModel
                 SetProperty(ref isDebuging, value);
             }
         }
-        private string CurrentDir { get; set; }
+        internal string CurrentDir { get; set; }
 
         public ICommand StartDebug => new RelayCommand(() => StartDebugCore(), () => !IsDebuging);
 
@@ -125,7 +125,7 @@ namespace RhinoPythonNetEditor.ViewModel
             Times = GetIterateCount();
             if(Time > Times)
             {
-                await Locator.Messenger.Send(new MessageDialogRequestMessage { Message = $"当前设定迭代次数{Time}超出上限{Times}。", Title = "警告" });
+                await Locator.Messenger.Send(new MessageDialogRequestMessage { Message = $"Current iteration round {Time} is bigger than the limit {Times}. Please modify current iteration round in config.", Title = "Warning" });
                 return;
             }
             debugManager = new DebugManager();

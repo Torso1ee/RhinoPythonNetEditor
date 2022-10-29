@@ -39,6 +39,7 @@ using static System.Windows.Forms.VisualStyles.VisualStyleElement.TextBox;
 using ICSharpCode.AvalonEdit.CodeCompletion;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.TaskbarClock;
 using static System.Windows.Forms.AxHost;
+using OmniSharp.Extensions.LanguageServer.Protocol.Models;
 
 
 namespace RhinoPythonNetEditor.View.Controls
@@ -71,6 +72,7 @@ namespace RhinoPythonNetEditor.View.Controls
             textEditor.TextArea.PreviewKeyDown += TextArea_PreviewKeyDown;
             textEditor.TextArea.PreviewKeyUp += TextArea_PreviewKeyUp;
             textEditor.TextArea.TextEntering += TextArea_TextEntering;
+            textEditor.TextArea.TextView.NonPrintableCharacterBrush = new SolidColorBrush(Color.FromRgb(0xD4, 0xD4, 0xD4)) { Opacity = 0.3 };
             IsVisibleChanged += Editor_IsVisibleChanged;
         }
 
@@ -115,6 +117,14 @@ namespace RhinoPythonNetEditor.View.Controls
             marker.ForegroundColor = color;
             marker.Reason = MarkerReason.HighLight;
         }
+
+        private void AddMark(int start, int offset, Color color)
+        {
+            ITextMarker marker = textMarkerService.Create(start, offset);
+            marker.ForegroundColor = color;
+            marker.Reason = MarkerReason.Mark;
+        }
+
 
         private void AddErrorHint(int start, int offset, Color color)
         {
@@ -268,8 +278,10 @@ namespace RhinoPythonNetEditor.View.Controls
                     textMarkerService.RemoveAll(t => true);
                     LintManager.DidChange(CacheFile, m.Value);
                 }));
-                messenger.Register<EditorEditMessage>(this, (r, m) => {
-                    Application.Current.Dispatcher.Invoke(() => {
+                messenger.Register<EditorEditMessage>(this, (r, m) =>
+                {
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
                         switch (m.Value)
                         {
                             case EditBehaviors.Copy:
@@ -291,7 +303,25 @@ namespace RhinoPythonNetEditor.View.Controls
                                 textEditor.SelectAll();
                                 break;
                         }
-                    
+
+                    });
+                });
+                messenger.Register<MarkMessage>(this, (r, m) =>
+                {
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        switch (m.Value)
+                        {
+                            case MarkBehaviors.Mark:
+                                AddMark(textEditor.SelectionStart, textEditor.SelectionLength, Colors.Yellow);
+                                break;
+                            case MarkBehaviors.Unmark:
+                                textMarkerService.RemoveAll(t => t.StartOffset >= textEditor.SelectionStart && t.EndOffset <= textEditor.SelectionStart + textEditor.SelectionLength && t.Reason == MarkerReason.Mark);
+                                break;
+                            case MarkBehaviors.UnmarkAll:
+                                textMarkerService.RemoveAll(t => t.Reason == MarkerReason.Mark);
+                                break;
+                        }
                     });
                 });
                 messenger.Register<SyntaxHintChangedMessage>(this, (r, m) =>

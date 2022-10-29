@@ -14,6 +14,7 @@ using System.Windows.Documents;
 using System.IO;
 using RhinoPythonNetEditor.Interface;
 using Microsoft.Win32;
+using System.Security.Policy;
 
 
 namespace RhinoPythonNetEditor.ViewModel
@@ -35,6 +36,55 @@ namespace RhinoPythonNetEditor.ViewModel
         {
             Process.Start(new ProcessStartInfo("cmd", $"/c start {uri}"));
         });
+
+        private int port = 1080;
+
+        public int Port
+        {
+            get { return port; }
+            set { SetProperty(ref port, value); }
+        }
+
+        private string address = "127.0.0.1";
+
+        public string Address
+        {
+            get { return address = "127.0.0.1"; }
+            set { SetProperty(ref address, value); }
+        }
+
+        private string libName;
+
+        public string LibName
+        {
+            get { return libName; }
+            set { SetProperty(ref libName, value); }
+        }
+
+        public ICommand Pip => new RelayCommand<string>(txt =>
+        {
+            if (txt != "install" && txt != "uninstall") return;
+            var pythonPath = Locator.DebugViewModel.PythonPath;
+            var pipPath = Locator.DebugViewModel.CurrentDir + @"\python_env\Scripts\pip.exe";
+            var proxyCmd = "";
+            if (useProxy) proxyCmd = $"--proxy {Address}:{Port}";
+            var cmd = $"{pipPath} {txt} {libName} {proxyCmd}";
+            Process.Start(new ProcessStartInfo(pythonPath, cmd));
+        });
+
+        public ICommand PipDialog => new RelayCommand(() =>
+        {
+            Messenger.Send(new PipMessage { DataContext = this });
+        });
+
+        private bool useProxy;
+
+        public bool UseProxy
+        {
+            get { return useProxy; }
+            set { SetProperty(ref useProxy, value); }
+        }
+
 
         public ICommand Run => new RelayCommand(() =>
         {
@@ -85,6 +135,12 @@ namespace RhinoPythonNetEditor.ViewModel
             if (Enum.TryParse(txt, out EditBehaviors behavior))
                 Messenger.Send(new EditorEditMessage(behavior));
 
+        });
+
+        public ICommand Mark => new RelayCommand<string>(txt =>
+        {
+            if (Enum.TryParse(txt, out MarkBehaviors behavior))
+                Messenger.Send(new MarkMessage(behavior));
         });
 
     }
