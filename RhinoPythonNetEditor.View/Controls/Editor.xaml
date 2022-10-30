@@ -140,5 +140,6 @@
                     />
             </avalonEdit:TextEditor.Options>
         </avalonEdit:TextEditor>
+        <local:ReplaceControl HorizontalAlignment="Right" Effect="{StaticResource CmdDropShadowEffect}" Visibility="{ Binding  IsSearch, Converter={StaticResource BoolToVisibility}}"  VerticalAlignment="Top"/>
     </Grid>
 </UserControl>

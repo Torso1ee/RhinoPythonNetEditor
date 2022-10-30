@@ -74,6 +74,12 @@ namespace RhinoPythonNetEditor.View.Controls
             textEditor.TextArea.TextEntering += TextArea_TextEntering;
             textEditor.TextArea.TextView.NonPrintableCharacterBrush = new SolidColorBrush(Color.FromRgb(0xD4, 0xD4, 0xD4)) { Opacity = 0.3 };
             IsVisibleChanged += Editor_IsVisibleChanged;
+            textEditor.TextChanged += TextEditor_TextChanged;
+        }
+
+        private void TextEditor_TextChanged(object sender, EventArgs e)
+        {
+            if (DataContext is ViewModelLocator vm && vm.TextEditorViewModel.IsSearch)  messenger.Send(new NotifySearchMessage());
         }
 
         private void Timer_Tick(object sender, EventArgs e)
@@ -125,7 +131,13 @@ namespace RhinoPythonNetEditor.View.Controls
             marker.Reason = MarkerReason.Mark;
         }
 
-
+        private ITextMarker AddSearch(int start, int offset, Color color)
+        {
+            ITextMarker marker = textMarkerService.Create(start, offset);
+            marker.BackgroundColor = color;
+            marker.Reason = MarkerReason.Search;
+            return marker;
+        }
         private void AddErrorHint(int start, int offset, Color color)
         {
             ITextMarker marker = textMarkerService.Create(start, offset);
@@ -278,6 +290,12 @@ namespace RhinoPythonNetEditor.View.Controls
                     textMarkerService.RemoveAll(t => true);
                     LintManager.DidChange(CacheFile, m.Value);
                 }));
+                messenger.Register<ClearSearchMessage>(this, (r, m) => Application.Current.Dispatcher.Invoke(() =>
+                {
+                    Markers.Clear();
+                    textMarkerService.RemoveAll(t => t.Reason == MarkerReason.Search);
+                    m.Reply(true);
+                }));
                 messenger.Register<EditorEditMessage>(this, (r, m) =>
                 {
                     Application.Current.Dispatcher.Invoke(() =>
@@ -324,6 +342,57 @@ namespace RhinoPythonNetEditor.View.Controls
                         }
                     });
                 });
+                messenger.Register<ScrollToMessage>(this, (r, m) =>
+                {
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                       if(Markers.Count > m.Value)
+                        {
+                            if (CurrentMarker != null) CurrentMarker.BackgroundColor = Colors.LightYellow;
+                            CurrentMarker = Markers[m.Value];
+                            CurrentMarker.BackgroundColor = Colors.Blue;
+                            var ln = textEditor.Document.GetLineByOffset(CurrentMarker.StartOffset);
+                            textEditor.ScrollTo(ln.LineNumber, CurrentMarker.StartOffset - ln.Offset);
+                        }
+                    });
+                });
+                messenger.Register<SearchRequestMessage>(this, (r, m) =>
+                {
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        Markers.Clear();
+                        CurrentMarker = null;
+                        textMarkerService.RemoveAll(t => t.Reason == MarkerReason.Search);
+                        var text = textEditor.Text;
+                        var re = m.SearchText;
+                        var search = m.UseRe ? m.SearchText : Regex.Escape(m.SearchText);
+                        if (m.AllMatch)
+                        {
+                            search = $"\\b{search}\\b";
+                        }
+                        var op = m.ClarifyCase ? RegexOptions.None : RegexOptions.IgnoreCase;
+                        try
+                        {
+                            var results = new Regex(search, op).Matches(text);
+                            foreach (Match res in results)
+                            {
+                                Markers.Add(AddSearch(res.Index, res.Length, Colors.LightYellow));
+                            }
+                            int currentIndex = -1;
+                            if (Markers.Count > 0)
+                            {
+                                var tm = Markers.OrderBy(mk => Math.Abs(mk.StartOffset - textEditor.TextArea.Caret.Offset)).First();
+                                CurrentMarker = tm;
+                                tm.BackgroundColor = Colors.Blue;
+                                var ln = textEditor.Document.GetLineByOffset(tm.StartOffset);
+                                currentIndex = Markers.IndexOf(tm);
+                                textEditor.ScrollTo(ln.LineNumber,tm.StartOffset - ln.Offset);
+                            }
+                            m.Reply((true, results.Count, currentIndex));
+                        }
+                        catch { m.Reply((false, 0, -1)); }
+                    });
+                });
                 messenger.Register<SyntaxHintChangedMessage>(this, (r, m) =>
                 {
                     Dispatcher.Invoke(() =>
@@ -362,6 +431,10 @@ namespace RhinoPythonNetEditor.View.Controls
             }
             IsEnabled = true;
         }
+
+        private List<ITextMarker> Markers { get; } = new List<ITextMarker>();
+
+        private ITextMarker CurrentMarker { get; set; }
 
         private void UserControl_Unloaded(object sender, RoutedEventArgs e)
         {

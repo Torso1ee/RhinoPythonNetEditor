@@ -33,13 +33,13 @@ namespace RhinoPythonNetEditor.Component
             var count = References.Count;
             for (int i = 0; i < count; i++)
             {
-                writer.SetString("Reference", i, References[i]);
+                writer.SetString("References", i, References[i]);
             }
             writer.SetInt32("AdditionalReferenceCount", this.AdditionalReferences.Count);
             count = AdditionalReferences.Count;
             for (int i = 0; i < count; i++)
             {
-                writer.SetString("AdditionalReferenceCount", i, References[i]);
+                writer.SetString("AdditionalReferences", i, AdditionalReferences[i]);
             }
             return true;
         }
@@ -53,7 +53,7 @@ namespace RhinoPythonNetEditor.Component
                 var count = reader.GetInt32("ReferenceCount");
                 for (int i = 0; i < count; i++)
                 {
-                    References.Add(reader.GetString("Reference", i));
+                    References.Add(reader.GetString("References", i));
                 }
 
             }
@@ -62,7 +62,7 @@ namespace RhinoPythonNetEditor.Component
                 var count = reader.GetInt32("AdditionalReferenceCount");
                 for (int i = 0; i < count; i++)
                 {
-                    AdditionalReferences.Add(reader.GetString("AdditionalReference", i));
+                    AdditionalReferences.Add(reader.GetString("AdditionalReferences", i));
                 }
 
             }
@@ -76,6 +76,9 @@ namespace RhinoPythonNetEditor.Component
             writer.Write("References");
             writer.Write(References.Count);
             foreach (var str in References) writer.Write(str);
+            writer.Write("AdditionalReferences");
+            writer.Write(AdditionalReferences.Count);
+            foreach (var str in AdditionalReferences) writer.Write(str);
         }
 
         public bool IsEmpty => string.IsNullOrEmpty(PythonCode);

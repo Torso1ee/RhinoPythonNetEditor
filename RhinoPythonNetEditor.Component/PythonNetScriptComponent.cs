@@ -47,8 +47,8 @@ namespace RhinoPythonNetEditor.Component
         /// new tabs/panels will automatically be created.
         /// </summary>
         public PythonNetScriptComponent()
-          : base("PythonNet Script", "PythonNet Script",
-            "PythonNetScriptComponent provides editing and debugging cpython code in Rhino. PythonNet Script also supports interoperating with .Net library.",
+          : base("CPyhton Script", "CPyhton",
+            "A CPyhton scriptable component . CPyhtonScriptComponent provides editing and debugging cpython code in Rhino and also supports interoperating with .Net library.",
             "Maths", "Script")
         {
             ScriptSource = new ScriptSource(this);
@@ -851,6 +851,7 @@ namespace RhinoPythonNetEditor.Component
             ScriptSource.PythonCode = reader.GetString("code");
             ScriptSource.References.Clear();
             ScriptSource.References.AddRange(reader.GetString("reference").Split('\n'));
+            ScriptSource.AdditionalReferences.Clear();
             ScriptSource.AdditionalReferences.AddRange(reader.GetString("additionalReference").Split('\n'));
             ScriptAssembly = null;
             return base.Read(reader);

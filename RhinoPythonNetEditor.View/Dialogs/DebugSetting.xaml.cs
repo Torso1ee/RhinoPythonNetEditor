@@ -35,7 +35,11 @@ namespace RhinoPythonNetEditor.View.Dialogs
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            if (Parent is Dialog dialog) dialog.Close();
+            if (Parent is Dialog dialog)
+            {
+                dialog.Result = References.ToList();
+                dialog.Close();
+            }
         }
 
         public static readonly DependencyProperty ReferencesProperty = DependencyProperty.Register("References", typeof(ObservableCollection<string>), typeof(DebugSetting));

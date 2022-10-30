@@ -76,7 +76,9 @@ namespace RhinoPythonNetEditor.ViewModel
         public ICommand Setting => new RelayCommand(async () =>
         {
             Times = GetIterateCount();
-            await Locator.Messenger.Send(new DebugSettingDialogRequestMessage());
+            var result = await Locator.Messenger.Send(new DebugSettingDialogRequestMessage());
+            Locator.IScriptComponent.SetReference(result as List<string>);
+
         });
 
         private bool stopped;
@@ -123,7 +125,7 @@ namespace RhinoPythonNetEditor.ViewModel
         private async void StartDebugCore()
         {
             Times = GetIterateCount();
-            if(Time > Times)
+            if (Time > Times)
             {
                 await Locator.Messenger.Send(new MessageDialogRequestMessage { Message = $"Current iteration round {Time} is bigger than the limit {Times}. Please modify current iteration round in config.", Title = "Warning" });
                 return;
@@ -198,7 +200,7 @@ namespace RhinoPythonNetEditor.ViewModel
             if (IsDebuging) debugManager.SendBreakPointRequest(Indicis.Select(i => i + LineOffset).ToList());
         }
 
-      
+
         private int GetIterateCount()
         {
             Type iteratorType = null;

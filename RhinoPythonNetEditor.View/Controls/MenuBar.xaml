@@ -130,6 +130,7 @@
         <MenuItem Header="Tools">
             <MenuItem 
             Style="{StaticResource MenuItemIconKeyStyle}"  
+                Command="{Binding Search}"
             attach:IconElement.Geometry="{StaticResource ReplaceGeometry}"
             attach:IconElement.AttachedKey="Ctrl+F"
             Header="Find &amp; Replace..."/>

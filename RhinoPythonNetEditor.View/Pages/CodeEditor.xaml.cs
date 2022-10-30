@@ -73,7 +73,6 @@ namespace RhinoPythonNetEditor.View.Pages
                     {
                         var messageBox = new DebugSetting(vm.IScriptComponent.GetReference());
                         var t = Dialog.Show(window, messageBox).WaitingForClosed();
-                        vm.IScriptComponent.SetReference(messageBox.References.ToList());
                         m.Reply(t);
                     }
                 });

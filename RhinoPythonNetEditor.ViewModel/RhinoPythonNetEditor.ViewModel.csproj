@@ -103,13 +103,17 @@
     <Compile Include="DebugViewModel.cs" />
     <Compile Include="MenuBarViewModel.cs" />
     <Compile Include="Messages\AllBreakPointInformationsMessage.cs" />
+    <Compile Include="Messages\ClearSearchMessage.cs" />
     <Compile Include="Messages\DebugRequestMessage.cs" />
     <Compile Include="Messages\DebugSettingDialogRequestMessage.cs" />
     <Compile Include="Messages\ConfirmDialogRequestMessage.cs" />
     <Compile Include="Messages\EditorEditMessage.cs" />
     <Compile Include="Messages\MarkMessage.cs" />
     <Compile Include="Messages\MessageDialogRequestMessage.cs" />
+    <Compile Include="Messages\NotifySearchMessage.cs" />
     <Compile Include="Messages\PipMessage.cs" />
+    <Compile Include="Messages\ScrollToMessage.cs" />
+    <Compile Include="Messages\SearchRequestMessage.cs" />
     <Compile Include="Messages\SetCodeMessage.cs" />
     <Compile Include="Messages\SetDocumentMessage.cs" />
     <Compile Include="Messages\StepMessage.cs" />

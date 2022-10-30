@@ -1,9 +1,11 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:attach="clr-namespace:RhinoPythonNetEditor.Styling.Attach"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-    
+
     <SolidColorBrush x:Key="CheckBoxCheckedBrush">#FFABAdB3</SolidColorBrush>
-    
+    <SolidColorBrush x:Key="MouseOverBrush">#55E9E9E9</SolidColorBrush>
+    <SolidColorBrush x:Key="ActiveBackgroundBrush">#4474BDFD</SolidColorBrush>
+
     <Style x:Key="CheckBoxBaseStyle" TargetType="CheckBox">
         <Setter Property="MinHeight" Value="15"/>
         <Setter Property="MinWidth" Value="15"/>
@@ -18,6 +20,48 @@
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsChecked" Value="True">
                             <Setter TargetName="bd" Property="Visibility" Value="Visible"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="SimpleCheckBoxStyle" TargetType="CheckBox">
+        <Setter Property="MinHeight" Value="15"/>
+        <Setter Property="MinWidth" Value="15"/>
+        <Setter Property="attach:IconElement.Height" Value="13"/>
+        <Setter Property="attach:IconElement.Width" Value="13"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="CheckBox">
+                    <Border x:Name="bd" ClipToBounds="True" Height="{TemplateBinding Height}" Background="Transparent"  Width="{TemplateBinding Width}">
+                        <Path Height="{TemplateBinding attach:IconElement.Height}" Width="{TemplateBinding attach:IconElement.Width }" HorizontalAlignment="Center" VerticalAlignment="Center" Data="{TemplateBinding attach:IconElement.Geometry}" Stretch="Uniform" Fill="White"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="bd" Property="Background" Value="{StaticResource MouseOverBrush }"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="ActiveBackgroundCheckBoxStyle" TargetType="CheckBox">
+        <Setter Property="MinHeight" Value="15"/>
+        <Setter Property="MinWidth" Value="15"/>
+        <Setter Property="attach:IconElement.Height" Value="13"/>
+        <Setter Property="attach:IconElement.Width" Value="13"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="CheckBox">
+                    <Border x:Name="bd" ClipToBounds="True" Height="{TemplateBinding Height}" Background="Transparent" CornerRadius="2"  Width="{TemplateBinding Width}">
+                        <Path Height="{TemplateBinding attach:IconElement.Height}" Width="{TemplateBinding attach:IconElement.Width }" HorizontalAlignment="Center" VerticalAlignment="Center"  Data="{TemplateBinding attach:IconElement.Geometry}" Stretch="Uniform" Fill="White"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsChecked" Value="True">
+                            <Setter TargetName="bd" Property="Background" Value="{StaticResource  ActiveBackgroundBrush }"/>
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>

@@ -180,6 +180,9 @@
     <Compile Include="Controls\OutputControl.xaml.cs">
       <DependentUpon>OutputControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\ReplaceControl.xaml.cs">
+      <DependentUpon>ReplaceControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Dialogs\ConfirmDialog.xaml.cs">
       <DependentUpon>ConfirmDialog.xaml</DependentUpon>
     </Compile>
@@ -218,6 +221,7 @@
     <Compile Include="Tools\BreakPointMargin.cs" />
     <Compile Include="Tools\CompletionData.cs" />
     <Compile Include="Tools\CompletionSegment.cs" />
+    <Compile Include="Tools\TextHelper.cs" />
     <Compile Include="Tools\TextMarkerInterface.cs" />
     <Compile Include="Tools\OverloadProvider.cs" />
     <Compile Include="Tools\PythonFoldingStrategy.cs" />
@@ -291,6 +295,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\OutputControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\ReplaceControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

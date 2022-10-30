@@ -89,7 +89,8 @@ namespace RhinoPythonNetEditor.View.Tools
     {
         Hint,
         HighLight,
-        Mark
+        Mark,
+        Search
     }
 
     [Flags]

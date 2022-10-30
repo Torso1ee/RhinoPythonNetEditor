@@ -143,5 +143,10 @@ namespace RhinoPythonNetEditor.ViewModel
                 Messenger.Send(new MarkMessage(behavior));
         });
 
+        public ICommand Search => new RelayCommand(() =>
+        {
+            Locator.TextEditorViewModel.IsSearch = true;
+        });
+
     }
 }
