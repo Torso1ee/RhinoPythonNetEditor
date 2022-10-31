@@ -78,7 +78,7 @@
             <Border   Visibility="{Binding ShowReplace, Converter= {StaticResource BoolToVisibility}}"  Margin="0,0,2,4"  Grid.Row="1" Width="150"  Background="{StaticResource BorderBrush}" Grid.Column="1" >
                 <DockPanel>
                     <!--<CheckBox  Margin="1,0" DockPanel.Dock="Right"  attach:IconElement.Geometry="{StaticResource SearchGeometry4}"/>-->
-                    <TextBox Height="20" />
+                    <TextBox Text="{Binding ReplaceText}" Height="20" />
                 </DockPanel>
             </Border>
             <StackPanel Margin="1,4,4,4" Grid.Column="2" Orientation="Horizontal">
@@ -89,8 +89,8 @@
                 <Button  Margin="1,0" Command="{Binding Close}" attach:IconElement.Geometry="{StaticResource CloseGeometry}"/>
             </StackPanel>
             <StackPanel  Visibility="{Binding ShowReplace, Converter= {StaticResource BoolToVisibility}}"  Margin="1,0,4,4" Grid.Row="1" Grid.Column="2" Orientation="Horizontal">
-                <Button Margin="1,0"  attach:IconElement.Geometry="{StaticResource ReplGeometry}"/>
-                <Button Margin="1,0"  attach:IconElement.Geometry="{StaticResource ReplAllGeometry}"/>
+                <Button Command="{Binding Replace}" Margin="1,0"  attach:IconElement.Geometry="{StaticResource ReplGeometry}"/>
+                <Button Command="{Binding ReplaceAll}" Margin="1,0"  attach:IconElement.Geometry="{StaticResource ReplAllGeometry}"/>
             </StackPanel>
         </Grid>
     </Border>

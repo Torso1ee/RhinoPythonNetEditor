@@ -79,7 +79,7 @@ namespace RhinoPythonNetEditor.View.Controls
 
         private void TextEditor_TextChanged(object sender, EventArgs e)
         {
-            if (DataContext is ViewModelLocator vm && vm.TextEditorViewModel.IsSearch)  messenger.Send(new NotifySearchMessage());
+            if (DataContext is ViewModelLocator vm && vm.TextEditorViewModel.IsSearch) messenger.Send(new NotifySearchMessage());
         }
 
         private void Timer_Tick(object sender, EventArgs e)
@@ -346,7 +346,7 @@ namespace RhinoPythonNetEditor.View.Controls
                 {
                     Application.Current.Dispatcher.Invoke(() =>
                     {
-                       if(Markers.Count > m.Value)
+                        if (Markers.Count > m.Value)
                         {
                             if (CurrentMarker != null) CurrentMarker.BackgroundColor = Colors.LightYellow;
                             CurrentMarker = Markers[m.Value];
@@ -373,7 +373,8 @@ namespace RhinoPythonNetEditor.View.Controls
                         var op = m.ClarifyCase ? RegexOptions.None : RegexOptions.IgnoreCase;
                         try
                         {
-                            var results = new Regex(search, op).Matches(text);
+                            CurrentRegex = new Regex(search, op);
+                            var results = CurrentRegex.Matches(text);
                             foreach (Match res in results)
                             {
                                 Markers.Add(AddSearch(res.Index, res.Length, Colors.LightYellow));
@@ -381,16 +382,43 @@ namespace RhinoPythonNetEditor.View.Controls
                             int currentIndex = -1;
                             if (Markers.Count > 0)
                             {
-                                var tm = Markers.OrderBy(mk => Math.Abs(mk.StartOffset - textEditor.TextArea.Caret.Offset)).First();
+                                var tm = Markers.OrderBy(mk => Math.Abs(mk.StartOffset - textEditor.CaretOffset)).First();
                                 CurrentMarker = tm;
                                 tm.BackgroundColor = Colors.Blue;
                                 var ln = textEditor.Document.GetLineByOffset(tm.StartOffset);
                                 currentIndex = Markers.IndexOf(tm);
-                                textEditor.ScrollTo(ln.LineNumber,tm.StartOffset - ln.Offset);
+                                textEditor.ScrollTo(ln.LineNumber, tm.StartOffset - ln.Offset);
                             }
                             m.Reply((true, results.Count, currentIndex));
                         }
-                        catch { m.Reply((false, 0, -1)); }
+                        catch { m.Reply((false, 0, -1)); CurrentRegex = null; }
+                    });
+                });
+                messenger.Register<ReplaceRequestMessage>(this, (r, m) =>
+                {
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        if (CurrentRegex != null)
+                        {
+                            if (m.IsAll)
+                            {
+                                var t = CurrentRegex.Replace(textEditor.Text, m.ReplaceText);
+                                textEditor.Document.Replace(0, textEditor.Text.Length, t);
+                                m.Reply(true); ;
+                            }
+                            else
+                            {
+                                if (m.Index >= 0 && m.Index < Markers.Count)
+                                {
+                                    textEditor.Document.Replace(Markers[m.Index].StartOffset, Markers[m.Index].Length, m.ReplaceText);
+                                    m.Reply(true); ;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            m.Reply(false);
+                        }
                     });
                 });
                 messenger.Register<SyntaxHintChangedMessage>(this, (r, m) =>
@@ -435,6 +463,8 @@ namespace RhinoPythonNetEditor.View.Controls
         private List<ITextMarker> Markers { get; } = new List<ITextMarker>();
 
         private ITextMarker CurrentMarker { get; set; }
+
+        private Regex CurrentRegex { get; set; }
 
         private void UserControl_Unloaded(object sender, RoutedEventArgs e)
         {

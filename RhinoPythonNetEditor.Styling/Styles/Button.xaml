@@ -8,7 +8,7 @@
     <Color x:Key="ButtonActiveBackgroundColor1">#33C6C6C6</Color>
     <Color x:Key="ButtonActiveForegroundColor1">black</Color>
     <SolidColorBrush x:Key="ButtonActiveBackgroundBrush">#55E9E9E9</SolidColorBrush>
-
+    <SolidColorBrush x:Key="ButtonDisabledForegroundBrush">#FFB8B8B8</SolidColorBrush>
 
     <Style TargetType="{x:Type Button}" x:Key="ButtonBaseStyle">
         <Style.Triggers>
@@ -80,6 +80,9 @@
                         </Grid>
                     </Border>
                     <ControlTemplate.Triggers>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Foreground" Value="{StaticResource ButtonDisabledForegroundBrush}"/>
+                        </Trigger>
                         <MultiTrigger>
                             <MultiTrigger.Conditions>
                                 <Condition Property="IsMouseOver" Value="True"/>

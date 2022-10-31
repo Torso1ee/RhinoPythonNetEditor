@@ -109,6 +109,14 @@ namespace RhinoPythonNetEditor.ViewModel
             set { SetProperty(ref searchText, value); }
         }
 
+        private string replaceText="";
+
+        public string ReplaceText
+        {
+            get { return replaceText; }
+            set { SetProperty(ref replaceText, value); }
+        }
+
         private bool useRe;
 
         public bool UseRe
@@ -164,6 +172,15 @@ namespace RhinoPythonNetEditor.ViewModel
             set { SetProperty(ref currentCount, value); }
         }
 
+        public ICommand Replace => new RelayCommand(() =>
+        {
+            Messenger.Send(new ReplaceRequestMessage { Index = CurrentIndex, IsAll = false, ReplaceText = ReplaceText });
+        });
+
+        public ICommand ReplaceAll => new RelayCommand(() =>
+        {
+            Messenger.Send(new ReplaceRequestMessage { Index = -1, IsAll = true, ReplaceText = ReplaceText });
+        });
 
         public void SearchInternal(TextBox tb)
         {

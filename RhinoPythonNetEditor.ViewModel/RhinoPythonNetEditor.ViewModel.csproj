@@ -112,6 +112,7 @@
     <Compile Include="Messages\MessageDialogRequestMessage.cs" />
     <Compile Include="Messages\NotifySearchMessage.cs" />
     <Compile Include="Messages\PipMessage.cs" />
+    <Compile Include="Messages\ReplaceRequestMessage.cs" />
     <Compile Include="Messages\ScrollToMessage.cs" />
     <Compile Include="Messages\SearchRequestMessage.cs" />
     <Compile Include="Messages\SetCodeMessage.cs" />
