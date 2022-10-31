@@ -33,6 +33,8 @@ namespace RhinoPythonNetEditor.ViewModel
             IsActive = true;
         }
 
+    
+
         public void SetCode(string text)
         {
             Document.Text = text;
@@ -109,7 +111,7 @@ namespace RhinoPythonNetEditor.ViewModel
             set { SetProperty(ref searchText, value); }
         }
 
-        private string replaceText="";
+        private string replaceText = "";
 
         public string ReplaceText
         {

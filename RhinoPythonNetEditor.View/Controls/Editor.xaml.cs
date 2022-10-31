@@ -40,7 +40,7 @@ using ICSharpCode.AvalonEdit.CodeCompletion;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.TaskbarClock;
 using static System.Windows.Forms.AxHost;
 using OmniSharp.Extensions.LanguageServer.Protocol.Models;
-
+using ICSharpCode.AvalonEdit.Document;
 
 namespace RhinoPythonNetEditor.View.Controls
 {
@@ -286,8 +286,8 @@ namespace RhinoPythonNetEditor.View.Controls
                 });
                 messenger.Register<SetCodeMessage>(this, (r, m) => Application.Current.Dispatcher.Invoke(() =>
                 {
-                    textEditor.Text = m.Value;
                     textMarkerService.RemoveAll(t => true);
+                    textEditor.Document.Replace(0, textEditor.Text.Length, m.Value);
                     LintManager.DidChange(CacheFile, m.Value);
                 }));
                 messenger.Register<ClearSearchMessage>(this, (r, m) => Application.Current.Dispatcher.Invoke(() =>
@@ -296,6 +296,56 @@ namespace RhinoPythonNetEditor.View.Controls
                     textMarkerService.RemoveAll(t => t.Reason == MarkerReason.Search);
                     m.Reply(true);
                 }));
+                messenger.Register<NoteRequestMessage>(this, (r, m) =>
+                {
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        var start = textEditor.SelectionStart;
+                        var end = textEditor.SelectionStart + textEditor.SelectionLength;
+                        var l1 = textEditor.Document.GetLineByOffset(start);
+                        var l2 = textEditor.Document.GetLineByOffset(end);
+                        var ls = new List<DocumentLine>();
+                        for (int i = l1.LineNumber; i <= l2.LineNumber; i++)
+                        {
+                            ls.Add(textEditor.Document.Lines[i - 1]);
+                        }
+                        var noteOrCancel = ls.All(l => l.Length == 0 || textEditor.Document.GetCharAt(l.Offset) == '#');
+                        var text = "";
+                        if (noteOrCancel)
+                        {
+                            foreach (var l in ls)
+                            {
+                                if (l.Length > 0)
+                                {
+                                    text += textEditor.Document.GetText(l.Offset + 1,  l.TotalLength - 1);
+                                }
+                                else
+                                {
+                                    if (l.DelimiterLength > 0) text += "\r\n";
+                                }
+                            }
+                        }
+                        else
+                        {
+                            foreach (var l in ls)
+                            {
+                                if (l.Length > 0)
+                                {
+                                    if (l.Length == 0) text += "\r\n";
+                                    else text += "#" + textEditor.Document.GetText(l.Offset, l.TotalLength);
+                                }
+                                else
+                                {
+                                    if (l.DelimiterLength > 0) text += "\r\n";
+                                }
+                            }
+                        }
+                        textEditor.Document.Replace(l1.Offset, l2.Offset + l2.TotalLength - l1.Offset, text);
+                        textEditor.SelectionStart = l1.Offset;
+                        textEditor.SelectionLength =Math.Max(0, text.EndsWith("\r\n")? text.Length - 2:text.Length);
+                    });
+
+                });
                 messenger.Register<EditorEditMessage>(this, (r, m) =>
                 {
                     Application.Current.Dispatcher.Invoke(() =>
@@ -469,6 +519,11 @@ namespace RhinoPythonNetEditor.View.Controls
         private void UserControl_Unloaded(object sender, RoutedEventArgs e)
         {
             LintManager.DidClose(CacheFile);
+        }
+
+        private void UserControl_PreviewKeyDown(object sender, KeyEventArgs e)
+        {
+
         }
     }
 }

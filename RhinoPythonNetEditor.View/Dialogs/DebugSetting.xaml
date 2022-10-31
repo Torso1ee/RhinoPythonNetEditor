@@ -90,7 +90,7 @@
                                                     <ColumnDefinition/>
                                                 </Grid.ColumnDefinitions>
                                                 <Button Command="{Binding RemoveReference, RelativeSource={RelativeSource AncestorType=local:DebugSetting}}" CommandParameter="{Binding}" Margin="5,0" Style="{StaticResource IconButtonStyle1}" attach:IconElement.Geometry="{StaticResource MinimizeGeometry}"/>
-                                                <TextBlock Margin="5,0"   Grid.Column="1" Foreground="{StaticResource ActiveBrush}" Height="15" Text="{Binding}" TextTrimming="CharacterEllipsis"/>
+                                                <TextBlock Margin="5,0"   ToolTip="{Binding}"  Grid.Column="1" Foreground="{StaticResource ActiveBrush}" Height="15" Text="{Binding}" TextTrimming="CharacterEllipsis"/>
                                             </Grid>
                                         </Border>
                                     </DataTemplate>

@@ -137,6 +137,11 @@ namespace RhinoPythonNetEditor.ViewModel
 
         });
 
+        public ICommand Note => new RelayCommand(() =>
+        {
+            Messenger.Send(new NoteRequestMessage());
+        });
+
         public ICommand Mark => new RelayCommand<string>(txt =>
         {
             if (Enum.TryParse(txt, out MarkBehaviors behavior))

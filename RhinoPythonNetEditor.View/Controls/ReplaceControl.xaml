@@ -11,6 +11,9 @@
              Loaded="UserControl_Loaded"
              d:DataContext="{d:DesignInstance vm:TextEditorViewModel}"
              mc:Ignorable="d" >
+    <i:Interaction.Behaviors>
+        <i:MouseDragElementBehavior ConstrainToParentBounds="True"/>
+    </i:Interaction.Behaviors>
     <UserControl.Resources>
         <ResourceDictionary>
             <SolidColorBrush x:Key="BorderBrush" Color="#FF444444"></SolidColorBrush>
@@ -63,9 +66,9 @@
             </CheckBox>
             <Border Margin="0,4,2,4"  Width="150"  Background="{StaticResource BorderBrush}" Grid.Column="1" >
                 <DockPanel>
-                    <CheckBox Margin="1,0" DockPanel.Dock="Right" IsChecked="{Binding UseRe}" attach:IconElement.Geometry="{StaticResource SearchGeometry3}"/>
-                    <CheckBox Margin="1,0" DockPanel.Dock="Right"  IsChecked="{Binding AllMatch}" attach:IconElement.Geometry="{StaticResource SearchGeometry2}"/>
-                    <CheckBox Margin="1,0" DockPanel.Dock="Right" IsChecked="{Binding ClarifyCase}" attach:IconElement.Geometry="{StaticResource SearchGeometry1}"/>
+                    <CheckBox ToolTip="Use regex" Margin="1,0" DockPanel.Dock="Right" IsChecked="{Binding UseRe}" attach:IconElement.Geometry="{StaticResource SearchGeometry3}"/>
+                    <CheckBox ToolTip="Whole word match" Margin="1,0" DockPanel.Dock="Right"  IsChecked="{Binding AllMatch}" attach:IconElement.Geometry="{StaticResource SearchGeometry2}"/>
+                    <CheckBox ToolTip="Case sensitive" Margin="1,0" DockPanel.Dock="Right" IsChecked="{Binding ClarifyCase}" attach:IconElement.Geometry="{StaticResource SearchGeometry1}"/>
                     <TextBox  x:Name="input" Height="20" Text="{Binding SearchText}"  >
                         <i:Interaction.Triggers>
                             <i:EventTrigger EventName="TextChanged">
@@ -89,8 +92,8 @@
                 <Button  Margin="1,0" Command="{Binding Close}" attach:IconElement.Geometry="{StaticResource CloseGeometry}"/>
             </StackPanel>
             <StackPanel  Visibility="{Binding ShowReplace, Converter= {StaticResource BoolToVisibility}}"  Margin="1,0,4,4" Grid.Row="1" Grid.Column="2" Orientation="Horizontal">
-                <Button Command="{Binding Replace}" Margin="1,0"  attach:IconElement.Geometry="{StaticResource ReplGeometry}"/>
-                <Button Command="{Binding ReplaceAll}" Margin="1,0"  attach:IconElement.Geometry="{StaticResource ReplAllGeometry}"/>
+                <Button ToolTip="Replace Current" Command="{Binding Replace}" Margin="1,0"  attach:IconElement.Geometry="{StaticResource ReplGeometry}"/>
+                <Button ToolTip="Replace All" Command="{Binding ReplaceAll}" Margin="1,0"  attach:IconElement.Geometry="{StaticResource ReplAllGeometry}"/>
             </StackPanel>
         </Grid>
     </Border>

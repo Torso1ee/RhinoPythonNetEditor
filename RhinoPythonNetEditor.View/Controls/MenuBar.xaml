@@ -55,7 +55,7 @@
             <MenuItem 
             Style="{StaticResource MenuItemIconKeyStyle}"  
             attach:IconElement.Geometry="{StaticResource DebugGeometry}"
-            attach:IconElement.AttachedKey="Ctrl+F5"
+            attach:IconElement.AttachedKey="F5"
             Header="Debug"  
             Command="{Binding Data.DebugViewModel.StartDebug, Source={StaticResource proxy}}"/>
             <MenuItem 
@@ -73,7 +73,7 @@
             Header="Export As..."/>
             <MenuItem 
             Style="{StaticResource MenuItemIconKeyStyle}"  
-                Command="{Binding ExportAs}"
+                Command="{Binding Confirm}"
             attach:IconElement.Geometry="{StaticResource ConfirmGeometry}"
             attach:IconElement.AttachedKey="Ctrl+S"
             Header="Save"  />
@@ -119,6 +119,13 @@
             attach:IconElement.Geometry="{StaticResource PasteGeometry}"
             attach:IconElement.AttachedKey="Ctrl+V"
             Header="Paste"/>
+            <MenuItem 
+            Style="{StaticResource MenuItemIconKeyStyle}"  
+                    Command="{Binding Note}"
+                CommandParameter="{Binding Header, RelativeSource={RelativeSource Self}}"
+            attach:IconElement.Geometry="{StaticResource CommentGeometry}"
+            attach:IconElement.AttachedKey="Ctrl+/"
+            Header="Comment"/>
             <MenuItem 
             Style="{StaticResource MenuItemIconKeyStyle}"
                     Command="{Binding Edit}"
@@ -176,6 +183,7 @@
         </MenuItem>
         <MenuItem 
             Style="{StaticResource MenuItemIconStyle}"  
+            ToolTip="Save and Close"
             attach:IconElement.Geometry="{StaticResource ConfirmGeometry}"
             Header="OK"  
             Command="{Binding Confirm}"
@@ -183,6 +191,7 @@
            DockPanel.Dock="Right"/>
         <MenuItem 
             Style="{StaticResource MenuItemIconStyle}"  
+            ToolTip="Start debugging (Only support for params whose datas are &quot; Rhino Data &quot; (int, string, Curve, Brep ...))"
             attach:IconElement.Geometry="{StaticResource DebugGeometry}"
             Header="Debug"  
             Command="{Binding Data.DebugViewModel.StartDebug, Source={StaticResource proxy}}"
@@ -190,6 +199,7 @@
            DockPanel.Dock="Right"/>
         <MenuItem 
             Style="{StaticResource MenuItemIconStyle}"  
+            ToolTip="Debug configuration"
             attach:IconElement.Geometry="{StaticResource SettingGeometry}"
             Header="Config"  
             Command="{Binding Data.DebugViewModel.Setting, Source={StaticResource proxy}}"
@@ -197,6 +207,7 @@
            DockPanel.Dock="Right"/>
         <MenuItem 
             Style="{StaticResource MenuItemIconStyle}"  
+            ToolTip="Run component"
             attach:IconElement.Geometry="{StaticResource TestGeometry}"
             Header="Run"  
             Command="{Binding Run}"

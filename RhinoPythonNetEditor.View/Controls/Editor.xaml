@@ -116,6 +116,16 @@
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </UserControl.Resources>
+    <UserControl.InputBindings>
+        <KeyBinding Command="{Binding Data.DebugViewModel.StartDebug , Source={StaticResource proxy}}" Key="F5"/>
+        <KeyBinding Command="{Binding Data.MenuBarViewModel.Run , Source={StaticResource proxy}}" Gesture="Ctrl+F5"/>
+        <KeyBinding Command="{Binding Data.MenuBarViewModel.ImportFrom , Source={StaticResource proxy}}" Gesture="Ctrl+O"/>
+        <KeyBinding Command="{Binding Data.MenuBarViewModel.ExportAs , Source={StaticResource proxy}}" Gesture="Ctrl+E"/>
+        <KeyBinding Command="{Binding Data.MenuBarViewModel.Confirm , Source={StaticResource proxy}}" Gesture="Ctrl+S"/>
+        <KeyBinding Command="{Binding Data.MenuBarViewModel.Search , Source={StaticResource proxy}}" Gesture="Ctrl+F"/>
+        <KeyBinding Command="{Binding Data.MenuBarViewModel.Note , Source={StaticResource proxy}}" Gesture="Ctrl+oem2" Key="OemQuestion"/>
+        <KeyBinding Command="ApplicationCommands.Close" Gesture="Alt+F4"/>
+    </UserControl.InputBindings>
     <Grid Background="{StaticResource EditorBackgroundBrush}"  DataContext="{Binding Data.TextEditorViewModel, Source={StaticResource proxy}}">
         <avalonEdit:TextEditor Name="textEditor"
                                Margin="5,0,5,0"

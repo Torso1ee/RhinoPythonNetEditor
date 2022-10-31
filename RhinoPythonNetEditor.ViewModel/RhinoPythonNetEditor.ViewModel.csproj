@@ -110,6 +110,7 @@
     <Compile Include="Messages\EditorEditMessage.cs" />
     <Compile Include="Messages\MarkMessage.cs" />
     <Compile Include="Messages\MessageDialogRequestMessage.cs" />
+    <Compile Include="Messages\NoteRequestMessage.cs" />
     <Compile Include="Messages\NotifySearchMessage.cs" />
     <Compile Include="Messages\PipMessage.cs" />
     <Compile Include="Messages\ReplaceRequestMessage.cs" />
