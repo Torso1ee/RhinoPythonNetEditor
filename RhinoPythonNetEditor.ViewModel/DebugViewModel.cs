@@ -23,6 +23,7 @@ using System.Windows;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Shapes;
+using System.Xml.Linq;
 
 namespace RhinoPythonNetEditor.ViewModel
 {
@@ -146,6 +147,7 @@ namespace RhinoPythonNetEditor.ViewModel
                 var bytes = Encoding.UTF8.GetBytes(result.Item2);
                 await fs.WriteAsync(bytes, 0, bytes.Length);
             }
+            ImportCodeFile($@"{dir}itemp.py");
             var file = $@"{dir}temp.py";
             var script = $@"{PythonPath}  -u -m debugpy --listen localhost:{port} --wait-for-client --log-to {dir}logs ""{file}""";
             debugManager.DebugEnd += DebugManager_DebugEnd;
@@ -253,9 +255,11 @@ namespace RhinoPythonNetEditor.ViewModel
         {
             var sb = new StringBuilder();
             sb.AppendLine("import paramparser");
+            sb.AppendLine("from itemp import *");
+            sb.AppendLine("import_references()");
             sb.AppendLine("from System import *");
             sb.AppendLine($"prmDict = paramparser.parse_args(r'{CurrentDir}',r'{paramPath}')");
-            int i = 3;
+            int i = 5;
             foreach (var p in Locator.ComponentHost.Params.Input)
             {
                 sb.AppendLine($"{p.NickName}=prmDict['{p.NickName}']");
@@ -263,6 +267,16 @@ namespace RhinoPythonNetEditor.ViewModel
             }
             sb.AppendLine(code);
             return (i, sb.ToString());
+        }
+
+        private void ImportCodeFile(string path)
+        {
+            var sb = new StringBuilder();
+            sb.AppendLine($"import clr");
+            sb.AppendLine($"def import_references():");
+            foreach (var r in Locator.IScriptComponent.GetReference()) sb.AppendLine($"    clr.AddReference(r'{r}')");
+            sb.AppendLine($"    pass");
+            File.WriteAllText(path, sb.ToString());
         }
 
         private void SerializeInput(int time, string path)

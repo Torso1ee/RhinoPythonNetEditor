@@ -78,10 +78,10 @@ namespace RhinoPythonNetEditor.ViewModel
                 {
                     if (l.Contains("temp.py"))
                     {
-                        var ma = Regex.Match(l, @"temp.py"", line (\d+)");
+                        var ma = Regex.Match(l, @"\\temp.py"", line (\d+)");
                         if (ma.Groups.Count == 2)
                         {
-                            var eLine = ma.Groups[0].Value.Replace(ma.Groups[1].Value, (int.Parse(ma.Groups[1].Value) - 5).ToString());
+                            var eLine = ma.Groups[0].Value.Replace(ma.Groups[1].Value, (Math.Max(0,int.Parse(ma.Groups[1].Value) - 5)).ToString());
                             ls.Add(l.Replace(ma.Groups[0].Value, eLine));
                         }
                         else ls.Add(l);

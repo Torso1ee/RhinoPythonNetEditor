@@ -181,6 +181,11 @@ namespace RhinoPythonNetEditor.Component
         /// to store data in output parameters.</param>
         protected override void SolveInstance(IGH_DataAccess DA)
         {
+            if (!IsPythonInitialized)
+            {
+                AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Failed to set up python environment !");
+                return;
+            }
             if (HasOutParameter) DA.DisableGapLogic(0);
             IGH_ScriptInstance scriptInstance = GetScriptInstance();
             if (DA.Iteration == 0 && compilerErrors.Count > 0)
@@ -280,7 +285,7 @@ namespace RhinoPythonNetEditor.Component
                             var mh = Regex.Match(msg, @".py, line (\d+)");
                             if (mh.Groups.Count == 2)
                             {
-                                var er = mh.Groups[0].Value.Replace(mh.Groups[1].Value, (int.Parse(mh.Groups[1].Value) - 2).ToString());
+                                var er = mh.Groups[0].Value.Replace(mh.Groups[1].Value, (int.Parse(mh.Groups[1].Value) - 4).ToString());
                                 msg = msg.Replace(mh.Groups[0].Value, er);
                             }
                             ls.Add($"Runtime Error ({ex.GetType().ToString()}):{msg}");
@@ -294,7 +299,7 @@ namespace RhinoPythonNetEditor.Component
                                 var ma = Regex.Match(l, @"line (\d+), in");
                                 if (ma.Groups.Count == 2)
                                 {
-                                    var eLine = ma.Groups[0].Value.Replace(ma.Groups[1].Value, (int.Parse(ma.Groups[1].Value) - 2).ToString());
+                                    var eLine = ma.Groups[0].Value.Replace(ma.Groups[1].Value, (int.Parse(ma.Groups[1].Value) - 4).ToString());
                                     ls.Add(l.Replace(ma.Groups[0].Value, eLine));
                                 }
                             }

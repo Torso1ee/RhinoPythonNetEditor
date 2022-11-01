@@ -99,7 +99,10 @@ namespace RhinoPythonNetEditor.Component
         private void GeneratePyFile(Guid id)
         {
             var sb = new StringBuilder();
+            var idName = id.ToString().Replace("-", "");
             sb.AppendLine($"from System import *");
+            sb.AppendLine($"from i{idName} import *");
+            sb.AppendLine($"import_references()");
             sb.AppendLine($"def func({string.Join(",", new[] { CodeBlock_PyParameterSignature(), CodeBlock_PyReturnSignature() }.Where(s => !string.IsNullOrEmpty(s)))}):");
             var lines = PythonCode.Split('\n');
             var code = "";
@@ -107,6 +110,13 @@ namespace RhinoPythonNetEditor.Component
             sb.AppendLine(code);
             sb.AppendLine("    " + $"return [{CodeBlock_PyReturnSignature()}]");
             File.WriteAllText(PythonNetScriptComponent.CompiledPath + $@"\{id}.py", sb.ToString());
+
+            sb = new StringBuilder();
+            sb.AppendLine($"import clr");
+            sb.AppendLine($"def import_references():");
+            foreach (var r in AdditionalReferences) sb.AppendLine($"    clr.AddReference(r'{r}')");
+            sb.AppendLine($"    pass");
+            File.WriteAllText(PythonNetScriptComponent.CompiledPath + $@"\i{idName}.py", sb.ToString());
         }
 
         private static SortedDictionary<string, string> _keywords;
