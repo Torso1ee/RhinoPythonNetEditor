@@ -313,11 +313,12 @@ namespace RhinoPythonNetEditor.View.Controls
                         var text = "";
                         if (noteOrCancel)
                         {
+                            var regex = new Regex("# ?");
                             foreach (var l in ls)
                             {
                                 if (l.Length > 0)
                                 {
-                                    text += textEditor.Document.GetText(l.Offset + 1,  l.TotalLength - 1);
+                                    text += regex.Replace(textEditor.Document.GetText(l.Offset, l.TotalLength), "", 1);
                                 }
                                 else
                                 {
@@ -332,7 +333,7 @@ namespace RhinoPythonNetEditor.View.Controls
                                 if (l.Length > 0)
                                 {
                                     if (l.Length == 0) text += "\r\n";
-                                    else text += "#" + textEditor.Document.GetText(l.Offset, l.TotalLength);
+                                    else text += "# " + textEditor.Document.GetText(l.Offset, l.TotalLength);
                                 }
                                 else
                                 {
@@ -342,7 +343,7 @@ namespace RhinoPythonNetEditor.View.Controls
                         }
                         textEditor.Document.Replace(l1.Offset, l2.Offset + l2.TotalLength - l1.Offset, text);
                         textEditor.SelectionStart = l1.Offset;
-                        textEditor.SelectionLength =Math.Max(0, text.EndsWith("\r\n")? text.Length - 2:text.Length);
+                        textEditor.SelectionLength = Math.Max(0, text.EndsWith("\r\n") ? text.Length - 2 : text.Length);
                     });
 
                 });

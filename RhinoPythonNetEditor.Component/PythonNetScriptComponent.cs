@@ -160,6 +160,10 @@ namespace RhinoPythonNetEditor.Component
             if (!IsPythonInitialized)
             {
                 AssemblyPath = Path.GetDirectoryName(typeof(ViewModelLocator).Assembly.Location);
+                var dllDir = AssemblyPath + @"\compiled";
+                var debugDir = AssemblyPath + @"\temp";
+                if (Directory.Exists(dllDir)) Directory.Delete(dllDir, true);
+                if (Directory.Exists(debugDir)) Directory.Delete(debugDir, true);
                 PythonInitialized();
             }
             if (!PythonLibAdded)
