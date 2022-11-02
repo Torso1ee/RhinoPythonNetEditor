@@ -179,7 +179,7 @@
             <MenuItem Width="Auto" Header="RhinoDeveloper"  Command="{Binding OpenWebsite}" CommandParameter="https://developer.rhino3d.com/api/"/>
             <MenuItem Width="Auto" Header="PythonNet"  Command="{Binding OpenWebsite}" CommandParameter="http://pythonnet.github.io/"/>
             <MenuItem Width="Auto" Header="RhinoForum"  Command="{Binding OpenWebsite}" CommandParameter="https://discourse.mcneel.com/"/>
-            <MenuItem Width="Auto" Header="Contact"/>
+            <MenuItem Width="Auto" Header="Contact"  Command="{Binding OpenWebsite}" CommandParameter="https://www.food4rhino.com/en/app/grasshoppercpythoneditor"/>
         </MenuItem>
         <MenuItem 
             Style="{StaticResource MenuItemIconStyle}"  
