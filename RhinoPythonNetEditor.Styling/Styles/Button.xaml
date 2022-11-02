@@ -3,9 +3,12 @@
                     xmlns:attach="clr-namespace:RhinoPythonNetEditor.Styling.Attach">
 
 
-    <Color x:Key="ButtonActiveBackgroundColor">#11E9E9E9</Color>
+    <Color x:Key="ButtonActiveBackgroundColor">#55E9E9E9</Color>
     <Color x:Key="ButtonActiveForegroundColor">White</Color>
-
+    <Color x:Key="ButtonActiveBackgroundColor1">#33C6C6C6</Color>
+    <Color x:Key="ButtonActiveForegroundColor1">black</Color>
+    <SolidColorBrush x:Key="ButtonActiveBackgroundBrush">#55E9E9E9</SolidColorBrush>
+    <SolidColorBrush x:Key="ButtonDisabledForegroundBrush">#FFB8B8B8</SolidColorBrush>
 
     <Style TargetType="{x:Type Button}" x:Key="ButtonBaseStyle">
         <Style.Triggers>
@@ -17,8 +20,33 @@
                 <MultiTrigger.EnterActions>
                     <BeginStoryboard>
                         <Storyboard>
-                            <ColorAnimation  Storyboard.TargetProperty="(Button.Background).(SolidColorBrush.Color)" Duration="0:0:0.3" To="{StaticResource ButtonActiveBackgroundColor}"/>
                             <ColorAnimation  Storyboard.TargetProperty="(Button.Foreground).(SolidColorBrush.Color)" Duration="0:0:0.3" To="{StaticResource  ButtonActiveForegroundColor}"/>
+                        </Storyboard>
+                    </BeginStoryboard>
+                </MultiTrigger.EnterActions>
+                <MultiTrigger.ExitActions>
+                    <BeginStoryboard>
+                        <Storyboard>
+                            <ColorAnimation  Storyboard.TargetProperty="(Button.Foreground).(SolidColorBrush.Color)" Duration="0:0:0.3"/>
+                        </Storyboard>
+                    </BeginStoryboard>
+                </MultiTrigger.ExitActions>
+            </MultiTrigger>
+        </Style.Triggers>
+    </Style>
+
+    <Style TargetType="{x:Type Button}" x:Key="ButtonInvertBaseStyle">
+        <Style.Triggers>
+            <MultiTrigger>
+                <MultiTrigger.Conditions>
+                    <Condition Property="IsMouseOver" Value="True"/>
+                    <Condition Property="IsEnabled" Value="True"/>
+                </MultiTrigger.Conditions>
+                <MultiTrigger.EnterActions>
+                    <BeginStoryboard>
+                        <Storyboard>
+                            <ColorAnimation  Storyboard.TargetProperty="(Button.Background).(SolidColorBrush.Color)" Duration="0:0:0.3" To="{StaticResource ButtonActiveBackgroundColor1}"/>
+                            <ColorAnimation  Storyboard.TargetProperty="(Button.Foreground).(SolidColorBrush.Color)" Duration="0:0:0.3" To="{StaticResource  ButtonActiveForegroundColor1}"/>
                         </Storyboard>
                     </BeginStoryboard>
                 </MultiTrigger.EnterActions>
@@ -36,16 +64,57 @@
 
 
     <Style TargetType="{x:Type Button}" x:Key="IconButtonStyle" BasedOn="{StaticResource  ButtonBaseStyle}">
+        <Setter Property="attach:IconElement.ActiveBackground" Value="{StaticResource ButtonActiveBackgroundBrush}"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type Button}">
                     <Border x:Name="bd" Background="{TemplateBinding Background}">
-                        <Path x:Name="icon" 
+                        <Grid>
+                            <Border x:Name="bd1" Opacity="0" Background="{TemplateBinding attach:IconElement.ActiveBackground}"/>
+                            <Path x:Name="icon" 
                               Fill="{TemplateBinding Foreground}"
                               Data="{TemplateBinding attach:IconElement.Geometry}"
                               Height="{TemplateBinding attach:IconElement.Height }" 
                               Width="{TemplateBinding attach:IconElement.Width }" 
                               Stretch="Uniform"/>
+                        </Grid>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Foreground" Value="{StaticResource ButtonDisabledForegroundBrush}"/>
+                        </Trigger>
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="IsMouseOver" Value="True"/>
+                                <Condition Property="IsEnabled" Value="True"/>
+                            </MultiTrigger.Conditions>
+                            <MultiTrigger.EnterActions>
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <DoubleAnimation  Storyboard.TargetName="bd1" Storyboard.TargetProperty="Opacity"  Duration="0:0:0.3" To="0.5"/>
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </MultiTrigger.EnterActions>
+                            <MultiTrigger.ExitActions>
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <DoubleAnimation  Storyboard.TargetName="bd1" Storyboard.TargetProperty="Opacity"  Duration="0:0:0.3" From="0.5"/>
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </MultiTrigger.ExitActions>
+                        </MultiTrigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="{x:Type Button}" x:Key="TextButtonStyle" BasedOn="{StaticResource  ButtonInvertBaseStyle}">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Button}">
+                    <Border x:Name="bd" Background="{TemplateBinding Background}" CornerRadius="3">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" Content="{TemplateBinding Content}"/>
                     </Border>
                 </ControlTemplate>
             </Setter.Value>

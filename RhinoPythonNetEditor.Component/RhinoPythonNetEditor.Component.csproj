@@ -8,24 +8,75 @@
     <TargetExt>.gha</TargetExt>
     <UseWpf>true</UseWpf>
     <PlatformTarget>x64</PlatformTarget>
+    <AllowUnsafeBlocks>False</AllowUnsafeBlocks>
   </PropertyGroup>
-  
+	
   <ItemGroup>
-    <PackageReference Include="Grasshopper" Version="7.13.21348.13001" IncludeAssets="compile;build" />
-    <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.39" />
+    <None Remove="paramparser.py" />
+  </ItemGroup>
+	
+  <ItemGroup>
+    <Content Include="paramparser.py">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   
   <ItemGroup>
+    <PackageReference Include="AvalonEdit" Version="6.1.3.50" />
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="7.0.1" />
+    <PackageReference Include="Grasshopper" Version="7.0.20314.3001" IncludeAssets="compile;build" />
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="2.1.1" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="6.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="2.1.1" />
+    <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.39" />
+    <PackageReference Include="pythonnet" Version="3.0.0" />
+    <PackageReference Include="Rhino.Inside" Version="7.0.0" />
+    <PackageReference Include="System.Collections.Immutable" Version="5.0.0" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <ProjectReference Include="..\RhinoPythonNetEditor.Interface\RhinoPythonNetEditor.Interface.csproj" />
     <ProjectReference Include="..\RhinoPythonNetEditor.Resources\RhinoPythonNetEditor.Resources.csproj" />
     <ProjectReference Include="..\RhinoPythonNetEditor.Styling\RhinoPythonNetEditor.Styling.csproj" />
     <ProjectReference Include="..\RhinoPythonNetEditor.ViewModel\RhinoPythonNetEditor.ViewModel.csproj" />
     <ProjectReference Include="..\RhinoPythonNetEditor.View\RhinoPythonNetEditor.View.csproj" />
   </ItemGroup>
   
+  <ItemGroup>
+    <Reference Include="Microsoft.VisualBasic" />
+    <Reference Include="System.Windows.Forms" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <Compile Update="PythonScriptInstance.cs">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Compile>
+    <Compile Update="Resources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  
+  <ItemGroup>
+    <EmbeddedResource Update="Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  
   <PropertyGroup Condition="$(Configuration) == 'Debug' AND $([MSBuild]::IsOSPlatform(Windows))">
     <StartProgram>C:\Program Files\Rhino 7\System\Rhino.exe</StartProgram>
     <StartArguments></StartArguments>
     <StartAction>Program</StartAction>
+  </PropertyGroup>
+  
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <Optimize>False</Optimize>
+  </PropertyGroup>
+  
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <Optimize>False</Optimize>
   </PropertyGroup>
 
 </Project>

@@ -33,8 +33,20 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="CommunityToolkit.Mvvm, Version=8.0.0.0, Culture=neutral, PublicKeyToken=4aff67a105548ee2, processorArchitecture=MSIL">
-      <HintPath>..\packages\CommunityToolkit.Mvvm.8.0.0\lib\netstandard2.0\CommunityToolkit.Mvvm.dll</HintPath>
+    <Reference Include="CommunityToolkit.Mvvm, Version=7.0.0.0, Culture=neutral, PublicKeyToken=4aff67a105548ee2, processorArchitecture=MSIL">
+      <HintPath>..\packages\CommunityToolkit.Mvvm.7.0.1\lib\netstandard2.0\CommunityToolkit.Mvvm.dll</HintPath>
+    </Reference>
+    <Reference Include="Eto, Version=2.5.0.0, Culture=neutral, PublicKeyToken=552281e97c755530, processorArchitecture=MSIL">
+      <HintPath>..\packages\RhinoCommon.7.0.20314.3001\lib\net45\Eto.dll</HintPath>
+    </Reference>
+    <Reference Include="GH_IO, Version=7.0.20314.3000, Culture=neutral, PublicKeyToken=6a29997d2e6b4f97, processorArchitecture=MSIL">
+      <HintPath>..\packages\Grasshopper.7.0.20314.3001\lib\net45\GH_IO.dll</HintPath>
+    </Reference>
+    <Reference Include="Grasshopper, Version=7.0.20314.3000, Culture=neutral, PublicKeyToken=dda4f5ec2cd80803, processorArchitecture=MSIL">
+      <HintPath>..\packages\Grasshopper.7.0.20314.3001\lib\net45\Grasshopper.dll</HintPath>
+    </Reference>
+    <Reference Include="ICSharpCode.AvalonEdit, Version=6.1.3.50, Culture=neutral, PublicKeyToken=9cc39be672370310, processorArchitecture=MSIL">
+      <HintPath>..\packages\AvalonEdit.6.1.3.50\lib\net45\ICSharpCode.AvalonEdit.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Bcl.AsyncInterfaces, Version=6.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Bcl.AsyncInterfaces.6.0.0\lib\net461\Microsoft.Bcl.AsyncInterfaces.dll</HintPath>
@@ -45,8 +57,17 @@
     <Reference Include="Microsoft.Extensions.DependencyInjection.Abstractions, Version=6.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Extensions.DependencyInjection.Abstractions.6.0.0\lib\net461\Microsoft.Extensions.DependencyInjection.Abstractions.dll</HintPath>
     </Reference>
+    <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.13.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
+    <Reference Include="Rhino.UI, Version=7.0.20314.3000, Culture=neutral, PublicKeyToken=552281e97c755530, processorArchitecture=MSIL">
+      <HintPath>..\packages\RhinoCommon.7.0.20314.3001\lib\net45\Rhino.UI.dll</HintPath>
+    </Reference>
+    <Reference Include="RhinoCommon, Version=7.0.20314.3000, Culture=neutral, PublicKeyToken=552281e97c755530, processorArchitecture=MSIL">
+      <HintPath>..\packages\RhinoCommon.7.0.20314.3001\lib\net45\RhinoCommon.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Buffers, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Buffers.4.5.1\lib\net461\System.Buffers.dll</HintPath>
@@ -69,6 +90,7 @@
     <Reference Include="System.Threading.Tasks.Extensions, Version=4.2.0.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Threading.Tasks.Extensions.4.5.4\lib\net461\System.Threading.Tasks.Extensions.dll</HintPath>
     </Reference>
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -81,9 +103,24 @@
     <Compile Include="DebugViewModel.cs" />
     <Compile Include="MenuBarViewModel.cs" />
     <Compile Include="Messages\AllBreakPointInformationsMessage.cs" />
-    <Compile Include="Messages\CodeRequestMessage.cs" />
+    <Compile Include="Messages\ClearSearchMessage.cs" />
     <Compile Include="Messages\DebugRequestMessage.cs" />
+    <Compile Include="Messages\DebugSettingDialogRequestMessage.cs" />
+    <Compile Include="Messages\ConfirmDialogRequestMessage.cs" />
+    <Compile Include="Messages\EditorEditMessage.cs" />
+    <Compile Include="Messages\MarkMessage.cs" />
+    <Compile Include="Messages\MessageDialogRequestMessage.cs" />
+    <Compile Include="Messages\NoteRequestMessage.cs" />
+    <Compile Include="Messages\NotifySearchMessage.cs" />
+    <Compile Include="Messages\PipMessage.cs" />
+    <Compile Include="Messages\ReplaceRequestMessage.cs" />
+    <Compile Include="Messages\ScrollToMessage.cs" />
+    <Compile Include="Messages\SearchRequestMessage.cs" />
+    <Compile Include="Messages\SetCodeMessage.cs" />
+    <Compile Include="Messages\SetDocumentMessage.cs" />
     <Compile Include="Messages\StepMessage.cs" />
+    <Compile Include="Messages\SyntaxHintChangedMessage.cs" />
+    <Compile Include="OutputViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TerminalViewModel.cs" />
     <Compile Include="TextEditorViewModel.cs" />
@@ -98,17 +135,23 @@
       <Project>{D295E2F0-FB3A-4B51-BE94-C81C59CECFC0}</Project>
       <Name>RhinoPythonNetEditor.DataModels</Name>
     </ProjectReference>
+    <ProjectReference Include="..\RhinoPythonNetEditor.Interface\RhinoPythonNetEditor.Interface.csproj">
+      <Project>{312606DF-E1F0-4FE1-9129-8141381E7151}</Project>
+      <Name>RhinoPythonNetEditor.Interface</Name>
+    </ProjectReference>
     <ProjectReference Include="..\RhinoPythonNetEditor.Managers\RhinoPythonNetEditor.Managers.csproj">
       <Project>{61a41698-e18e-425c-99e8-7fb46814398d}</Project>
       <Name>RhinoPythonNetEditor.Managers</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <Import Project="..\packages\CommunityToolkit.Mvvm.8.0.0\build\netstandard2.0\CommunityToolkit.Mvvm.targets" Condition="Exists('..\packages\CommunityToolkit.Mvvm.8.0.0\build\netstandard2.0\CommunityToolkit.Mvvm.targets')" />
+  <Import Project="..\packages\RhinoCommon.7.0.20314.3001\build\RhinoCommon.targets" Condition="Exists('..\packages\RhinoCommon.7.0.20314.3001\build\RhinoCommon.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
       <ErrorText>这台计算机上缺少此项目引用的 NuGet 程序包。使用“NuGet 程序包还原”可下载这些程序包。有关更多信息，请参见 http://go.microsoft.com/fwlink/?LinkID=322105。缺少的文件是 {0}。</ErrorText>
     </PropertyGroup>
-    <Error Condition="!Exists('..\packages\CommunityToolkit.Mvvm.8.0.0\build\netstandard2.0\CommunityToolkit.Mvvm.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\CommunityToolkit.Mvvm.8.0.0\build\netstandard2.0\CommunityToolkit.Mvvm.targets'))" />
+    <Error Condition="!Exists('..\packages\RhinoCommon.7.0.20314.3001\build\RhinoCommon.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\RhinoCommon.7.0.20314.3001\build\RhinoCommon.targets'))" />
+    <Error Condition="!Exists('..\packages\Grasshopper.7.0.20314.3001\build\Grasshopper.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Grasshopper.7.0.20314.3001\build\Grasshopper.targets'))" />
   </Target>
+  <Import Project="..\packages\Grasshopper.7.0.20314.3001\build\Grasshopper.targets" Condition="Exists('..\packages\Grasshopper.7.0.20314.3001\build\Grasshopper.targets')" />
 </Project>

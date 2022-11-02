@@ -17,7 +17,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RhinoPythonNetEditor.DataMo
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RhinoPythonNetEditor.Managers", "RhinoPythonNetEditor.Managers\RhinoPythonNetEditor.Managers.csproj", "{61A41698-E18E-425C-99E8-7FB46814398D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RhinoPythonNetEditor.Component", "RhinoPythonNetEditor.Component\RhinoPythonNetEditor.Component.csproj", "{2340E8DD-8F30-4FCC-8DDB-0F6FFDE73BD8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RhinoPythonNetEditor.Component", "RhinoPythonNetEditor.Component\RhinoPythonNetEditor.Component.csproj", "{2340E8DD-8F30-4FCC-8DDB-0F6FFDE73BD8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RhinoPythonNetEditor.CustomControls", "RhinoPythonNetEditor.CustomControls\RhinoPythonNetEditor.CustomControls.csproj", "{3E401E80-504F-4482-AAEF-FD7AF317F22F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RhinoPythonNetEditor.Interface", "RhinoPythonNetEditor.Interface\RhinoPythonNetEditor.Interface.csproj", "{312606DF-E1F0-4FE1-9129-8141381E7151}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -57,6 +61,14 @@ Global
 		{2340E8DD-8F30-4FCC-8DDB-0F6FFDE73BD8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2340E8DD-8F30-4FCC-8DDB-0F6FFDE73BD8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2340E8DD-8F30-4FCC-8DDB-0F6FFDE73BD8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3E401E80-504F-4482-AAEF-FD7AF317F22F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3E401E80-504F-4482-AAEF-FD7AF317F22F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3E401E80-504F-4482-AAEF-FD7AF317F22F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3E401E80-504F-4482-AAEF-FD7AF317F22F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{312606DF-E1F0-4FE1-9129-8141381E7151}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{312606DF-E1F0-4FE1-9129-8141381E7151}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{312606DF-E1F0-4FE1-9129-8141381E7151}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{312606DF-E1F0-4FE1-9129-8141381E7151}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

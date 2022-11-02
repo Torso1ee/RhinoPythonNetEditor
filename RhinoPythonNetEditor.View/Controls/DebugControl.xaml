@@ -5,11 +5,14 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:RhinoPythonNetEditor.View.Controls"
              xmlns:attach="clr-namespace:RhinoPythonNetEditor.Styling.Attach;assembly=RhinoPythonNetEditor.Styling"
+            xmlns:viewModels="clr-namespace:RhinoPythonNetEditor.ViewModel;assembly=RhinoPythonNetEditor.ViewModel"
+             xmlns:tools="clr-namespace:RhinoPythonNetEditor.View.Tools"
              mc:Ignorable="d" 
-              DataContext="{Binding DebugViewModel, Source={StaticResource Locator}}"
+              d:DataContext="{d:DesignInstance {x:Type viewModels:DebugViewModel}}"
              Height="30" Width="150">
     <UserControl.Resources>
         <ResourceDictionary>
+            <tools:BindingProxy x:Key="proxy" Data="{Binding}"/>
             <SolidColorBrush x:Key="DebugButtonBrush1" Color="#FF74BDFD" x:Shared="False"/>
             <SolidColorBrush x:Key="DebugButtonBrush2" Color="#FF88D084" x:Shared="False"/>
             <SolidColorBrush x:Key="DebugButtonBrush3" Color="#FFF0856F" x:Shared="False"/>
@@ -34,7 +37,7 @@
     <UserControl.Effect>
         <StaticResource ResourceKey="DefaultDropShadowEffect"/>
     </UserControl.Effect>
-    <Border Background="{StaticResource EditorBackgroundBrush}">
+    <Border Background="{StaticResource EditorBackgroundBrush}" DataContext="{Binding Data.DebugViewModel, Source={StaticResource proxy}}">
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
             <Button  IsEnabled="{Binding ConfigDone}">
                 <Button.Style >

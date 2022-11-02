@@ -1,4 +1,9 @@
-﻿using System;
+﻿using CommunityToolkit.Mvvm.Messaging;
+using ICSharpCode.AvalonEdit;
+using RhinoPythonNetEditor.View.Tools;
+using RhinoPythonNetEditor.ViewModel;
+using RhinoPythonNetEditor.ViewModel.Messages;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -25,5 +30,6 @@ namespace RhinoPythonNetEditor.View.Controls
             InitializeComponent();
         }
 
+      
     }
 }

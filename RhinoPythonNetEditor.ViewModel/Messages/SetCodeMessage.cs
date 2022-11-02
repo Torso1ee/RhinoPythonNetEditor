@@ -7,7 +7,10 @@ using System.Threading.Tasks;
 
 namespace RhinoPythonNetEditor.ViewModel.Messages
 {
-    public class CodeRequestMessage:RequestMessage<string>
+    public class SetCodeMessage : ValueChangedMessage<string>
     {
+        public SetCodeMessage(string value) : base(value)
+        {
+        }
     }
 }

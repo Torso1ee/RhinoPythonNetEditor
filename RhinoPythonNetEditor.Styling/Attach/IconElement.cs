@@ -30,6 +30,18 @@ namespace RhinoPythonNetEditor.Styling.Attach
 
         public static void SetWidth(DependencyObject dependencyObject, double value) => dependencyObject.SetValue(WidthProperty, value);
 
+        public static readonly DependencyProperty AttachedKeyProperty = DependencyProperty.RegisterAttached("AttachedKey", typeof(string), typeof(IconElement), new PropertyMetadata(""));
+
+        public static string GetAttachedKey(DependencyObject dependencyObject) => (string)dependencyObject.GetValue(AttachedKeyProperty);
+
+        public static void SetAttachedKey(DependencyObject dependencyObject, string value) => dependencyObject.SetValue(AttachedKeyProperty, value);
+
+        public static readonly DependencyProperty ActiveBackgroundProperty = DependencyProperty.RegisterAttached("ActiveBackground", typeof(SolidColorBrush), typeof(IconElement), new PropertyMetadata(Brushes.White));
+
+        public static SolidColorBrush GetActiveBackground(DependencyObject dependencyObject) => (SolidColorBrush)dependencyObject.GetValue(ActiveBackgroundProperty);
+
+        public static void SetActiveBackground(DependencyObject dependencyObject, SolidColorBrush value) => dependencyObject.SetValue(ActiveBackgroundProperty, value);
+
 
     }
 }

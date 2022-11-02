@@ -1,0 +1,41 @@
+﻿<UserControl x:Class="RhinoPythonNetEditor.View.Controls.HintControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:RhinoPythonNetEditor.View.Controls"
+            xmlns:model="clr-namespace:RhinoPythonNetEditor.DataModels.Business;assembly=RhinoPythonNetEditor.DataModels"
+             xmlns:attach="clr-namespace:RhinoPythonNetEditor.Styling.Attach;assembly=RhinoPythonNetEditor.Styling"
+           xmlns:tools="clr-namespace:RhinoPythonNetEditor.View.Tools"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <UserControl.Resources>
+
+        <ResourceDictionary>
+            <tools:BindingProxy x:Key="proxy" Data="{Binding}"/>
+            <Style TargetType="TextBlock">
+                <Setter Property="Foreground" Value="{StaticResource HintBrush}"/>
+                <Setter Property="Height" Value="15"/>
+                <Setter Property="FontFamily" Value="Consolas"/>
+                <Setter Property="HorizontalAlignment" Value="Left"/>
+            </Style>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/RhinoPythonNetEditor.View;component/ViewDictionary.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </UserControl.Resources>
+    <ScrollViewer Margin="5"  DataContext="{Binding Data.OutputViewModel, Source={StaticResource proxy}}" >
+        <ItemsControl  ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Auto" Margin="10" Background="{x:Null}" ItemsSource="{Binding  SyntaxHints}" BorderBrush="{x:Null}">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate DataType="{x:Type model:SyntaxInfo}" >
+                    <DockPanel Margin="3" HorizontalAlignment="Left">
+                        <Path DockPanel.Dock="Left" Height="15" Width="15" Data="{Binding Servity, Converter={StaticResource ServityToGeometryConverter}}" Fill="{Binding Servity, Converter={StaticResource ServityToColorConverter}}" Stretch="Uniform"/>
+                        <TextBlock Margin="5,0" DockPanel.Dock="Right" Text="{Binding  Range}" Foreground="{StaticResource MenuItemTextBrush}"/>
+                        <TextBlock Margin="5,0" DockPanel.Dock="Right" Text="{Binding Source, StringFormat={}(From {0})}" Foreground="{StaticResource MenuItemTextBrush}" />
+                        <TextBlock Margin="5,0" DockPanel.Dock="Right"  Text="{Binding Message}" TextTrimming="CharacterEllipsis"/>
+                    </DockPanel>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+    </ScrollViewer>
+</UserControl>

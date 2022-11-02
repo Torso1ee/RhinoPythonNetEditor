@@ -55,6 +55,10 @@
     <Compile Include="Attach\ScrollViewerExtension.cs" />
     <Compile Include="Behaviors\WindowAeroStyleBehavior.cs" />
     <Compile Include="Converters\InvertBooleanConverter.cs" />
+    <Compile Include="Converters\KindToColorConverter.cs" />
+    <Compile Include="Converters\KindToGeometryConverter.cs" />
+    <Compile Include="Converters\ServityToColorConverter.cs" />
+    <Compile Include="Converters\ServityToGeometryConverter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -87,6 +91,14 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Styles\CheckBox.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Styles\Dialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Styles\Effect.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -107,7 +119,20 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Styles\TextBox.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\RhinoPythonNetEditor.CustomControls\RhinoPythonNetEditor.CustomControls.csproj">
+      <Project>{3e401e80-504f-4482-aaef-fd7af317f22f}</Project>
+      <Name>RhinoPythonNetEditor.CustomControls</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\RhinoPythonNetEditor.Resources\RhinoPythonNetEditor.Resources.csproj">
+      <Project>{cae904b4-4dff-4291-82b1-584021351fb2}</Project>
+      <Name>RhinoPythonNetEditor.Resources</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

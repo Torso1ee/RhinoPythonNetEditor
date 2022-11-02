@@ -1,0 +1,100 @@
+﻿<UserControl x:Class="RhinoPythonNetEditor.View.Controls.ReplaceControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+             xmlns:vm="clr-namespace:RhinoPythonNetEditor.ViewModel;assembly=RhinoPythonNetEditor.ViewModel"
+             xmlns:attach="clr-namespace:RhinoPythonNetEditor.Styling.Attach;assembly=RhinoPythonNetEditor.Styling"
+             xmlns:local="clr-namespace:RhinoPythonNetEditor.View.Controls"
+             IsVisibleChanged="UserControl_IsVisibleChanged"
+             Loaded="UserControl_Loaded"
+             d:DataContext="{d:DesignInstance vm:TextEditorViewModel}"
+             mc:Ignorable="d" >
+    <i:Interaction.Behaviors>
+        <i:MouseDragElementBehavior ConstrainToParentBounds="True"/>
+    </i:Interaction.Behaviors>
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <SolidColorBrush x:Key="BorderBrush" Color="#FF444444"></SolidColorBrush>
+            <SolidColorBrush x:Key="ResultBrush" Color="#FFF48771"></SolidColorBrush>
+            <Style  TargetType="CheckBox" BasedOn="{StaticResource ActiveBackgroundCheckBoxStyle }">
+                <Setter Property="Height" Value="15"/>
+                <Setter Property="Width" Value="15"/>
+                <EventSetter Event="Checked" Handler="CheckBox_Checked"/>
+                <EventSetter Event="Unchecked" Handler="CheckBox_Checked"/>
+            </Style>
+            <Style TargetType="Button" BasedOn="{StaticResource IconButtonStyle}">
+                <Setter Property="Height" Value="20"/>
+                <Setter Property="Width" Value="20"/>
+                <Setter Property="attach:IconElement.Height" Value="13"/>
+                <Setter Property="attach:IconElement.Width" Value="13"/>
+                <Setter Property="Background" Value="Transparent"/>
+                <Setter Property="Foreground" Value="{StaticResource ActiveBrush}"/>
+            </Style>
+            <Style TargetType="TextBox" BasedOn="{StaticResource TextBoxBaseStyle}">
+                <Setter Property="Foreground" Value="{StaticResource ActiveBrush}"/>
+                <Setter Property="HorizontalContentAlignment" Value="Left"/>
+            </Style>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/RhinoPythonNetEditor.View;component/ViewDictionary.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </UserControl.Resources>
+    <Border Background="{StaticResource EditorBackgroundBrush}">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition  Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="20"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <CheckBox Margin="2" IsChecked="{Binding ShowReplace}" HorizontalAlignment="Center" Grid.RowSpan="2" >
+                <CheckBox.Style>
+                    <Style TargetType="CheckBox" BasedOn="{StaticResource SimpleCheckBoxStyle}">
+                        <Setter Property="attach:IconElement.Geometry" Value="{StaticResource CollapseGeometry}"/>
+                        <Style.Triggers>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter Property="attach:IconElement.Geometry" Value="{StaticResource  ExpendGeometry}"/>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </CheckBox.Style>
+            </CheckBox>
+            <Border Margin="0,4,2,4"  Width="150"  Background="{StaticResource BorderBrush}" Grid.Column="1" >
+                <DockPanel>
+                    <CheckBox ToolTip="Use regex" Margin="1,0" DockPanel.Dock="Right" IsChecked="{Binding UseRe}" attach:IconElement.Geometry="{StaticResource SearchGeometry3}"/>
+                    <CheckBox ToolTip="Whole word match" Margin="1,0" DockPanel.Dock="Right"  IsChecked="{Binding AllMatch}" attach:IconElement.Geometry="{StaticResource SearchGeometry2}"/>
+                    <CheckBox ToolTip="Case sensitive" Margin="1,0" DockPanel.Dock="Right" IsChecked="{Binding ClarifyCase}" attach:IconElement.Geometry="{StaticResource SearchGeometry1}"/>
+                    <TextBox  x:Name="input" Height="20" Text="{Binding SearchText}"  >
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="TextChanged">
+                                <i:CallMethodAction  TargetObject="{Binding}"  MethodName="Search"/>
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                    </TextBox>
+                </DockPanel>
+            </Border>
+            <Border   Visibility="{Binding ShowReplace, Converter= {StaticResource BoolToVisibility}}"  Margin="0,0,2,4"  Grid.Row="1" Width="150"  Background="{StaticResource BorderBrush}" Grid.Column="1" >
+                <DockPanel>
+                    <!--<CheckBox  Margin="1,0" DockPanel.Dock="Right"  attach:IconElement.Geometry="{StaticResource SearchGeometry4}"/>-->
+                    <TextBox Text="{Binding ReplaceText}" Height="20" />
+                </DockPanel>
+            </Border>
+            <StackPanel Margin="1,4,4,4" Grid.Column="2" Orientation="Horizontal">
+                <TextBlock Foreground="{StaticResource ResultBrush}" Margin="1,0"  Text="{Binding Result}" VerticalAlignment="Center" MinWidth="80" Width="Auto"/>
+                <Button Margin="1,0" Command="{Binding Up}" attach:IconElement.Geometry="{StaticResource PrevGemeometry}"/>
+                <Button Margin="1,0" Command="{Binding Down}"  attach:IconElement.Geometry="{StaticResource NextGemeometry}"/>
+                <!--<CheckBox IsChecked="{Binding SelectionOnly}" Margin="1,0" attach:IconElement.Height="13" attach:IconElement.Width="13"  Height="20" Width="20" DockPanel.Dock="Right" attach:IconElement.Geometry="{StaticResource ContextGeometry}"/>-->
+                <Button  Margin="1,0" Command="{Binding Close}" attach:IconElement.Geometry="{StaticResource CloseGeometry}"/>
+            </StackPanel>
+            <StackPanel  Visibility="{Binding ShowReplace, Converter= {StaticResource BoolToVisibility}}"  Margin="1,0,4,4" Grid.Row="1" Grid.Column="2" Orientation="Horizontal">
+                <Button ToolTip="Replace Current" Command="{Binding Replace}" Margin="1,0"  attach:IconElement.Geometry="{StaticResource ReplGeometry}"/>
+                <Button ToolTip="Replace All" Command="{Binding ReplaceAll}" Margin="1,0"  attach:IconElement.Geometry="{StaticResource ReplAllGeometry}"/>
+            </StackPanel>
+        </Grid>
+    </Border>
+</UserControl>

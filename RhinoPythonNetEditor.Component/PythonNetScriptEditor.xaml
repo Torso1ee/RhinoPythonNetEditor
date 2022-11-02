@@ -5,20 +5,32 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:RhinoPythonNetEditor.Component"
         xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
-        xmlns:viewModel="clr-namespace:RhinoPythonNetEditor.ViewModel;assembly=RhinoPythonNetEditor.ViewModel"
+        xmlns:vm="clr-namespace:RhinoPythonNetEditor.ViewModel;assembly=RhinoPythonNetEditor.ViewModel"
         xmlns:commands="clr-namespace:RhinoPythonNetEditor.View.Commands;assembly=RhinoPythonNetEditor.View"
         xmlns:View="clr-namespace:RhinoPythonNetEditor.View.Pages;assembly=RhinoPythonNetEditor.View"
         xmlns:behaviors="clr-namespace:RhinoPythonNetEditor.Styling.Behaviors;assembly=RhinoPythonNetEditor.Styling"
         mc:Ignorable="d"
+        Topmost="True"
+        MinWidth="400"
+        PreviewMouseDown="Window_PreviewMouseDown"
+        Loaded="Window_Loaded"
+        ShowInTaskbar="False"
         SnapsToDevicePixels="True"
         Background="#99D3D3D3"
         Title="MainWindow" Height="800" Width="800">
-    <Window.Resources>
-        <viewModel:ViewModelLocator x:Key="Locator"/>
-    </Window.Resources>
     <i:Interaction.Behaviors>
         <behaviors:WindowAeroStyleBehavior x:Name="aero" Enabled="True"/>
     </i:Interaction.Behaviors>
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/RhinoPythonNetEditor.View;component/ViewDictionary.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Window.Resources>
+    <Window.DataContext>
+        <vm:ViewModelLocator/>
+    </Window.DataContext>
     <Window.Template>
         <ControlTemplate TargetType="{x:Type Window}">
             <Border BorderBrush="{TemplateBinding Background}"  Background="{TemplateBinding Background}" BorderThickness="0,1,0,0">
@@ -32,6 +44,6 @@
         <WindowChrome UseAeroCaptionButtons="false" NonClientFrameEdges="None"  GlassFrameThickness="0,1,0,0" CaptionHeight="1" />
     </WindowChrome.WindowChrome>
     <Grid>
-        <View:CodeEditor  x:Name="editor"/>
+        <View:CodeEditor  HostInRhino="True" x:Name="editor"/>
     </Grid>
 </Window>

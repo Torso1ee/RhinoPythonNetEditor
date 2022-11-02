@@ -3,8 +3,13 @@
                     xmlns:attach="clr-namespace:RhinoPythonNetEditor.Styling.Attach">
 
     <!--Brush-->
-    <Color  x:Key="MenuItemActiveColor">#19E9E9E9</Color> 
+    <Color  x:Key="MenuItemActiveColor">#19E9E9E9</Color>
+
+
+
     <SolidColorBrush  x:Key="MenuItemTextActiveBrush" Color="#FFC6C6C6"/>
+    <SolidColorBrush Color="#CC3F4040" x:Key="MenuBarBackgroundBrush"/>
+
     <LinearGradientBrush x:Key="MenuItemIconBrush"  EndPoint="0.5,1" StartPoint="0.5,0">
         <GradientStop Color="White"/>
         <GradientStop Color="Gray"  Offset="1"/>
@@ -34,19 +39,31 @@
             </Trigger>
         </Style.Triggers>
     </Style>
-    
+
+
+
     <Style x:Key="MenuItemActiveStyle" TargetType="{x:Type MenuItem}" BasedOn="{StaticResource MenuItemBaseStyle}" >
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type MenuItem}">
                     <Grid  Height="{TemplateBinding Height}" Width="{TemplateBinding Width}">
                         <Border x:Name="bd" Background="{TemplateBinding Background}" CornerRadius="5" Margin="2" />
-                        <ContentPresenter x:Name="presenter" HorizontalAlignment="Center" VerticalAlignment="Center" ContentSource="Header"/>
+                        <ContentPresenter x:Name="presenter" Margin="5" HorizontalAlignment="Center" VerticalAlignment="Center"  ContentSource="Header"/>
+                        <Popup x:Name="PART_Popup" AllowsTransparency="true" Focusable="false" IsOpen="{Binding IsSubmenuOpen, RelativeSource={RelativeSource TemplatedParent}}" HorizontalOffset="5" Placement="Bottom" PopupAnimation="Fade" >
+                            <Border x:Name="SubMenuBorder" Background="{StaticResource MenuBarBackgroundBrush}" Effect="{DynamicResource CmdDropShadowEffect}"  Margin="5"  CornerRadius="2" Padding="2" >
+                                <ScrollViewer x:Name="SubMenuScrollViewer">
+                                    <Grid RenderOptions.ClearTypeHint="Enabled">
+                                        <ItemsPresenter x:Name="ItemsPresenter"  KeyboardNavigation.DirectionalNavigation="Cycle" Grid.IsSharedSizeScope="true" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" KeyboardNavigation.TabNavigation="Cycle"/>
+                                    </Grid>
+                                </ScrollViewer>
+                            </Border>
+                        </Popup>
                     </Grid>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
     </Style>
+
 
     <Style x:Key="MenuItemActiveWithIconStyle" TargetType="{x:Type MenuItem}" BasedOn="{StaticResource MenuItemBaseStyle}"  >
         <Setter Property="Template">
@@ -54,13 +71,43 @@
                 <ControlTemplate TargetType="{x:Type MenuItem}">
                     <Grid  Height="{TemplateBinding Height}" Width="{TemplateBinding Width}">
                         <Border x:Name="bd" Background="{TemplateBinding Background}" CornerRadius="5" Margin="2" />
-                        <Grid HorizontalAlignment="Center">
+                        <Grid HorizontalAlignment="Center" Margin="5,0"  >
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto"/>
                                 <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
                             <Path x:Name="p" Data="{TemplateBinding attach:IconElement.Geometry}" Height="{TemplateBinding attach:IconElement.Height}" Width="{TemplateBinding attach:IconElement.Width}" Stretch="Uniform"/>
                             <ContentPresenter Grid.Column="1" Margin="4" x:Name="presenter" HorizontalAlignment="Center" VerticalAlignment="Center" ContentSource="Header"/>
+                        </Grid>
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter TargetName="p" Property="Fill" Value="{StaticResource MenuItemIconUnactiveBrush}"/>
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="True">
+                            <Setter TargetName="p" Property="Fill" Value="{StaticResource MenuItemIconBrush }"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="MenuItemActiveWithIconAndKeyStyle" TargetType="{x:Type MenuItem}" BasedOn="{StaticResource MenuItemBaseStyle}"  >
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type MenuItem}">
+                    <Grid  Height="{TemplateBinding Height}" Width="{TemplateBinding Width}">
+                        <Border x:Name="bd" Background="{TemplateBinding Background}" CornerRadius="5" Margin="2" />
+                        <Grid Margin="5,0"  >
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
+                            <Path x:Name="p" Data="{TemplateBinding attach:IconElement.Geometry}" Height="{TemplateBinding attach:IconElement.Height}" Width="{TemplateBinding attach:IconElement.Width}" Stretch="Uniform"/>
+                            <ContentPresenter Grid.Column="1" Margin="4" x:Name="presenter" HorizontalAlignment="Center" VerticalAlignment="Center" ContentSource="Header"/>
+                            <TextBlock  HorizontalAlignment="Right" VerticalAlignment="Center" Grid.Column="2" Text="{TemplateBinding attach:IconElement.AttachedKey}"/>
                         </Grid>
                     </Grid>
                     <ControlTemplate.Triggers>
