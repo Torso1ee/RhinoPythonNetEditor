@@ -164,6 +164,7 @@ namespace RhinoPythonNetEditor.ViewModel
 
         private async void DebugManager_DebugEnd(object sender, EventArgs e)
         {
+            Locator.TerminalViewModel.StopPSInstance();
             var start = restart;
             ConfigDone = false;
             Stopped = false;

@@ -66,6 +66,11 @@ namespace RhinoPythonNetEditor.Managers
             PSInstance.Stop();
         }
 
+        public void Stop()
+        {
+            PSInstance?.Stop();
+        }
+
 
         void Col_DataAdded(object sender, DataAddedEventArgs e)
         {
