@@ -168,7 +168,7 @@ namespace RhinoPythonNetEditor.Component
             }
             if (!PythonLibAdded)
             {
-                ScriptSource.References.Add(AssemblyPath + @"\Python.Runtime.dll");
+                if (!ScriptSource.References.Contains(AssemblyPath + @"\Python.Runtime.dll")) ScriptSource.References.Add(AssemblyPath + @"\Python.Runtime.dll");
                 PythonLibAdded = true;
             }
             if (Locator != null) Locator.OutputViewModel.Results.Clear();
@@ -857,11 +857,13 @@ namespace RhinoPythonNetEditor.Component
 
         public override bool Read(GH_IReader reader)
         {
+            var refs = reader.GetString("reference");
+            var exRefs = reader.GetString("additionalReference");
             ScriptSource.PythonCode = reader.GetString("code");
             ScriptSource.References.Clear();
-            ScriptSource.References.AddRange(reader.GetString("reference").Split('\n'));
+            if (refs != "" && refs != null) ScriptSource.References.AddRange(refs.Split('\n'));
             ScriptSource.AdditionalReferences.Clear();
-            ScriptSource.AdditionalReferences.AddRange(reader.GetString("additionalReference").Split('\n'));
+            if (exRefs != "" && exRefs != null) ScriptSource.AdditionalReferences.AddRange(exRefs.Split('\n'));
             ScriptAssembly = null;
             return base.Read(reader);
         }

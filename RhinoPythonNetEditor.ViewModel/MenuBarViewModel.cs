@@ -34,7 +34,7 @@ namespace RhinoPythonNetEditor.ViewModel
 
         public ICommand OpenWebsite => new RelayCommand<string>(uri =>
         {
-            Process.Start(new ProcessStartInfo("cmd", $"/c start {uri}"));
+            Process.Start(new ProcessStartInfo("cmd", $"/c start {uri}") { CreateNoWindow = true, UseShellExecute = false });
         });
 
         private int port = 1080;

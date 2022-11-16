@@ -7,6 +7,7 @@
              xmlns:tools="clr-namespace:RhinoPythonNetEditor.View.Tools"
              xmlns:attach="clr-namespace:RhinoPythonNetEditor.Styling.Attach;assembly=RhinoPythonNetEditor.Styling"
              mc:Ignorable="d" 
+             SnapsToDevicePixels="True"
              Width="500" Height="Auto">
     <UserControl.Resources>
         <ResourceDictionary>
