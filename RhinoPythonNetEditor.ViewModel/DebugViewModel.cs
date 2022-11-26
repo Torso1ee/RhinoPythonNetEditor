@@ -156,8 +156,12 @@ namespace RhinoPythonNetEditor.ViewModel
             debugManager.Continued += DebugManager_Continued;
             if (Messenger.Send(new DebugRequestMessage { Port = port, Script = script }))
             {
-                IsDebuging = true;
-                debugManager.Start(infos.Select(i => i + LineOffset).ToList(), file);
+                //IsDebuging = debugManager.Start(infos.Select(i => i + LineOffset).ToList(), file);
+                if (!IsDebuging)
+                {
+                    await Locator.Messenger.Send(new MessageDialogRequestMessage { Message = $"Failed to initialize debugger. Please try again!", Title = "Error" });
+                    return;
+                }
             }
 
         }

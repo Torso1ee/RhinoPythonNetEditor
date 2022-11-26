@@ -50,14 +50,17 @@ namespace RhinoPythonNetEditor.Managers
         public int AdapterPort { get; set; }
 
 
-        public void Start(List<int> indicis, string file)
+        public bool Start(List<int> indicis, string file)
         {
             Indicis = indicis.ToList();
             FilePath = file;
-            InitializeHost();
-            Client.SendRequest(new InitializeRequest() { }, e => { });
-            Client.SendRequest(new AttachRequest() { _Restart = false }, arg => { });
-
+            if (InitializeHost())
+            {
+                Client.SendRequest(new InitializeRequest() { }, e => { });
+                Client.SendRequest(new AttachRequest() { _Restart = false }, arg => { });
+                return true;
+            }
+            return false;
         }
 
         public void Continue()
@@ -104,15 +107,28 @@ namespace RhinoPythonNetEditor.Managers
             Client.SendRequest(req, (a, e) => { });
         }
 
-        private void InitializeHost()
+        private bool InitializeHost()
         {
+            if(TcpClient != null)
+            {
+                TcpClient.Close();
+            }
             TcpClient = new TcpClient();
-            TcpClient.Connect(IPAddress.Loopback.ToString(), AdapterPort);
-            var stream = new NetworkStream(TcpClient.Client);
-            Client = new DebugProtocolHost(stream, stream);
-            Client.EventReceived += Client_EventReceived;
-            Client.LogMessage += Client_LogMessage;
-            Client.Run();
+            try
+            {
+                TcpClient.Connect(IPAddress.Loopback.ToString(), AdapterPort);
+            }
+            catch { }
+            if (TcpClient.Connected)
+            {
+                var stream = new NetworkStream(TcpClient.Client);
+                Client = new DebugProtocolHost(stream, stream);
+                Client.EventReceived += Client_EventReceived;
+                Client.LogMessage += Client_LogMessage;
+                Client.Run();
+                return true;
+            }
+            return false;
         }
 
         private void Client_LogMessage(object sender, LogEventArgs e)
