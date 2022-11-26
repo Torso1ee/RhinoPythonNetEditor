@@ -149,21 +149,21 @@ namespace RhinoPythonNetEditor.ViewModel
             }
             ImportCodeFile($@"{dir}itemp.py");
             var file = $@"{dir}temp.py";
-            var script = $@"{PythonPath}  -u -m debugpy --listen localhost:{port} --wait-for-client --log-to {dir}logs ""{file}""";
+            //var script = $@"{PythonPath}  -u -m debugpy --listen localhost:{port} --wait-for-client --log-to {dir}logs ""{file}""";
+            var script = $@"{PythonPath}  -u -m debugpy --listen localhost:{port} --wait-for-client ""{file}""";
             debugManager.DebugEnd += DebugManager_DebugEnd;
             debugManager.Stopped += DebugManager_Stopped;
             debugManager.ConfigDone += (s, e) => ConfigDone = true;
             debugManager.Continued += DebugManager_Continued;
             if (Messenger.Send(new DebugRequestMessage { Port = port, Script = script }))
             {
-                //IsDebuging = debugManager.Start(infos.Select(i => i + LineOffset).ToList(), file);
+                IsDebuging = debugManager.Start(infos.Select(i => i + LineOffset).ToList(), file);
                 if (!IsDebuging)
                 {
                     await Locator.Messenger.Send(new MessageDialogRequestMessage { Message = $"Failed to initialize debugger. Please try again!", Title = "Error" });
                     return;
                 }
             }
-
         }
 
         private async void DebugManager_DebugEnd(object sender, EventArgs e)
