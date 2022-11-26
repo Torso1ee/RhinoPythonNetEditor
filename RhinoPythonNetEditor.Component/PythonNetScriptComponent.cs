@@ -857,11 +857,11 @@ namespace RhinoPythonNetEditor.Component
 
         public override bool Read(GH_IReader reader)
         {
-            var refs = reader.GetString("reference");
+            //var refs = reader.GetString("reference");
             var exRefs = reader.GetString("additionalReference");
             ScriptSource.PythonCode = reader.GetString("code");
-            ScriptSource.References.Clear();
-            if (refs != "" && refs != null) ScriptSource.References.AddRange(refs.Split('\n'));
+            //ScriptSource.References.Clear();
+            //if (refs != "" && refs != null) ScriptSource.References.AddRange(refs.Split('\n'));
             ScriptSource.AdditionalReferences.Clear();
             if (exRefs != "" && exRefs != null) ScriptSource.AdditionalReferences.AddRange(exRefs.Split('\n'));
             ScriptAssembly = null;
@@ -871,7 +871,7 @@ namespace RhinoPythonNetEditor.Component
         public override bool Write(GH_IWriter writer)
         {
             writer.SetString("code", ScriptSource.PythonCode);
-            writer.SetString("reference", String.Join("\n", ScriptSource.References));
+            //writer.SetString("reference", String.Join("\n", ScriptSource.References));
             writer.SetString("additionalReference", String.Join("\n", ScriptSource.AdditionalReferences));
             return base.Write(writer);
         }
