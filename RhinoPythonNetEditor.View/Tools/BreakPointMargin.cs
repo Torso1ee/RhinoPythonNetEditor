@@ -129,8 +129,8 @@ namespace RhinoPythonNetEditor.View.Tools
                     var geo = Arrow.Clone();
                     var rectangle = new RectangleGeometry(new Rect(new Size(2000, 18)));
                     double y = stepLine.GetTextLineVisualYPosition(stepLine.TextLines[0], VisualYPosition.TextTop);
-                    geo.Transform = new TranslateTransform(0, y + 3);
-                    rectangle.Transform = new TranslateTransform(60, y);
+                    geo.Transform = new TranslateTransform(0, y + 3 - textView.VerticalOffset);
+                    rectangle.Transform = new TranslateTransform(60, y - textView.VerticalOffset);
                     drawingContext.DrawGeometry(Brushes.Transparent, ArrowPen, geo);
                     drawingContext.DrawGeometry(LineBrush, LinePen, rectangle);
                 }
