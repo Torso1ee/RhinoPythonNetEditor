@@ -54,7 +54,7 @@ namespace RhinoPythonNetEditor.Component
             ScriptSource = new ScriptSource(this);
         }
 
-
+   
 
         private void Document_ObjectsDeleted(object sender, GH_DocObjectEventArgs e)
         {
@@ -459,6 +459,8 @@ namespace RhinoPythonNetEditor.Component
                     variable.Optional = true;
                     variable.ShowHints = true;
                 }
+                param.ObjectChanged -= Param_ObjectChanged;
+                param.ObjectChanged += Param_ObjectChanged;
             }
             int num3 = this.Params.Output.Count - 1;
             for (int j = this.FirstOutputIndex; j <= num3; j++)
@@ -466,9 +468,15 @@ namespace RhinoPythonNetEditor.Component
                 IGH_Param param2 = this.Params.Output[j];
                 param2.Name = param2.NickName;
                 param2.Description = string.Format("Output parameter {0}", param2.NickName);
+                param2.ObjectChanged -= Param_ObjectChanged;
+                param2.ObjectChanged += Param_ObjectChanged;
             }
         }
 
+        private void Param_ObjectChanged(IGH_DocumentObject sender, GH_ObjectChangedEventArgs e)
+        {
+            ScriptAssembly = null;
+        }
 
         internal int FirstOutputIndex
         {
